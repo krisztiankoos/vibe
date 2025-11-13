@@ -313,6 +313,52 @@
   font-size: 1.2rem;
 }
 
+.mc-option {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.mc-option input[type="radio"] {
+  width: auto;
+  cursor: pointer;
+}
+
+.mc-option input[type="text"] {
+  flex: 1;
+}
+
+.mc-option button {
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.tf-options {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.tf-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.tf-options input[type="radio"] {
+  width: auto;
+  cursor: pointer;
+}
+
 .add-exercise-btn {
   width: 100%;
   padding: 1rem;
@@ -463,6 +509,30 @@
 .empty-message {
   color: #999;
   font-style: italic;
+}
+
+.correct-answer {
+  background: #e8f5e9;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.teacher-notes {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 4px;
+}
+
+.teacher-notes p:first-child {
+  margin-top: 0;
+  color: #e65100;
+  font-weight: 600;
+}
+
+.teacher-notes p:last-child {
+  margin-bottom: 0;
 }
 
 .app-footer {

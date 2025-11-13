@@ -8,8 +8,9 @@ interface PresentationFormProps {
 
 export default function PresentationForm({ presentation, onChange }: PresentationFormProps) {
   const [newExample, setNewExample] = useState('');
+  const [newMediaLink, setNewMediaLink] = useState('');
 
-  const updateField = (field: keyof Presentation, value: string) => {
+  const updateField = (field: keyof Presentation, value: string | number | string[]) => {
     onChange({ ...presentation, [field]: value });
   };
 
@@ -27,6 +28,23 @@ export default function PresentationForm({ presentation, onChange }: Presentatio
     onChange({
       ...presentation,
       examples: presentation.examples.filter((_, i) => i !== index),
+    });
+  };
+
+  const addMediaLink = () => {
+    if (newMediaLink.trim()) {
+      onChange({
+        ...presentation,
+        mediaLinks: [...(presentation.mediaLinks || []), newMediaLink.trim()],
+      });
+      setNewMediaLink('');
+    }
+  };
+
+  const removeMediaLink = (index: number) => {
+    onChange({
+      ...presentation,
+      mediaLinks: (presentation.mediaLinks || []).filter((_, i) => i !== index),
     });
   };
 
@@ -85,6 +103,53 @@ export default function PresentationForm({ presentation, onChange }: Presentatio
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="form-group">
+        <label>Duration (minutes, optional)</label>
+        <input
+          type="number"
+          min="1"
+          value={presentation.duration || ''}
+          onChange={(e) => updateField('duration', e.target.value ? parseInt(e.target.value) : '')}
+          placeholder="e.g., 15"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Media Links (YouTube, websites, optional)</label>
+        <div className="examples-input">
+          <input
+            type="text"
+            value={newMediaLink}
+            onChange={(e) => setNewMediaLink(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && addMediaLink()}
+            placeholder="Paste YouTube link or website URL..."
+          />
+          <button type="button" onClick={addMediaLink}>Add</button>
+        </div>
+        {presentation.mediaLinks && presentation.mediaLinks.length > 0 && (
+          <ul className="examples-list">
+            {presentation.mediaLinks.map((link, index) => (
+              <li key={index}>
+                <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                <button onClick={() => removeMediaLink(index)}>×</button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <small>Add YouTube videos or external resources (grammar tutorials, etc.)</small>
+      </div>
+
+      <div className="form-group">
+        <label>Teacher Notes (optional, private)</label>
+        <textarea
+          value={presentation.teacherNotes || ''}
+          onChange={(e) => updateField('teacherNotes', e.target.value)}
+          placeholder="Private notes for yourself (e.g., common errors, alternative explanations)..."
+          rows={3}
+        />
+        <small>These notes are for you only and won't be shown to students</small>
       </div>
 
       <div className="info-box">

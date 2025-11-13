@@ -24,6 +24,19 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
   // Free text states
   const [freeTextPrompt, setFreeTextPrompt] = useState('');
 
+  // Multiple choice states
+  const [mcQuestion, setMcQuestion] = useState('');
+  const [mcOptions, setMcOptions] = useState<string[]>(['', '', '', '']);
+  const [mcCorrectAnswer, setMcCorrectAnswer] = useState<number>(-1);
+
+  // True/False states
+  const [tfStatement, setTfStatement] = useState('');
+  const [tfCorrectAnswer, setTfCorrectAnswer] = useState<boolean | undefined>(undefined);
+
+  // Sentence scramble states
+  const [scrambleWords, setScrambleWords] = useState('');
+  const [scrambleCorrect, setScrambleCorrect] = useState('');
+
   const resetForm = () => {
     setInstruction('');
     setGapFillText('');
@@ -31,6 +44,13 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
     setSortingItems('');
     setMatchingPairs([{ left: '', right: '' }]);
     setFreeTextPrompt('');
+    setMcQuestion('');
+    setMcOptions(['', '', '', '']);
+    setMcCorrectAnswer(-1);
+    setTfStatement('');
+    setTfCorrectAnswer(undefined);
+    setScrambleWords('');
+    setScrambleCorrect('');
   };
 
   const handleAddExercise = () => {
@@ -81,6 +101,43 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
           };
         }
         break;
+
+      case 'multiple-choice':
+        if (instruction && mcQuestion && mcOptions.some((opt) => opt.trim())) {
+          exercise = {
+            type: 'multiple-choice',
+            id: crypto.randomUUID(),
+            instruction,
+            question: mcQuestion,
+            options: mcOptions.filter((opt) => opt.trim()),
+            correctAnswer: mcCorrectAnswer >= 0 ? mcCorrectAnswer : undefined,
+          };
+        }
+        break;
+
+      case 'true-false':
+        if (instruction && tfStatement) {
+          exercise = {
+            type: 'true-false',
+            id: crypto.randomUUID(),
+            instruction,
+            statement: tfStatement,
+            correctAnswer: tfCorrectAnswer,
+          };
+        }
+        break;
+
+      case 'sentence-scramble':
+        if (instruction && scrambleWords) {
+          exercise = {
+            type: 'sentence-scramble',
+            id: crypto.randomUUID(),
+            instruction,
+            words: scrambleWords.split(' ').map((w) => w.trim()).filter(Boolean),
+            correctSentence: scrambleCorrect || undefined,
+          };
+        }
+        break;
     }
 
     if (exercise) {
@@ -105,6 +162,25 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
     setMatchingPairs(matchingPairs.filter((_, i) => i !== index));
   };
 
+  const updateMcOption = (index: number, value: string) => {
+    const updated = [...mcOptions];
+    updated[index] = value;
+    setMcOptions(updated);
+  };
+
+  const addMcOption = () => {
+    setMcOptions([...mcOptions, '']);
+  };
+
+  const removeMcOption = (index: number) => {
+    if (mcOptions.length > 2) {
+      setMcOptions(mcOptions.filter((_, i) => i !== index));
+      if (mcCorrectAnswer === index) {
+        setMcCorrectAnswer(-1);
+      }
+    }
+  };
+
   return (
     <div className="exercise-builder">
       <h3>Add Exercise</h3>
@@ -113,8 +189,11 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
         <label>Exercise Type</label>
         <select value={exerciseType} onChange={(e) => setExerciseType(e.target.value as ExerciseType)}>
           <option value="gap-fill">Gap Fill</option>
-          <option value="sorting">Sorting</option>
+          <option value="multiple-choice">Multiple Choice</option>
+          <option value="true-false">True/False</option>
           <option value="matching">Matching</option>
+          <option value="sorting">Sorting</option>
+          <option value="sentence-scramble">Sentence Scramble</option>
           <option value="free-text">Free Text / Production</option>
         </select>
       </div>
@@ -203,6 +282,116 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
             rows={4}
           />
         </div>
+      )}
+
+      {exerciseType === 'multiple-choice' && (
+        <>
+          <div className="form-group">
+            <label>Question</label>
+            <input
+              type="text"
+              value={mcQuestion}
+              onChange={(e) => setMcQuestion(e.target.value)}
+              placeholder="e.g., Which sentence is correct?"
+            />
+          </div>
+          <div className="form-group">
+            <label>Options</label>
+            {mcOptions.map((option, index) => (
+              <div key={index} className="mc-option">
+                <input
+                  type="radio"
+                  name="correctAnswer"
+                  checked={mcCorrectAnswer === index}
+                  onChange={() => setMcCorrectAnswer(index)}
+                  title="Mark as correct answer"
+                />
+                <input
+                  type="text"
+                  value={option}
+                  onChange={(e) => updateMcOption(index, e.target.value)}
+                  placeholder={`Option ${index + 1}`}
+                />
+                {mcOptions.length > 2 && (
+                  <button onClick={() => removeMcOption(index)}>×</button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={addMcOption}>Add Option</button>
+            <small>Click the radio button to mark the correct answer (optional)</small>
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'true-false' && (
+        <>
+          <div className="form-group">
+            <label>Statement</label>
+            <textarea
+              value={tfStatement}
+              onChange={(e) => setTfStatement(e.target.value)}
+              placeholder="e.g., The present perfect tense is used to describe completed actions."
+              rows={3}
+            />
+          </div>
+          <div className="form-group">
+            <label>Correct Answer (optional)</label>
+            <div className="tf-options">
+              <label>
+                <input
+                  type="radio"
+                  name="tfAnswer"
+                  checked={tfCorrectAnswer === true}
+                  onChange={() => setTfCorrectAnswer(true)}
+                />
+                True
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="tfAnswer"
+                  checked={tfCorrectAnswer === false}
+                  onChange={() => setTfCorrectAnswer(false)}
+                />
+                False
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="tfAnswer"
+                  checked={tfCorrectAnswer === undefined}
+                  onChange={() => setTfCorrectAnswer(undefined)}
+                />
+                No answer key
+              </label>
+            </div>
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'sentence-scramble' && (
+        <>
+          <div className="form-group">
+            <label>Words (space-separated)</label>
+            <input
+              type="text"
+              value={scrambleWords}
+              onChange={(e) => setScrambleWords(e.target.value)}
+              placeholder="e.g., been have I Paris to"
+            />
+            <small>Enter words separated by spaces. They will be presented in random order to students.</small>
+          </div>
+          <div className="form-group">
+            <label>Correct Sentence (optional)</label>
+            <input
+              type="text"
+              value={scrambleCorrect}
+              onChange={(e) => setScrambleCorrect(e.target.value)}
+              placeholder="e.g., I have been to Paris"
+            />
+            <small>Enter the correct sentence for your reference</small>
+          </div>
+        </>
       )}
 
       <button className="add-exercise-btn" onClick={handleAddExercise}>

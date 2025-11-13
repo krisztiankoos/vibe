@@ -7,6 +7,81 @@ interface LessonPreviewProps {
 }
 
 export default function LessonPreview({ lesson, onExport, onPrint }: LessonPreviewProps) {
+  const renderExercise = (exercise: Lesson['controlledPractice']['exercises'][0]) => {
+    switch (exercise.type) {
+      case 'gap-fill':
+        return (
+          <>
+            <p>{exercise.text}</p>
+            {exercise.answers.length > 0 && (
+              <p><strong>Answers:</strong> {exercise.answers.join(', ')}</p>
+            )}
+          </>
+        );
+
+      case 'sorting':
+        return (
+          <ul>
+            {exercise.items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        );
+
+      case 'matching':
+        return (
+          <div className="matching-preview">
+            {exercise.pairs.map((pair, i) => (
+              <div key={i} className="pair">
+                {pair.left} ↔ {pair.right}
+              </div>
+            ))}
+          </div>
+        );
+
+      case 'free-text':
+        return <p className="prompt">{exercise.prompt}</p>;
+
+      case 'multiple-choice':
+        return (
+          <>
+            <p><strong>Q:</strong> {exercise.question}</p>
+            <ol type="A">
+              {exercise.options.map((option, i) => (
+                <li key={i} className={exercise.correctAnswer === i ? 'correct-answer' : ''}>
+                  {option}
+                  {exercise.correctAnswer === i && ' ✓'}
+                </li>
+              ))}
+            </ol>
+          </>
+        );
+
+      case 'true-false':
+        return (
+          <>
+            <p>{exercise.statement}</p>
+            {exercise.correctAnswer !== undefined && (
+              <p><strong>Answer:</strong> {exercise.correctAnswer ? 'True' : 'False'}</p>
+            )}
+          </>
+        );
+
+      case 'sentence-scramble':
+        return (
+          <>
+            <p><strong>Words to arrange:</strong> {exercise.words.join(' • ')}</p>
+            {exercise.correctSentence && (
+              <p><strong>Correct sentence:</strong> {exercise.correctSentence}</p>
+            )}
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="lesson-preview">
       <div className="preview-header">
@@ -34,13 +109,37 @@ export default function LessonPreview({ lesson, onExport, onPrint }: LessonPrevi
       <div className="preview-section">
         <h3>Lead-In</h3>
         <p><strong>{lesson.leadIn.title}</strong></p>
+        {lesson.leadIn.duration && (
+          <p><strong>Duration:</strong> {lesson.leadIn.duration} minutes</p>
+        )}
         <p>{lesson.leadIn.description}</p>
         <div className="content-box">{lesson.leadIn.content}</div>
+        {lesson.leadIn.mediaLinks && lesson.leadIn.mediaLinks.length > 0 && (
+          <>
+            <p><strong>Media Resources:</strong></p>
+            <ul>
+              {lesson.leadIn.mediaLinks.map((link, index) => (
+                <li key={index}>
+                  <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        {lesson.leadIn.teacherNotes && (
+          <div className="teacher-notes">
+            <p><strong>Teacher Notes:</strong></p>
+            <p>{lesson.leadIn.teacherNotes}</p>
+          </div>
+        )}
       </div>
 
       <div className="preview-section">
         <h3>Presentation</h3>
         <p><strong>{lesson.presentation.title}</strong></p>
+        {lesson.presentation.duration && (
+          <p><strong>Duration:</strong> {lesson.presentation.duration} minutes</p>
+        )}
         <p><strong>Target Language:</strong> {lesson.presentation.targetLanguage}</p>
         <div className="content-box">{lesson.presentation.explanation}</div>
         {lesson.presentation.examples.length > 0 && (
@@ -53,6 +152,24 @@ export default function LessonPreview({ lesson, onExport, onPrint }: LessonPrevi
             </ul>
           </>
         )}
+        {lesson.presentation.mediaLinks && lesson.presentation.mediaLinks.length > 0 && (
+          <>
+            <p><strong>Media Resources:</strong></p>
+            <ul>
+              {lesson.presentation.mediaLinks.map((link, index) => (
+                <li key={index}>
+                  <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        {lesson.presentation.teacherNotes && (
+          <div className="teacher-notes">
+            <p><strong>Teacher Notes:</strong></p>
+            <p>{lesson.presentation.teacherNotes}</p>
+          </div>
+        )}
       </div>
 
       <div className="preview-section">
@@ -62,39 +179,9 @@ export default function LessonPreview({ lesson, onExport, onPrint }: LessonPrevi
         ) : (
           lesson.controlledPractice.exercises.map((exercise, index) => (
             <div key={exercise.id} className="exercise-preview">
-              <h4>Exercise {index + 1}: {exercise.type.toUpperCase()}</h4>
+              <h4>Exercise {index + 1}: {exercise.type.toUpperCase().replace(/-/g, ' ')}</h4>
               <p><strong>Instructions:</strong> {exercise.instruction}</p>
-
-              {exercise.type === 'gap-fill' && (
-                <>
-                  <p>{exercise.text}</p>
-                  {exercise.answers.length > 0 && (
-                    <p><strong>Answers:</strong> {exercise.answers.join(', ')}</p>
-                  )}
-                </>
-              )}
-
-              {exercise.type === 'sorting' && (
-                <ul>
-                  {exercise.items.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              )}
-
-              {exercise.type === 'matching' && (
-                <div className="matching-preview">
-                  {exercise.pairs.map((pair, i) => (
-                    <div key={i} className="pair">
-                      {pair.left} ↔ {pair.right}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {exercise.type === 'free-text' && (
-                <p className="prompt">{exercise.prompt}</p>
-              )}
+              {renderExercise(exercise)}
             </div>
           ))
         )}
@@ -107,39 +194,9 @@ export default function LessonPreview({ lesson, onExport, onPrint }: LessonPrevi
         ) : (
           lesson.freePractice.exercises.map((exercise, index) => (
             <div key={exercise.id} className="exercise-preview">
-              <h4>Exercise {index + 1}: {exercise.type.toUpperCase()}</h4>
+              <h4>Exercise {index + 1}: {exercise.type.toUpperCase().replace(/-/g, ' ')}</h4>
               <p><strong>Instructions:</strong> {exercise.instruction}</p>
-
-              {exercise.type === 'gap-fill' && (
-                <>
-                  <p>{exercise.text}</p>
-                  {exercise.answers.length > 0 && (
-                    <p><strong>Answers:</strong> {exercise.answers.join(', ')}</p>
-                  )}
-                </>
-              )}
-
-              {exercise.type === 'sorting' && (
-                <ul>
-                  {exercise.items.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              )}
-
-              {exercise.type === 'matching' && (
-                <div className="matching-preview">
-                  {exercise.pairs.map((pair, i) => (
-                    <div key={i} className="pair">
-                      {pair.left} ↔ {pair.right}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {exercise.type === 'free-text' && (
-                <p className="prompt">{exercise.prompt}</p>
-              )}
+              {renderExercise(exercise)}
             </div>
           ))
         )}

@@ -1,6 +1,6 @@
 export type LessonStructure = 'PPP' | 'TTT';
 
-export type ExerciseType = 'gap-fill' | 'sorting' | 'matching' | 'free-text';
+export type ExerciseType = 'gap-fill' | 'sorting' | 'matching' | 'free-text' | 'multiple-choice' | 'true-false' | 'sentence-scramble';
 
 export interface GapFillExercise {
   type: 'gap-fill';
@@ -32,12 +32,47 @@ export interface FreeTextExercise {
   prompt: string;
 }
 
-export type Exercise = GapFillExercise | SortingExercise | MatchingExercise | FreeTextExercise;
+export interface MultipleChoiceExercise {
+  type: 'multiple-choice';
+  id: string;
+  instruction: string;
+  question: string;
+  options: string[];
+  correctAnswer?: number; // Optional: index of correct answer
+}
+
+export interface TrueFalseExercise {
+  type: 'true-false';
+  id: string;
+  instruction: string;
+  statement: string;
+  correctAnswer?: boolean; // Optional: true or false
+}
+
+export interface SentenceScrambleExercise {
+  type: 'sentence-scramble';
+  id: string;
+  instruction: string;
+  words: string[]; // Words in scrambled order
+  correctSentence?: string; // Optional: correct sentence for reference
+}
+
+export type Exercise =
+  | GapFillExercise
+  | SortingExercise
+  | MatchingExercise
+  | FreeTextExercise
+  | MultipleChoiceExercise
+  | TrueFalseExercise
+  | SentenceScrambleExercise;
 
 export interface LeadIn {
   title: string;
   description: string;
   content: string;
+  duration?: number; // Duration in minutes
+  mediaLinks?: string[]; // YouTube or external links
+  teacherNotes?: string; // Private notes for teacher
 }
 
 export interface Presentation {
@@ -45,6 +80,9 @@ export interface Presentation {
   targetLanguage: string;
   examples: string[];
   explanation: string;
+  duration?: number; // Duration in minutes
+  mediaLinks?: string[]; // YouTube or external links
+  teacherNotes?: string; // Private notes for teacher
 }
 
 export interface PracticeSection {
