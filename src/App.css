@@ -1929,3 +1929,248 @@
     text-align: center;
   }
 }
+
+/* Tooltip System */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip {
+  background: #2c3e50;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.tooltip-top::before {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0 6px;
+  border-color: #2c3e50 transparent transparent transparent;
+}
+
+.tooltip-bottom::before {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent #2c3e50 transparent;
+}
+
+.tooltip-left::before {
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px 0 6px 6px;
+  border-color: transparent transparent transparent #2c3e50;
+}
+
+.tooltip-right::before {
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px 6px 6px 0;
+  border-color: transparent #2c3e50 transparent transparent;
+}
+
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+  color: #667eea;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.help-icon:hover {
+  color: #5568d3;
+  transform: scale(1.1);
+}
+
+.help-icon:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* Field with help icon */
+.field-label-with-help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.field-label-with-help label {
+  margin-bottom: 0;
+}
+
+/* Hint text under fields */
+.field-hint {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.field-hint.example {
+  color: #667eea;
+  background: #f5f5ff;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  border-left: 3px solid #667eea;
+}
+
+/* Help section banner */
+.help-banner {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f5f5ff 100%);
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.help-banner-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.help-banner-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.help-banner-content p {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Section help text */
+.section-help {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+}
+
+.section-help h4 {
+  margin: 0 0 0.5rem 0;
+  color: #e65100;
+  font-size: 1rem;
+}
+
+.section-help ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+}
+
+.section-help li {
+  margin: 0.25rem 0;
+  color: #555;
+}
+
+/* Better form labels */
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.form-group label.required::after {
+  content: '*';
+  color: #f44336;
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* Validation feedback */
+.field-validation {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field-validation.error {
+  color: #d32f2f;
+}
+
+.field-validation.success {
+  color: #388e3c;
+}
+
+.field-validation.warning {
+  color: #f57c00;
+}
+
+/* Quick tips sidebar */
+.quick-tips {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.quick-tips h4 {
+  margin: 0 0 1rem 0;
+  color: #667eea;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quick-tips ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.quick-tips li {
+  margin: 0.75rem 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+.quick-tips li strong {
+  color: #333;
+}
