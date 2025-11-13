@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Lesson, Exercise } from './types';
 import type { Language } from './translations';
 import { getTranslation } from './translations';
@@ -8,6 +8,7 @@ import PresentationForm from './components/PresentationForm';
 import ExerciseBuilder from './components/ExerciseBuilder';
 import LessonPreview from './components/LessonPreview';
 import SampleLessons from './components/SampleLessons';
+import StudentLessonView from './components/StudentLessonView';
 import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/lessonUtils';
 import './App.css';
 
@@ -41,7 +42,47 @@ function App() {
 
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
   const [showSampleLessons, setShowSampleLessons] = useState(false);
+  const [studentMode, setStudentMode] = useState(false);
+  const [studentLesson, setStudentLesson] = useState<Lesson | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check URL parameters for shared lesson
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedLessonId = params.get('lesson');
+    const mode = params.get('mode');
+
+    if (sharedLessonId && mode === 'student') {
+      // Load lesson from localStorage
+      const lessons = JSON.parse(localStorage.getItem('lessons') || '[]');
+      const shared = lessons.find((l: Lesson) => l.id === sharedLessonId);
+
+      if (shared) {
+        setStudentLesson(shared);
+        setStudentMode(true);
+        // Auto-select language based on lesson or default to English
+        if (!language) {
+          setLanguage('en');
+        }
+      }
+    }
+  }, []);
+
+  // Show student view if in student mode
+  if (studentMode && studentLesson && language) {
+    return (
+      <StudentLessonView
+        lesson={studentLesson}
+        language={language}
+        onExit={() => {
+          setStudentMode(false);
+          setStudentLesson(null);
+          // Clear URL params
+          window.history.replaceState({}, '', window.location.pathname);
+        }}
+      />
+    );
+  }
 
   // Show language selector if no language selected
   if (!language) {
@@ -125,6 +166,39 @@ function App() {
   const handleLoadSample = (sampleLesson: Lesson) => {
     setLesson(sampleLesson);
     setCurrentStep('preview');
+  };
+
+  const handleShareLesson = () => {
+    // First save the lesson
+    const lessons = JSON.parse(localStorage.getItem('lessons') || '[]');
+    const existingIndex = lessons.findIndex((l: Lesson) => l.id === lesson.id);
+
+    if (existingIndex >= 0) {
+      lessons[existingIndex] = lesson;
+    } else {
+      lessons.push(lesson);
+    }
+
+    localStorage.setItem('lessons', JSON.stringify(lessons));
+
+    // Generate shareable URL
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}?lesson=${lesson.id}&mode=student`;
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert(
+        language === 'en'
+          ? `Share link copied to clipboard!\n\nStudents can use this link to access the lesson:\n${shareUrl}`
+          : `Посилання для обміну скопійовано в буфер обміну!\n\nСтуденти можуть використовувати це посилання для доступу до уроку:\n${shareUrl}`
+      );
+    }).catch(() => {
+      // Fallback: show the URL in a prompt
+      prompt(
+        language === 'en' ? 'Copy this link to share with students:' : 'Скопіюйте це посилання, щоб поділитися зі студентами:',
+        shareUrl
+      );
+    });
   };
 
   const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
@@ -288,9 +362,14 @@ function App() {
           </button>
         )}
         {currentStep === 'preview' && (
-          <button onClick={saveLesson} className="save-button">
-            {t.saveLesson}
-          </button>
+          <>
+            <button onClick={handleShareLesson} className="share-button" style={{ background: '#ff9800' }}>
+              🔗 {language === 'en' ? 'Share with Students' : 'Поділитися зі Студентами'}
+            </button>
+            <button onClick={saveLesson} className="save-button">
+              {t.saveLesson}
+            </button>
+          </>
         )}
       </footer>
 
