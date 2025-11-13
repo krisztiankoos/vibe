@@ -482,13 +482,26 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
 
       {exerciseType === 'free-text' && (
         <div className="form-group">
-          <label>{t.promptQuestion}</label>
+          <div className="field-label-with-help">
+            <label htmlFor="freeTextPrompt" className="required">
+              {t.promptQuestion}
+            </label>
+            <HelpIcon text={help.freeText.prompt} />
+          </div>
           <textarea
+            id="freeTextPrompt"
             value={freeTextPrompt}
             onChange={(e) => setFreeTextPrompt(e.target.value)}
-            placeholder={t.promptPlaceholder}
+            placeholder={language === 'en'
+              ? 'e.g., "Write about your last vacation. Where did you go? What did you do?"'
+              : 'напр., "Напишіть про свої останні канікули. Куди ви поїхали? Що ви робили?"'}
             rows={4}
           />
+          <div className="field-hint">
+            {language === 'en'
+              ? '✍️ Give students a clear topic or question to write about'
+              : '✍️ Дайте учням чітку тему або питання для написання'}
+          </div>
         </div>
       )}
 
@@ -609,24 +622,46 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
       {exerciseType === 'sentence-scramble' && (
         <>
           <div className="form-group">
-            <label>{t.wordsToArrange}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="scrambleWords" className="required">
+                {t.wordsToArrange}
+              </label>
+              <HelpIcon text={help.sentenceScramble.words} />
+            </div>
             <input
+              id="scrambleWords"
               type="text"
               value={scrambleWords}
               onChange={(e) => setScrambleWords(e.target.value)}
-              placeholder={t.wordsPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "always / I / coffee / drink / morning / the / in"'
+                : 'напр., "завжди / я / каву / п\'ю / ранку / вранці"'}
             />
-            <small>{t.scrambleHint}</small>
+            <div className="field-hint example">
+              <strong>{language === 'en' ? '💡 Tip:' : '💡 Порада:'}</strong> {t.scrambleHint}
+            </div>
           </div>
           <div className="form-group">
-            <label>{t.correctSentence}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="scrambleCorrect">
+                {t.correctSentence}
+              </label>
+              <HelpIcon text={help.sentenceScramble.correctSentence} />
+            </div>
             <input
+              id="scrambleCorrect"
               type="text"
               value={scrambleCorrect}
               onChange={(e) => setScrambleCorrect(e.target.value)}
-              placeholder={t.correctSentencePlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "I always drink coffee in the morning"'
+                : 'напр., "Я завжди п\'ю каву вранці"'}
             />
-            <small>{t.correctSentenceHint}</small>
+            <div className="field-hint">
+              {language === 'en'
+                ? '✓ Optional: provide the answer key for teachers'
+                : '✓ Необов\'язково: надайте ключ відповідей для вчителів'}
+            </div>
           </div>
         </>
       )}
