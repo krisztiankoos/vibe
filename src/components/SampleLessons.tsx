@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Lesson } from '../types';
 import type { Language } from '../translations';
-import { sampleLessons } from '../data/sampleLessons';
+import { sampleLessonsEnglish } from '../data/sampleLessons';
+import { sampleLessonsUkrainian } from '../data/sampleLessonsUkrainian';
 
 interface SampleLessonsProps {
   onLoadSample: (lesson: Lesson) => void;
@@ -12,6 +13,9 @@ interface SampleLessonsProps {
 export default function SampleLessons({ onLoadSample, language, onClose }: SampleLessonsProps) {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+
+  // Get appropriate samples based on UI language
+  const sampleLessons = language === 'en' ? sampleLessonsEnglish : sampleLessonsUkrainian;
 
   const handleLoadSample = (lesson: Lesson) => {
     // Create a new lesson with a new ID and timestamp

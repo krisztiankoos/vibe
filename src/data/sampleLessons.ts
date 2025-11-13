@@ -1,6 +1,7 @@
 import type { Lesson } from '../types';
 
-export const sampleLessons: Lesson[] = [
+// English language teaching samples
+export const sampleLessonsEnglish: Lesson[] = [
   {
     id: 'sample-ppp-present-simple',
     title: 'Present Simple Tense - Daily Routines',
@@ -404,3 +405,18 @@ export const sampleLessons: Lesson[] = [
     createdAt: new Date('2024-02-01').toISOString()
   }
 ];
+
+// Import Ukrainian samples
+import { sampleLessonsUkrainian } from './sampleLessonsUkrainian';
+
+// Combined export - all samples
+export const sampleLessons = [...sampleLessonsEnglish, ...sampleLessonsUkrainian];
+
+// Helper to get samples by target language
+export const getSamplesByLanguage = (targetLang: 'English' | 'Ukrainian' | 'Українська мова') => {
+  if (targetLang === 'English') {
+    return sampleLessonsEnglish;
+  } else {
+    return sampleLessonsUkrainian;
+  }
+};
