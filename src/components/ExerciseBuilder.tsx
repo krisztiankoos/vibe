@@ -753,127 +753,242 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
 
       {exerciseType === 'role-play' && (
         <>
+          <div className="section-help">
+            <p>
+              {language === 'en'
+                ? '🎭 Role-play allows students to practice real-life situations. Students act out a scenario using the target language in a creative, communicative way.'
+                : '🎭 Рольова гра дозволяє учням практикувати реальні ситуації. Учні розігрують сценарій, використовуючи цільову мову творчим, комунікативним способом.'}
+            </p>
+          </div>
           <div className="form-group">
-            <label>{t.rolePlayScenario}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="rolePlayScenario" className="required">
+                {t.rolePlayScenario}
+              </label>
+              <HelpIcon text={help.rolePlay.scenario} />
+            </div>
             <textarea
+              id="rolePlayScenario"
               value={rolePlayScenario}
               onChange={(e) => setRolePlayScenario(e.target.value)}
-              placeholder={t.rolePlayScenarioPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "You are at a doctor\'s office. One student is the doctor, the other is the patient."'
+                : 'напр., "Ви в кабінеті лікаря. Один учень - лікар, інший - пацієнт."'}
               rows={3}
             />
           </div>
           <div className="form-group">
-            <label>{t.roles}</label>
+            <div className="field-label-with-help">
+              <label className="required">{t.roles}</label>
+              <HelpIcon text={help.rolePlay.roles} />
+            </div>
+            <div className="field-hint">
+              {language === 'en'
+                ? '👥 Define at least 2 roles with clear descriptions of what each person should do'
+                : '👥 Визначте принаймні 2 ролі з чіткими описами того, що має робити кожна людина'}
+            </div>
             {roles.map((role, index) => (
-              <div key={index} className="role-input">
+              <div key={index} className="role-input" style={{ marginBottom: '1rem', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}>
                 <input
                   type="text"
                   value={role.name}
                   onChange={(e) => updateRole(index, 'name', e.target.value)}
-                  placeholder={t.roleName}
-                  style={{ marginBottom: '5px' }}
+                  placeholder={language === 'en' ? 'Role name (e.g., Doctor, Patient)' : 'Назва ролі (напр., Лікар, Пацієнт)'}
+                  style={{ marginBottom: '5px', width: '100%' }}
                 />
                 <textarea
                   value={role.description}
                   onChange={(e) => updateRole(index, 'description', e.target.value)}
-                  placeholder={t.roleDescription}
+                  placeholder={language === 'en'
+                    ? 'What should this person do? (e.g., "Ask about the patient\'s symptoms and give advice")'
+                    : 'Що має робити ця людина? (напр., "Запитайте про симптоми пацієнта та дайте пораду")'}
                   rows={2}
+                  style={{ width: '100%' }}
                 />
                 {roles.length > 1 && (
-                  <button onClick={() => removeRole(index)}>×</button>
+                  <button onClick={() => removeRole(index)} style={{ marginTop: '5px' }}>× {t.remove || 'Remove'}</button>
                 )}
               </div>
             ))}
             <button type="button" onClick={addRole}>{t.addRole}</button>
           </div>
           <div className="form-group">
-            <label>{t.targetLanguageOptional}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="rolePlayTarget">
+                {t.targetLanguageOptional}
+              </label>
+              <HelpIcon text={help.rolePlay.targetLanguage} />
+            </div>
             <textarea
+              id="rolePlayTarget"
               value={rolePlayTarget}
               onChange={(e) => setRolePlayTarget(e.target.value)}
-              placeholder={t.infoGapTargetPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "Practice giving advice: You should... Why don\'t you...?"'
+                : 'напр., "Практика надання порад: Вам слід... Чому б вам не...?"'}
               rows={2}
             />
+            <div className="field-hint">
+              {language === 'en'
+                ? '🎯 Optional: specify the language focus (e.g., making complaints, giving directions)'
+                : '🎯 Необов\'язково: вкажіть мовний фокус (напр., скарги, надання вказівок)'}
+            </div>
           </div>
           <div className="form-group">
-            <label>{t.suggestedDuration}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="rolePlayDuration">
+                {t.suggestedDuration}
+              </label>
+              <HelpIcon text={help.rolePlay.duration} />
+            </div>
             <input
+              id="rolePlayDuration"
               type="number"
               min="1"
               value={rolePlayDuration}
               onChange={(e) => setRolePlayDuration(e.target.value ? parseInt(e.target.value) : '')}
-              placeholder={t.durationPlaceholder}
+              placeholder={language === 'en' ? 'e.g., 5-10 minutes' : 'напр., 5-10 хвилин'}
             />
+            <div className="field-hint">
+              {language === 'en'
+                ? '⏱️ How long should students perform the role-play?'
+                : '⏱️ Скільки часу учні повинні виконувати рольову гру?'}
+            </div>
           </div>
         </>
       )}
 
       {exerciseType === 'collocation' && (
         <>
+          <div className="section-help">
+            <p>
+              {language === 'en'
+                ? '🔗 Collocations are words that naturally go together in a language. Teaching collocations helps students sound more natural and fluent (e.g., "make a mistake" not "do a mistake").'
+                : '🔗 Колокації - це слова, які природно поєднуються в мові. Навчання колокаціям допомагає учням звучати більш природно та вільно (напр., "зробити помилку", "сильний дощ").'}
+            </p>
+          </div>
           <div className="form-group">
-            <label>{t.collocationWord}</label>
+            <div className="field-label-with-help">
+              <label className="required">{t.collocationWord}</label>
+              <HelpIcon text={help.collocation.word} />
+            </div>
+            <div className="field-hint">
+              {language === 'en'
+                ? '📝 Add base words and their common partners (e.g., "make" goes with "a decision", "a mistake", "progress")'
+                : '📝 Додайте базові слова та їх звичайних партнерів (напр., "робити" поєднується з "помилку", "зусилля", "прогрес")'}
+            </div>
             {collocations.map((collocation, index) => (
-              <div key={index} className="collocation-input" style={{ marginBottom: '10px' }}>
+              <div key={index} className="collocation-input" style={{ marginBottom: '1rem', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}>
                 <input
                   type="text"
                   value={collocation.word}
                   onChange={(e) => updateCollocation(index, 'word', e.target.value)}
-                  placeholder={t.collocationWord}
-                  style={{ marginBottom: '5px' }}
+                  placeholder={language === 'en' ? 'Base word (e.g., "make", "strong", "heavy")' : 'Базове слово (напр., "робити", "сильний", "важкий")'}
+                  style={{ marginBottom: '5px', width: '100%' }}
                 />
                 <input
                   type="text"
                   value={collocation.partners}
                   onChange={(e) => updateCollocation(index, 'partners', e.target.value)}
-                  placeholder={t.collocationPartnersPlaceholder}
+                  placeholder={language === 'en'
+                    ? 'Partners separated by commas (e.g., "a decision, a mistake, progress")'
+                    : 'Партнери через кому (напр., "рішення, помилку, прогрес")'}
+                  style={{ width: '100%' }}
                 />
                 {collocations.length > 1 && (
-                  <button onClick={() => removeCollocation(index)}>×</button>
+                  <button type="button" onClick={() => removeCollocation(index)} style={{ marginTop: '5px' }}>×</button>
                 )}
               </div>
             ))}
             <button type="button" onClick={addCollocationWord}>{t.addCollocation}</button>
           </div>
           <div className="form-group">
-            <label>{t.exerciseFormat}</label>
+            <div className="field-label-with-help">
+              <label>{t.exerciseFormat}</label>
+              <HelpIcon text={help.collocation.exerciseFormat} />
+            </div>
             <select value={collocationFormat} onChange={(e) => setCollocationFormat(e.target.value as 'match' | 'fill' | 'choose')}>
               <option value="match">{t.formatMatch}</option>
               <option value="fill">{t.formatFill}</option>
               <option value="choose">{t.formatChoose}</option>
             </select>
+            <div className="field-hint">
+              {language === 'en'
+                ? '🎯 Match = pair words together | Fill = complete sentences | Choose = select correct partner'
+                : '🎯 Match = з\'єднати слова | Fill = заповнити речення | Choose = вибрати правильного партнера'}
+            </div>
           </div>
         </>
       )}
 
       {exerciseType === 'lexical-set' && (
         <>
+          <div className="section-help">
+            <p>
+              {language === 'en'
+                ? '📦 Lexical sets are groups of words and phrases related to a specific topic or theme. The Lexical Approach emphasizes learning chunks and phrases, not just individual words.'
+                : '📦 Лексичні набори - це групи слів і фраз, пов\'язаних з певною темою. Лексичний підхід наголошує на вивченні сталих виразів і фраз, а не лише окремих слів.'}
+            </p>
+          </div>
           <div className="form-group">
-            <label>{t.topic}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="lexicalTopic" className="required">{t.topic}</label>
+              <HelpIcon text={help.lexicalSet.topic} />
+            </div>
             <input
+              id="lexicalTopic"
               type="text"
               value={lexicalTopic}
               onChange={(e) => setLexicalTopic(e.target.value)}
-              placeholder={t.topicPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "Weather", "Business meetings", "Restaurant language"'
+                : 'напр., "Погода", "Ділові зустрічі", "Ресторанна лексика"'}
             />
+            <div className="field-hint">
+              {language === 'en'
+                ? '🎯 Choose a clear topic that students can relate to and use in real situations'
+                : '🎯 Оберіть чітку тему, до якої учні можуть мати відношення та використовувати в реальних ситуаціях'}
+            </div>
           </div>
           <div className="form-group">
-            <label>{t.lexicalChunks}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="lexicalChunks" className="required">{t.lexicalChunks}</label>
+              <HelpIcon text={help.lexicalSet.chunks} />
+            </div>
             <textarea
+              id="lexicalChunks"
               value={lexicalChunks}
               onChange={(e) => setLexicalChunks(e.target.value)}
-              placeholder={t.chunksPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "It\'s pouring down\nout of the blue\nheavy rain\npartly cloudy\nbreeze picks up"'
+                : 'напр., "ллє як з відра\nяк грім серед ясного неба\nсильний дощ\nхмарно з проясненнями"'}
               rows={8}
             />
-            <small>{t.chunksHint}</small>
+            <div className="field-hint example">
+              <strong>{language === 'en' ? '💡 Important:' : '💡 Важливо:'}</strong> {t.chunksHint || (language === 'en'
+                ? 'Enter multi-word chunks and phrases, one per line. Focus on expressions that go together naturally.'
+                : 'Вводьте багатослівні вирази та фрази, по одному на рядок. Зосередьтеся на виразах, що природно поєднуються.')}
+            </div>
           </div>
           <div className="form-group">
-            <label>{t.contextOptional}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="lexicalContext">{t.contextOptional}</label>
+              <HelpIcon text={help.lexicalSet.context} />
+            </div>
             <textarea
+              id="lexicalContext"
               value={lexicalContext}
               onChange={(e) => setLexicalContext(e.target.value)}
-              placeholder={t.contextPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "Use these expressions when describing weather conditions or talking about unexpected events"'
+                : 'напр., "Використовуйте ці вирази, описуючи погодні умови або розповідаючи про несподівані події"'}
               rows={3}
             />
+            <div className="field-hint">
+              {language === 'en'
+                ? '📝 Help students understand when and where to use these expressions'
+                : '📝 Допоможіть учням зрозуміти, коли і де використовувати ці вирази'}
+            </div>
           </div>
         </>
       )}
