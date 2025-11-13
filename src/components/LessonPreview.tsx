@@ -81,6 +81,81 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
           </>
         );
 
+      case 'information-gap':
+        return (
+          <>
+            <p><strong>{t.scenario}:</strong> {exercise.scenario}</p>
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e3f2fd', borderRadius: '5px' }}>
+              <p><strong>{t.studentAInfo}:</strong></p>
+              <p>{exercise.studentAInfo}</p>
+            </div>
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#fff3e0', borderRadius: '5px' }}>
+              <p><strong>{t.studentBInfo}:</strong></p>
+              <p>{exercise.studentBInfo}</p>
+            </div>
+            {exercise.targetLanguage && (
+              <p style={{ marginTop: '10px' }}><strong>{t.targetLanguageOptional}:</strong> {exercise.targetLanguage}</p>
+            )}
+          </>
+        );
+
+      case 'role-play':
+        return (
+          <>
+            <p><strong>{t.scenario}:</strong> {exercise.scenario}</p>
+            <div style={{ marginTop: '10px' }}>
+              <p><strong>{t.roles}:</strong></p>
+              {exercise.roles.map((role, i) => (
+                <div key={i} style={{ padding: '10px', marginBottom: '10px', backgroundColor: '#f5f5f5', borderRadius: '5px' }}>
+                  <p><strong>{role.name}:</strong> {role.description}</p>
+                </div>
+              ))}
+            </div>
+            {exercise.targetLanguage && (
+              <p style={{ marginTop: '10px' }}><strong>{t.targetLanguageOptional}:</strong> {exercise.targetLanguage}</p>
+            )}
+            {exercise.duration && (
+              <p><strong>{t.duration}:</strong> {exercise.duration} minutes</p>
+            )}
+          </>
+        );
+
+      case 'collocation':
+        return (
+          <>
+            {exercise.exerciseFormat && (
+              <p><strong>{t.exerciseFormat}:</strong> {t[`format${exercise.exerciseFormat.charAt(0).toUpperCase() + exercise.exerciseFormat.slice(1)}` as keyof typeof t]}</p>
+            )}
+            <div style={{ marginTop: '10px' }}>
+              {exercise.collocations.map((col, i) => (
+                <div key={i} style={{ marginBottom: '10px' }}>
+                  <strong>{col.word}:</strong> {col.partners.join(', ')}
+                </div>
+              ))}
+            </div>
+          </>
+        );
+
+      case 'lexical-set':
+        return (
+          <>
+            <p><strong>{t.topic}:</strong> {exercise.topic}</p>
+            {exercise.context && (
+              <p style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '5px' }}>
+                <strong>{t.contextOptional}:</strong> {exercise.context}
+              </p>
+            )}
+            <div style={{ marginTop: '10px' }}>
+              <p><strong>{t.lexicalChunks}:</strong></p>
+              <ul>
+                {exercise.chunks.map((chunk, i) => (
+                  <li key={i}>{chunk}</li>
+                ))}
+              </ul>
+            </div>
+          </>
+        );
+
       default:
         return null;
     }

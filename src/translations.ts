@@ -92,6 +92,10 @@ interface Translations {
   sorting: string;
   sentenceScramble: string;
   freeText: string;
+  informationGap: string;
+  rolePlay: string;
+  collocation: string;
+  lexicalSet: string;
 
   // Gap fill
   textWithGaps: string;
@@ -138,6 +142,44 @@ interface Translations {
   // Free text
   promptQuestion: string;
   promptPlaceholder: string;
+
+  // Information Gap
+  scenario: string;
+  scenarioPlaceholder: string;
+  studentAInfo: string;
+  studentAInfoPlaceholder: string;
+  studentBInfo: string;
+  studentBInfoPlaceholder: string;
+  targetLanguageOptional: string;
+  infoGapTargetPlaceholder: string;
+
+  // Role Play
+  rolePlayScenario: string;
+  rolePlayScenarioPlaceholder: string;
+  roles: string;
+  roleName: string;
+  roleDescription: string;
+  addRole: string;
+  suggestedDuration: string;
+
+  // Collocation
+  collocationWord: string;
+  collocationPartners: string;
+  collocationPartnersPlaceholder: string;
+  addCollocation: string;
+  exerciseFormat: string;
+  formatMatch: string;
+  formatFill: string;
+  formatChoose: string;
+
+  // Lexical Set
+  topic: string;
+  topicPlaceholder: string;
+  lexicalChunks: string;
+  chunksPlaceholder: string;
+  chunksHint: string;
+  contextOptional: string;
+  contextPlaceholder: string;
 
   // Practice sections
   controlledPracticeTitle: string;
@@ -263,6 +305,10 @@ export const translations: Record<Language, Translations> = {
     sorting: 'Sorting',
     sentenceScramble: 'Sentence Scramble',
     freeText: 'Free Text / Production',
+    informationGap: 'Information Gap (Communicative)',
+    rolePlay: 'Role Play (Communicative)',
+    collocation: 'Collocation Practice (Lexical)',
+    lexicalSet: 'Lexical Set / Chunks (Lexical)',
 
     // Gap fill
     textWithGaps: 'Text with Gaps',
@@ -309,6 +355,44 @@ export const translations: Record<Language, Translations> = {
     // Free text
     promptQuestion: 'Prompt / Question',
     promptPlaceholder: 'e.g., Write about a memorable experience from your past...',
+
+    // Information Gap
+    scenario: 'Scenario',
+    scenarioPlaceholder: 'e.g., Student A has a train schedule, Student B needs to plan a trip...',
+    studentAInfo: 'Information for Student A',
+    studentAInfoPlaceholder: 'What Student A knows (e.g., departure times, prices)...',
+    studentBInfo: 'Information for Student B',
+    studentBInfoPlaceholder: 'What Student B knows (e.g., arrival times, platforms)...',
+    targetLanguageOptional: 'Target Language / Phrases (optional)',
+    infoGapTargetPlaceholder: 'e.g., "What time does...", "How much is...", "Can you tell me..."',
+
+    // Role Play
+    rolePlayScenario: 'Scenario',
+    rolePlayScenarioPlaceholder: 'e.g., At a restaurant, ordering food...',
+    roles: 'Roles',
+    roleName: 'Role Name',
+    roleDescription: 'Role Description',
+    addRole: 'Add Role',
+    suggestedDuration: 'Suggested Duration (minutes, optional)',
+
+    // Collocation
+    collocationWord: 'Base Word',
+    collocationPartners: 'Collocations (comma-separated)',
+    collocationPartnersPlaceholder: 'e.g., a decision, a mistake, progress, an effort',
+    addCollocation: 'Add Word',
+    exerciseFormat: 'Exercise Format (optional)',
+    formatMatch: 'Matching',
+    formatFill: 'Fill in the blank',
+    formatChoose: 'Choose correct collocation',
+
+    // Lexical Set
+    topic: 'Topic / Theme',
+    topicPlaceholder: 'e.g., Business Meeting, Travel, Food & Dining',
+    lexicalChunks: 'Lexical Chunks / Fixed Expressions (one per line)',
+    chunksPlaceholder: 'e.g., make a reservation, take a seat, order the bill',
+    chunksHint: 'Enter fixed expressions, collocations, and useful phrases related to the topic',
+    contextOptional: 'Context / Example Situation (optional)',
+    contextPlaceholder: 'e.g., You are at a restaurant with a business client...',
 
     // Practice sections
     controlledPracticeTitle: 'Controlled Practice',
@@ -433,6 +517,10 @@ export const translations: Record<Language, Translations> = {
     sorting: 'Сортування',
     sentenceScramble: 'Збирання Речення',
     freeText: 'Вільний Текст / Продукування',
+    informationGap: 'Інформаційний Розрив (Комунікативна)',
+    rolePlay: 'Рольова Гра (Комунікативна)',
+    collocation: 'Практика Колокацій (Лексична)',
+    lexicalSet: 'Лексичний Набір / Вирази (Лексична)',
 
     // Gap fill
     textWithGaps: 'Текст з Пропусками',
@@ -479,6 +567,44 @@ export const translations: Record<Language, Translations> = {
     // Free text
     promptQuestion: 'Підказка / Питання',
     promptPlaceholder: 'напр., Напишіть про незабутній досвід з вашого минулого...',
+
+    // Information Gap
+    scenario: 'Сценарій',
+    scenarioPlaceholder: 'напр., Студент А має розклад поїздів, Студент Б планує подорож...',
+    studentAInfo: 'Інформація для Студента А',
+    studentAInfoPlaceholder: 'Що знає Студент А (напр., час відправлення, ціни)...',
+    studentBInfo: 'Інформація для Студента Б',
+    studentBInfoPlaceholder: 'Що знає Студент Б (напр., час прибуття, платформи)...',
+    targetLanguageOptional: 'Цільова Мова / Фрази (необов\'язково)',
+    infoGapTargetPlaceholder: 'напр., "О котрій годині...", "Скільки коштує...", "Чи можете ви сказати мені..."',
+
+    // Role Play
+    rolePlayScenario: 'Сценарій',
+    rolePlayScenarioPlaceholder: 'напр., У ресторані, замовлення їжі...',
+    roles: 'Ролі',
+    roleName: 'Назва Ролі',
+    roleDescription: 'Опис Ролі',
+    addRole: 'Додати Роль',
+    suggestedDuration: 'Рекомендована Тривалість (хвилини, необов\'язково)',
+
+    // Collocation
+    collocationWord: 'Базове Слово',
+    collocationPartners: 'Колокації (через кому)',
+    collocationPartnersPlaceholder: 'напр., рішення, помилка, прогрес, зусилля',
+    addCollocation: 'Додати Слово',
+    exerciseFormat: 'Формат Вправи (необов\'язково)',
+    formatMatch: 'Підбір',
+    formatFill: 'Заповнення пропусків',
+    formatChoose: 'Вибір правильної колокації',
+
+    // Lexical Set
+    topic: 'Тема',
+    topicPlaceholder: 'напр., Ділова Зустріч, Подорож, Їжа та Харчування',
+    lexicalChunks: 'Лексичні Вирази / Сталі Вирази (по одному на рядок)',
+    chunksPlaceholder: 'напр., зробити бронювання, сісти, замовити рахунок',
+    chunksHint: 'Введіть сталі вирази, колокації та корисні фрази, пов\'язані з темою',
+    contextOptional: 'Контекст / Приклад Ситуації (необов\'язково)',
+    contextPlaceholder: 'напр., Ви в ресторані з діловим клієнтом...',
 
     // Practice sections
     controlledPracticeTitle: 'Керована Практика',

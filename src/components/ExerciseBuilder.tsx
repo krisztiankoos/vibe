@@ -41,6 +41,27 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
   const [scrambleWords, setScrambleWords] = useState('');
   const [scrambleCorrect, setScrambleCorrect] = useState('');
 
+  // Information gap states
+  const [infoGapScenario, setInfoGapScenario] = useState('');
+  const [studentAInfo, setStudentAInfo] = useState('');
+  const [studentBInfo, setStudentBInfo] = useState('');
+  const [infoGapTarget, setInfoGapTarget] = useState('');
+
+  // Role play states
+  const [rolePlayScenario, setRolePlayScenario] = useState('');
+  const [roles, setRoles] = useState<Array<{ name: string; description: string }>>([{ name: '', description: '' }]);
+  const [rolePlayTarget, setRolePlayTarget] = useState('');
+  const [rolePlayDuration, setRolePlayDuration] = useState<number | ''>('');
+
+  // Collocation states
+  const [collocations, setCollocations] = useState<Array<{ word: string; partners: string }>>([{ word: '', partners: '' }]);
+  const [collocationFormat, setCollocationFormat] = useState<'match' | 'fill' | 'choose'>('match');
+
+  // Lexical set states
+  const [lexicalTopic, setLexicalTopic] = useState('');
+  const [lexicalChunks, setLexicalChunks] = useState('');
+  const [lexicalContext, setLexicalContext] = useState('');
+
   const resetForm = () => {
     setInstruction('');
     setGapFillText('');
@@ -55,6 +76,19 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
     setTfCorrectAnswer(undefined);
     setScrambleWords('');
     setScrambleCorrect('');
+    setInfoGapScenario('');
+    setStudentAInfo('');
+    setStudentBInfo('');
+    setInfoGapTarget('');
+    setRolePlayScenario('');
+    setRoles([{ name: '', description: '' }]);
+    setRolePlayTarget('');
+    setRolePlayDuration('');
+    setCollocations([{ word: '', partners: '' }]);
+    setCollocationFormat('match');
+    setLexicalTopic('');
+    setLexicalChunks('');
+    setLexicalContext('');
   };
 
   const handleAddExercise = () => {
@@ -142,6 +176,64 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
           };
         }
         break;
+
+      case 'information-gap':
+        if (instruction && infoGapScenario && studentAInfo && studentBInfo) {
+          exercise = {
+            type: 'information-gap',
+            id: crypto.randomUUID(),
+            instruction,
+            scenario: infoGapScenario,
+            studentAInfo,
+            studentBInfo,
+            targetLanguage: infoGapTarget || undefined,
+          };
+        }
+        break;
+
+      case 'role-play':
+        if (instruction && rolePlayScenario && roles.some((r) => r.name && r.description)) {
+          exercise = {
+            type: 'role-play',
+            id: crypto.randomUUID(),
+            instruction,
+            scenario: rolePlayScenario,
+            roles: roles.filter((r) => r.name && r.description),
+            targetLanguage: rolePlayTarget || undefined,
+            duration: rolePlayDuration ? Number(rolePlayDuration) : undefined,
+          };
+        }
+        break;
+
+      case 'collocation':
+        if (instruction && collocations.some((c) => c.word && c.partners)) {
+          exercise = {
+            type: 'collocation',
+            id: crypto.randomUUID(),
+            instruction,
+            collocations: collocations
+              .filter((c) => c.word && c.partners)
+              .map((c) => ({
+                word: c.word,
+                partners: c.partners.split(',').map((p) => p.trim()).filter(Boolean),
+              })),
+            exerciseFormat: collocationFormat,
+          };
+        }
+        break;
+
+      case 'lexical-set':
+        if (instruction && lexicalTopic && lexicalChunks) {
+          exercise = {
+            type: 'lexical-set',
+            id: crypto.randomUUID(),
+            instruction,
+            topic: lexicalTopic,
+            chunks: lexicalChunks.split('\n').map((c) => c.trim()).filter(Boolean),
+            context: lexicalContext || undefined,
+          };
+        }
+        break;
     }
 
     if (exercise) {
@@ -185,6 +277,38 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
     }
   };
 
+  const addRole = () => {
+    setRoles([...roles, { name: '', description: '' }]);
+  };
+
+  const updateRole = (index: number, field: 'name' | 'description', value: string) => {
+    const updated = [...roles];
+    updated[index][field] = value;
+    setRoles(updated);
+  };
+
+  const removeRole = (index: number) => {
+    if (roles.length > 1) {
+      setRoles(roles.filter((_, i) => i !== index));
+    }
+  };
+
+  const addCollocationWord = () => {
+    setCollocations([...collocations, { word: '', partners: '' }]);
+  };
+
+  const updateCollocation = (index: number, field: 'word' | 'partners', value: string) => {
+    const updated = [...collocations];
+    updated[index][field] = value;
+    setCollocations(updated);
+  };
+
+  const removeCollocation = (index: number) => {
+    if (collocations.length > 1) {
+      setCollocations(collocations.filter((_, i) => i !== index));
+    }
+  };
+
   return (
     <div className="exercise-builder">
       <h3>{t.addExercise}</h3>
@@ -199,6 +323,10 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
           <option value="sorting">{t.sorting}</option>
           <option value="sentence-scramble">{t.sentenceScramble}</option>
           <option value="free-text">{t.freeText}</option>
+          <option value="information-gap">{t.informationGap}</option>
+          <option value="role-play">{t.rolePlay}</option>
+          <option value="collocation">{t.collocation}</option>
+          <option value="lexical-set">{t.lexicalSet}</option>
         </select>
       </div>
 
@@ -394,6 +522,174 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
               placeholder={t.correctSentencePlaceholder}
             />
             <small>{t.correctSentenceHint}</small>
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'information-gap' && (
+        <>
+          <div className="form-group">
+            <label>{t.scenario}</label>
+            <textarea
+              value={infoGapScenario}
+              onChange={(e) => setInfoGapScenario(e.target.value)}
+              placeholder={t.scenarioPlaceholder}
+              rows={3}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t.studentAInfo}</label>
+            <textarea
+              value={studentAInfo}
+              onChange={(e) => setStudentAInfo(e.target.value)}
+              placeholder={t.studentAInfoPlaceholder}
+              rows={4}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t.studentBInfo}</label>
+            <textarea
+              value={studentBInfo}
+              onChange={(e) => setStudentBInfo(e.target.value)}
+              placeholder={t.studentBInfoPlaceholder}
+              rows={4}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t.targetLanguageOptional}</label>
+            <textarea
+              value={infoGapTarget}
+              onChange={(e) => setInfoGapTarget(e.target.value)}
+              placeholder={t.infoGapTargetPlaceholder}
+              rows={2}
+            />
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'role-play' && (
+        <>
+          <div className="form-group">
+            <label>{t.rolePlayScenario}</label>
+            <textarea
+              value={rolePlayScenario}
+              onChange={(e) => setRolePlayScenario(e.target.value)}
+              placeholder={t.rolePlayScenarioPlaceholder}
+              rows={3}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t.roles}</label>
+            {roles.map((role, index) => (
+              <div key={index} className="role-input">
+                <input
+                  type="text"
+                  value={role.name}
+                  onChange={(e) => updateRole(index, 'name', e.target.value)}
+                  placeholder={t.roleName}
+                  style={{ marginBottom: '5px' }}
+                />
+                <textarea
+                  value={role.description}
+                  onChange={(e) => updateRole(index, 'description', e.target.value)}
+                  placeholder={t.roleDescription}
+                  rows={2}
+                />
+                {roles.length > 1 && (
+                  <button onClick={() => removeRole(index)}>×</button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={addRole}>{t.addRole}</button>
+          </div>
+          <div className="form-group">
+            <label>{t.targetLanguageOptional}</label>
+            <textarea
+              value={rolePlayTarget}
+              onChange={(e) => setRolePlayTarget(e.target.value)}
+              placeholder={t.infoGapTargetPlaceholder}
+              rows={2}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t.suggestedDuration}</label>
+            <input
+              type="number"
+              min="1"
+              value={rolePlayDuration}
+              onChange={(e) => setRolePlayDuration(e.target.value ? parseInt(e.target.value) : '')}
+              placeholder={t.durationPlaceholder}
+            />
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'collocation' && (
+        <>
+          <div className="form-group">
+            <label>{t.collocationWord}</label>
+            {collocations.map((collocation, index) => (
+              <div key={index} className="collocation-input" style={{ marginBottom: '10px' }}>
+                <input
+                  type="text"
+                  value={collocation.word}
+                  onChange={(e) => updateCollocation(index, 'word', e.target.value)}
+                  placeholder={t.collocationWord}
+                  style={{ marginBottom: '5px' }}
+                />
+                <input
+                  type="text"
+                  value={collocation.partners}
+                  onChange={(e) => updateCollocation(index, 'partners', e.target.value)}
+                  placeholder={t.collocationPartnersPlaceholder}
+                />
+                {collocations.length > 1 && (
+                  <button onClick={() => removeCollocation(index)}>×</button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={addCollocationWord}>{t.addCollocation}</button>
+          </div>
+          <div className="form-group">
+            <label>{t.exerciseFormat}</label>
+            <select value={collocationFormat} onChange={(e) => setCollocationFormat(e.target.value as 'match' | 'fill' | 'choose')}>
+              <option value="match">{t.formatMatch}</option>
+              <option value="fill">{t.formatFill}</option>
+              <option value="choose">{t.formatChoose}</option>
+            </select>
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'lexical-set' && (
+        <>
+          <div className="form-group">
+            <label>{t.topic}</label>
+            <input
+              type="text"
+              value={lexicalTopic}
+              onChange={(e) => setLexicalTopic(e.target.value)}
+              placeholder={t.topicPlaceholder}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t.lexicalChunks}</label>
+            <textarea
+              value={lexicalChunks}
+              onChange={(e) => setLexicalChunks(e.target.value)}
+              placeholder={t.chunksPlaceholder}
+              rows={8}
+            />
+            <small>{t.chunksHint}</small>
+          </div>
+          <div className="form-group">
+            <label>{t.contextOptional}</label>
+            <textarea
+              value={lexicalContext}
+              onChange={(e) => setLexicalContext(e.target.value)}
+              placeholder={t.contextPlaceholder}
+              rows={3}
+            />
           </div>
         </>
       )}
