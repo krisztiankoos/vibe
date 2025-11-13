@@ -668,41 +668,85 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
 
       {exerciseType === 'information-gap' && (
         <>
+          <div className="section-help">
+            <p>
+              {language === 'en'
+                ? '💬 Information gap activities require students to communicate to complete a task. Each student has different information that they need to share.'
+                : '💬 Вправи на інформаційний розрив вимагають від учнів спілкування для виконання завдання. Кожен учень має різну інформацію, якою потрібно поділитися.'}
+            </p>
+          </div>
           <div className="form-group">
-            <label>{t.scenario}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="infoGapScenario" className="required">
+                {t.scenario}
+              </label>
+              <HelpIcon text={help.informationGap.scenario} />
+            </div>
             <textarea
+              id="infoGapScenario"
               value={infoGapScenario}
               onChange={(e) => setInfoGapScenario(e.target.value)}
-              placeholder={t.scenarioPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "You are planning a weekend trip together. Find a time that works for both of you."'
+                : 'напр., "Ви плануєте спільну поїздку на вихідні. Знайдіть час, який підходить обом."'}
               rows={3}
             />
           </div>
           <div className="form-group">
-            <label>{t.studentAInfo}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="studentAInfo" className="required">
+                {t.studentAInfo}
+              </label>
+              <HelpIcon text={help.informationGap.studentAInfo} />
+            </div>
             <textarea
+              id="studentAInfo"
               value={studentAInfo}
               onChange={(e) => setStudentAInfo(e.target.value)}
-              placeholder={t.studentAInfoPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "You are free: Saturday morning, Sunday afternoon. You are busy: Friday evening, Saturday afternoon."'
+                : 'напр., "Ви вільні: субота ранок, неділя після обіду. Ви зайняті: п\'ятниця вечір, субота після обіду."'}
               rows={4}
             />
           </div>
           <div className="form-group">
-            <label>{t.studentBInfo}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="studentBInfo" className="required">
+                {t.studentBInfo}
+              </label>
+              <HelpIcon text={help.informationGap.studentBInfo} />
+            </div>
             <textarea
+              id="studentBInfo"
               value={studentBInfo}
               onChange={(e) => setStudentBInfo(e.target.value)}
-              placeholder={t.studentBInfoPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "You are free: Friday evening, Sunday afternoon. You are busy: Saturday all day."'
+                : 'напр., "Ви вільні: п\'ятниця вечір, неділя після обіду. Ви зайняті: субота весь день."'}
               rows={4}
             />
           </div>
           <div className="form-group">
-            <label>{t.targetLanguageOptional}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="infoGapTarget">
+                {t.targetLanguageOptional}
+              </label>
+              <HelpIcon text={help.informationGap.prompts} />
+            </div>
             <textarea
+              id="infoGapTarget"
               value={infoGapTarget}
               onChange={(e) => setInfoGapTarget(e.target.value)}
-              placeholder={t.infoGapTargetPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "Practice making suggestions: How about...? What about...? I\'m afraid I can\'t..."'
+                : 'напр., "Практика пропозицій: Як щодо...? А що насправді...? Боюся, що не можу..."'}
               rows={2}
             />
+            <div className="field-hint">
+              {language === 'en'
+                ? '🎯 Optional: specify which language functions students should practice'
+                : '🎯 Необов\'язково: вкажіть, які мовні функції учні повинні практикувати'}
+            </div>
           </div>
         </>
       )}
