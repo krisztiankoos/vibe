@@ -1,4 +1,4 @@
-import { Lesson } from '../types';
+import type { Lesson } from '../types';
 
 interface LessonPreviewProps {
   lesson: Lesson;

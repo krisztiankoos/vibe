@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Exercise, ExerciseType } from '../types';
+import type { Exercise, ExerciseType } from '../types';
 
 interface ExerciseBuilderProps {
   onAddExercise: (exercise: Exercise) => void;

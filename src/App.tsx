@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lesson, LessonStructure, Exercise, ExerciseType } from './types';
+import type { Lesson, Exercise } from './types';
 import LeadInForm from './components/LeadInForm';
 import PresentationForm from './components/PresentationForm';
 import ExerciseBuilder from './components/ExerciseBuilder';

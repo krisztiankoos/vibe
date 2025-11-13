@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Presentation } from '../types';
+import type { Presentation } from '../types';
 
 interface PresentationFormProps {
   presentation: Presentation;

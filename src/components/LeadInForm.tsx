@@ -1,4 +1,4 @@
-import { LeadIn } from '../types';
+import type { LeadIn } from '../types';
 
 interface LeadInFormProps {
   leadIn: LeadIn;
