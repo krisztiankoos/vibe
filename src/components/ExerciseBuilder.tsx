@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { Exercise, ExerciseType } from '../types';
 import type { Language } from '../translations';
 import { getTranslation } from '../translations';
+import { HelpIcon } from './Tooltip';
+import { helpText } from '../utils/helpText';
 
 interface ExerciseBuilderProps {
   onAddExercise: (exercise: Exercise) => void;
@@ -10,6 +12,8 @@ interface ExerciseBuilderProps {
 
 export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBuilderProps) {
   const t = getTranslation(language);
+  const help = helpText[language].exercises;
+
   const [exerciseType, setExerciseType] = useState<ExerciseType>('gap-fill');
   const [instruction, setInstruction] = useState('');
 
@@ -311,11 +315,26 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
 
   return (
     <div className="exercise-builder">
-      <h3>{t.addExercise}</h3>
+      <div className="help-banner">
+        <div className="help-banner-icon">✏️</div>
+        <div className="help-banner-content">
+          <h3>{language === 'en' ? 'Controlled Practice Exercises' : 'Вправи для контрольованої практики'}</h3>
+          <p>
+            {language === 'en'
+              ? 'Create exercises where students practice the target language in a controlled way. Choose from 11 exercise types including gap-fills, multiple choice, matching, and communicative activities.'
+              : 'Створюйте вправи, де учні практикують цільову мову контрольованим чином. Виберіть з 11 типів вправ, включаючи заповнення пропусків, множинний вибір, співставлення та комунікативні активності.'}
+          </p>
+        </div>
+      </div>
 
       <div className="form-group">
-        <label>{t.exerciseType}</label>
-        <select value={exerciseType} onChange={(e) => setExerciseType(e.target.value as ExerciseType)}>
+        <div className="field-label-with-help">
+          <label htmlFor="exerciseType" className="required">
+            {t.exerciseType}
+          </label>
+          <HelpIcon text={language === 'en' ? 'Choose the type of exercise that best fits your learning objectives' : 'Виберіть тип вправи, що найкраще відповідає вашим навчальним цілям'} />
+        </div>
+        <select id="exerciseType" value={exerciseType} onChange={(e) => setExerciseType(e.target.value as ExerciseType)}>
           <option value="gap-fill">{t.gapFill}</option>
           <option value="multiple-choice">{t.multipleChoice}</option>
           <option value="true-false">{t.trueFalse}</option>
@@ -328,38 +347,75 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
           <option value="collocation">{t.collocation}</option>
           <option value="lexical-set">{t.lexicalSet}</option>
         </select>
+        <div className="field-hint">
+          {language === 'en'
+            ? '📋 Select from 11 different exercise types based on your teaching goals'
+            : '📋 Виберіть з 11 різних типів вправ на основі ваших навчальних цілей'}
+        </div>
       </div>
 
       <div className="form-group">
-        <label>{t.instructionsForStudents}</label>
+        <div className="field-label-with-help">
+          <label htmlFor="instruction" className="required">
+            {t.instructionsForStudents}
+          </label>
+          <HelpIcon text={help.instruction} />
+        </div>
         <input
+          id="instruction"
           type="text"
           value={instruction}
           onChange={(e) => setInstruction(e.target.value)}
-          placeholder={t.instructionsPlaceholder}
+          placeholder={language === 'en' ? 'e.g., "Fill in the gaps with the correct form of the verb"' : 'напр., "Заповніть пропуски правильною формою дієслова"'}
         />
+        <div className="field-hint">
+          {language === 'en'
+            ? '📝 Clear instructions help students understand what to do'
+            : '📝 Чіткі інструкції допомагають учням зрозуміти, що робити'}
+        </div>
       </div>
 
       {exerciseType === 'gap-fill' && (
         <>
           <div className="form-group">
-            <label>{t.textWithGaps}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="gapFillText" className="required">
+                {t.textWithGaps}
+              </label>
+              <HelpIcon text={help.gapFill.text} />
+            </div>
             <textarea
+              id="gapFillText"
               value={gapFillText}
               onChange={(e) => setGapFillText(e.target.value)}
-              placeholder={t.textWithGapsPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "She ____ (work) in an office. He ____ (go) to school every day."'
+                : 'напр., "Вона ____ (працювати) в офісі. Він ____ (йти) до школи щодня."'}
               rows={4}
             />
-            <small>{t.gapsHint}</small>
+            <div className="field-hint example">
+              <strong>{language === 'en' ? '💡 Tip:' : '💡 Порада:'}</strong> {t.gapsHint}
+            </div>
           </div>
           <div className="form-group">
-            <label>{t.answersOptional}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="gapAnswers">
+                {t.answersOptional}
+              </label>
+              <HelpIcon text={help.gapFill.answers} />
+            </div>
             <input
+              id="gapAnswers"
               type="text"
               value={gapAnswers}
               onChange={(e) => setGapAnswers(e.target.value)}
-              placeholder={t.answersPlaceholder}
+              placeholder={language === 'en' ? 'e.g., works, goes' : 'напр., працює, йде'}
             />
+            <div className="field-hint">
+              {language === 'en'
+                ? '✓ Comma-separated list for answer key (optional)'
+                : '✓ Список через кому для ключа відповідей (необов\'язково)'}
+            </div>
           </div>
         </>
       )}
@@ -419,16 +475,25 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
       {exerciseType === 'multiple-choice' && (
         <>
           <div className="form-group">
-            <label>{t.question}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="mcQuestion" className="required">
+                {t.question}
+              </label>
+              <HelpIcon text={help.multipleChoice.question} />
+            </div>
             <input
+              id="mcQuestion"
               type="text"
               value={mcQuestion}
               onChange={(e) => setMcQuestion(e.target.value)}
-              placeholder={t.questionPlaceholder}
+              placeholder={language === 'en' ? 'e.g., "What is the correct past tense of go?"' : 'напр., "Який правильний минулий час слова йти?"'}
             />
           </div>
           <div className="form-group">
-            <label>{t.options}</label>
+            <div className="field-label-with-help">
+              <label className="required">{t.options}</label>
+              <HelpIcon text={help.multipleChoice.options} />
+            </div>
             {mcOptions.map((option, index) => (
               <div key={index} className="mc-option">
                 <input
@@ -450,7 +515,11 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
               </div>
             ))}
             <button type="button" onClick={addMcOption}>{t.addOption}</button>
-            <small>{t.markCorrectHint}</small>
+            <div className="field-hint">
+              {language === 'en'
+                ? '⭕ Click the radio button to mark the correct answer'
+                : '⭕ Натисніть на кружок, щоб позначити правильну відповідь'}
+            </div>
           </div>
         </>
       )}
@@ -458,16 +527,27 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
       {exerciseType === 'true-false' && (
         <>
           <div className="form-group">
-            <label>{t.statement}</label>
+            <div className="field-label-with-help">
+              <label htmlFor="tfStatement" className="required">
+                {t.statement}
+              </label>
+              <HelpIcon text={help.trueFalse.statement} />
+            </div>
             <textarea
+              id="tfStatement"
               value={tfStatement}
               onChange={(e) => setTfStatement(e.target.value)}
-              placeholder={t.statementPlaceholder}
+              placeholder={language === 'en'
+                ? 'e.g., "English is spoken in more than 50 countries around the world."'
+                : 'напр., "Англійська мова використовується в більш ніж 50 країнах світу."'}
               rows={3}
             />
           </div>
           <div className="form-group">
-            <label>{t.correctAnswer}</label>
+            <div className="field-label-with-help">
+              <label className="required">{t.correctAnswer}</label>
+              <HelpIcon text={help.trueFalse.correctAnswer} />
+            </div>
             <div className="tf-options">
               <label>
                 <input
@@ -496,6 +576,11 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
                 />
                 {t.noAnswerKey}
               </label>
+            </div>
+            <div className="field-hint">
+              {language === 'en'
+                ? '✓ Select whether the statement is True or False, or leave without answer key'
+                : '✓ Виберіть, чи є твердження Правдою чи Неправдою, або залиште без ключа відповідей'}
             </div>
           </div>
         </>
