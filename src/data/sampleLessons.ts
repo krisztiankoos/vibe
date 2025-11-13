@@ -403,6 +403,416 @@ export const sampleLessonsEnglish: Lesson[] = [
     },
     teacherNotes: 'The lexical approach focuses on learning words in chunks and collocations rather than isolated words. Encourage students to learn weather expressions as phrases.',
     createdAt: new Date('2024-02-01').toISOString()
+  },
+  {
+    id: 'sample-ppp-restaurant',
+    title: 'Ordering Food in a Restaurant',
+    level: 'A2+ Pre-Intermediate',
+    targetLanguage: 'English',
+    structure: 'PPP',
+    duration: 60,
+    objectives: [
+      'Students will be able to order food and drinks politely in a restaurant',
+      'Students will understand and use key restaurant vocabulary',
+      'Students will practice making requests and asking questions in a restaurant context'
+    ],
+    materials: [
+      'Restaurant menus (printed or projected)',
+      'Role-play cards',
+      'Audio of restaurant conversations',
+      'Whiteboard for language chunks'
+    ],
+    leadIn: {
+      title: 'Favorite Restaurants',
+      description: 'Activate students\' knowledge and interest in dining out',
+      content: 'Show pictures of different restaurants (fast food, cafe, fine dining). Ask: "Where do you like to eat?" "What\'s your favorite restaurant?" "What do you usually order?" Students discuss in pairs their favorite places to eat and what they like to order. Whole class shares interesting answers.',
+      duration: 10,
+      mediaLinks: [],
+      teacherNotes: 'This activates prior knowledge and gets students thinking about the context. Note any vocabulary they already use.'
+    },
+    presentation: {
+      title: 'Restaurant Language - Ordering and Requesting',
+      targetLanguage: 'Could I have...? I\'d like... Can I get...? What would you recommend? Is there...? That sounds good. Can we have the bill, please?',
+      explanation: 'When ordering in a restaurant, we use polite language:\n\nOrdering:\n- "I\'d like the chicken, please." (formal)\n- "Can I have a salad?" (neutral)\n- "I\'ll have the soup." (informal)\n\nAsking questions:\n- "What would you recommend?"\n- "Is there any vegetarian option?"\n- "Does this come with fries?"\n\nRequesting:\n- "Could I have some water?"\n- "Can we have the menu, please?"\n- "May I have the bill?"',
+      examples: [
+        'Waiter: Are you ready to order?',
+        'Customer: Yes, I\'d like the grilled salmon, please.',
+        'Waiter: Would you like anything to drink?',
+        'Customer: Could I have a glass of water?',
+        'Customer: What would you recommend for dessert?',
+        'Waiter: The chocolate cake is very popular.',
+        'Customer: That sounds good. I\'ll have that.',
+        'Customer: Can we have the bill, please?'
+      ],
+      duration: 15,
+      mediaLinks: [],
+      teacherNotes: 'Drill the key phrases. Model the intonation for polite requests. Use gestures to show waiter/customer roles.'
+    },
+    controlledPractice: {
+      type: 'controlled',
+      exercises: [
+        {
+          type: 'gap-fill',
+          id: 'ex-rest-1',
+          instruction: 'Complete the restaurant conversation with the correct phrases.',
+          text: 'Waiter: Good evening. Are you ready to order?\nCustomer: Yes, ____ the steak, please.\nWaiter: How would you like it cooked?\nCustomer: Medium, please. And ____ have a side salad?\nWaiter: Of course. Anything to drink?\nCustomer: ____ recommend?\nWaiter: The house wine is excellent.\nCustomer: ____ . I\'ll have a glass of that.\nWaiter: Certainly. Enjoy your meal!',
+          answers: ['I\'d like', 'could I', 'What would you', 'That sounds good']
+        },
+        {
+          type: 'matching',
+          id: 'ex-rest-2',
+          instruction: 'Match the customer questions with appropriate waiter responses.',
+          pairs: [
+            { left: 'What would you recommend?', right: 'The fish is very fresh today.' },
+            { left: 'Is there a vegetarian option?', right: 'Yes, we have a lovely vegetable curry.' },
+            { left: 'Can we have the bill?', right: 'Of course, I\'ll bring it right away.' },
+            { left: 'Does this come with fries?', right: 'Yes, or you can have a salad instead.' }
+          ]
+        }
+      ]
+    },
+    freePractice: {
+      type: 'free',
+      exercises: [
+        {
+          type: 'role-play',
+          id: 'ex-rest-3',
+          instruction: 'Work in pairs. Take turns being the waiter and customer. Order a complete meal.',
+          scenario: 'You are in a restaurant. The waiter takes your order for starter, main course, drinks, and dessert.',
+          roles: [
+            {
+              name: 'Waiter',
+              description: 'Greet customers, take their order, make recommendations, answer questions about the menu. Be polite and helpful.'
+            },
+            {
+              name: 'Customer',
+              description: 'Look at the menu, ask questions, order food and drinks using polite language. Ask for recommendations and the bill at the end.'
+            }
+          ],
+          targetLanguage: 'Use: I\'d like..., Could I have..., What would you recommend?, Can we have the bill?',
+          duration: 10
+        },
+        {
+          type: 'information-gap',
+          id: 'ex-rest-4',
+          instruction: 'Student A is the customer, Student B is the waiter. You have different information.',
+          scenario: 'The customer wants to order but has questions. The waiter has information about the menu.',
+          studentAInfo: 'Customer: You are vegetarian and allergic to nuts. Ask about vegetarian dishes and check ingredients. Order a meal.',
+          studentBInfo: 'Waiter: Today\'s specials are: 1) Grilled salmon with rice, 2) Vegetable lasagna (contains nuts), 3) Mushroom risotto (vegetarian, no nuts). Answer questions and take the order.',
+          prompts: [
+            'Do you have any vegetarian dishes?',
+            'Does it contain nuts?',
+            'What are the specials today?',
+            'I\'d like to order...'
+          ]
+        }
+      ]
+    },
+    teacherNotes: 'Monitor pronunciation of "I\'d like" (contraction). Common errors: using "I want" (too direct). Encourage students to switch roles in role-play. Extension: students create their own menus.',
+    createdAt: new Date('2024-03-10').toISOString()
+  },
+  {
+    id: 'sample-ppp-first-conditional',
+    title: 'First Conditional - Future Possibilities',
+    level: 'B1 Intermediate',
+    targetLanguage: 'English',
+    structure: 'PPP',
+    duration: 60,
+    objectives: [
+      'Students will be able to talk about future possibilities using first conditional',
+      'Students will understand the difference between certain and possible future',
+      'Students will practice making predictions and discussing consequences'
+    ],
+    materials: [
+      'Situation cards for discussion',
+      'Timeline visual aid',
+      'Consequence chain activity cards'
+    ],
+    leadIn: {
+      title: 'What Will Happen?',
+      description: 'Introduce the idea of future possibilities and consequences',
+      content: 'Show a situation: "It\'s raining heavily outside." Ask: "What will happen if you go outside without an umbrella?" Elicit: "I\'ll get wet." Write on board. Show more situations and elicit predictions. Students discuss in pairs: "What will happen if you don\'t study for the test?"',
+      duration: 8,
+      mediaLinks: [],
+      teacherNotes: 'Accept any answers at this stage, including those using will/won\'t and possible. This is diagnostic.'
+    },
+    presentation: {
+      title: 'First Conditional - Form and Use',
+      targetLanguage: 'If it rains, I\'ll stay home. If you study hard, you\'ll pass the exam. I\'ll call you if I need help.',
+      explanation: 'First Conditional is used for:\n- Real future possibilities (things that might happen)\n- Consequences of actions\n- Predictions with conditions\n\nForm:\nIf + present simple, will + base verb\nOR\nwill + base verb + if + present simple\n\nExamples:\nIf it rains, we\'ll stay inside. (condition first)\nWe\'ll stay inside if it rains. (result first)\n\nNOTE: We can use other modals: might, may, can, should\n"If you finish early, you can leave."',
+      examples: [
+        'If I have time, I\'ll help you.',
+        'She\'ll be happy if you call her.',
+        'If they don\'t hurry, they\'ll miss the bus.',
+        'We won\'t go to the beach if it\'s cold.',
+        'If you heat water to 100°C, it will boil.',
+        'I\'ll email you if I find the information.',
+        'If he asks me, I might say yes.'
+      ],
+      duration: 15,
+      mediaLinks: [],
+      teacherNotes: 'Use timeline to show this is about future, not hypothetical. Emphasize comma placement. Drill pronunciation of "I\'ll" and contractions.'
+    },
+    controlledPractice: {
+      type: 'controlled',
+      exercises: [
+        {
+          type: 'gap-fill',
+          id: 'ex-cond-1',
+          instruction: 'Complete the sentences with the correct form of the verb in brackets.',
+          text: 'If it ____ (rain) tomorrow, we ____ (not/go) to the park. I ____ (call) you if I ____ (need) help. She ____ (be) disappointed if you ____ (not/come) to the party. If they ____ (arrive) late, they ____ (miss) the beginning of the film. We ____ (have) a picnic if the weather ____ (be) nice.',
+          answers: ['rains', 'won\'t go', '\'ll call', 'need', '\'ll be', 'don\'t come', 'arrive', '\'ll miss', '\'ll have', 'is']
+        },
+        {
+          type: 'sentence-scramble',
+          id: 'ex-cond-2',
+          instruction: 'Put the words in the correct order to make first conditional sentences.',
+          words: ['if', 'study', 'you', 'hard', 'will', 'you', 'pass'],
+          correctSentence: 'If you study hard, you will pass.'
+        },
+        {
+          type: 'multiple-choice',
+          id: 'ex-cond-3',
+          instruction: 'Choose the correct form.',
+          question: 'If he ____ on time, we\'ll catch the train.',
+          options: ['arrive', 'arrives', 'will arrive', 'arriving'],
+          correctAnswer: 1
+        }
+      ]
+    },
+    freePractice: {
+      type: 'free',
+      exercises: [
+        {
+          type: 'free-text',
+          id: 'ex-cond-4',
+          instruction: 'Write about your plans for the weekend. Use first conditional to talk about possibilities.',
+          prompt: 'What will you do if the weather is nice? What will you do if it rains? What will happen if you have free time? Write 6-8 sentences.',
+          minWords: 80
+        },
+        {
+          type: 'information-gap',
+          id: 'ex-cond-5',
+          instruction: 'Student A and B have different "consequence chains". Ask and answer to complete your chain.',
+          scenario: 'Cause and effect chain of events. Find out what happens next.',
+          studentAInfo: 'If I wake up late, I\'ll miss the bus. If I miss the bus, ______? If ______, I\'ll be stressed. If I\'m stressed, ______?',
+          studentBInfo: 'If ______, you\'ll miss the bus. If you miss the bus, you\'ll be late for work. If you\'re late for work, ______? If ______, you\'ll need to relax in the evening.',
+          prompts: [
+            'What will happen if...?',
+            'If that happens, what will...?',
+            'What\'s the next consequence?'
+          ]
+        }
+      ]
+    },
+    teacherNotes: 'Common errors: "if it will rain" (wrong - use present simple in if-clause), missing comma. Monitor for overgeneralization. Encourage students to think of real personal examples.',
+    createdAt: new Date('2024-03-15').toISOString()
+  },
+  {
+    id: 'sample-ttt-past-storytelling',
+    title: 'Past Simple - Telling Stories',
+    level: 'A2 Pre-Intermediate',
+    targetLanguage: 'English',
+    structure: 'TTT',
+    duration: 60,
+    objectives: [
+      'Students will be able to narrate past events in chronological order',
+      'Students will use past simple regular and irregular verbs accurately',
+      'Students will develop storytelling skills using sequencing words'
+    ],
+    materials: [
+      'Story picture cards',
+      'Sequencing word flashcards (first, then, next, after that, finally)',
+      'Famous fairy tale summaries for reference'
+    ],
+    leadIn: {
+      title: 'Famous Stories',
+      description: 'Test what students already know about telling stories in the past',
+      content: 'Show pictures from well-known fairy tales (Cinderella, Little Red Riding Hood). In pairs, students try to tell the story in English. Monitor and note which past tense forms they use correctly and what errors occur. Whole class: one pair tells their story briefly.',
+      duration: 12,
+      mediaLinks: [],
+      teacherNotes: 'This is diagnostic - don\'t correct yet. Note common errors with irregular verbs and sequencing. Listen for use of time markers.'
+    },
+    presentation: {
+      title: 'Past Simple for Storytelling',
+      targetLanguage: 'Regular verbs: walked, arrived, opened. Irregular verbs: went, saw, came, took, said. Sequencing: First... Then... Next... After that... Finally...',
+      explanation: 'When telling stories, we use Past Simple because the events are finished.\n\nRegular verbs: add -ed\nwalk → walked, arrive → arrived, open → opened\n\nIrregular verbs: learn the special forms\ngo → went, see → saw, come → came, take → took, say → said\n\nSequencing words help organize the story:\nFirst, she woke up.\nThen, she had breakfast.\nNext, she went to school.\nAfter that, she met her friend.\nFinally, she came home.',
+      examples: [
+        'First, Little Red Riding Hood walked through the forest.',
+        'Then, she saw the wolf.',
+        'Next, she went to her grandmother\'s house.',
+        'After that, the wolf ate the grandmother.',
+        'Finally, the hunter saved them.',
+        'Yesterday, I woke up at 7am, had breakfast, and went to work.',
+        'Last week, we visited Paris. We saw the Eiffel Tower and ate French food.'
+      ],
+      duration: 15,
+      mediaLinks: [],
+      teacherNotes: 'Focus on the most common irregular verbs for storytelling. Drill pronunciation of -ed endings (/t/, /d/, /id/). Use timeline to show past.'
+    },
+    controlledPractice: {
+      type: 'controlled',
+      exercises: [
+        {
+          type: 'gap-fill',
+          id: 'ex-past-1',
+          instruction: 'Complete the story with the past simple form of the verbs in brackets.',
+          text: 'Last Saturday, I ____ (wake) up early. First, I ____ (have) breakfast. Then, I ____ (go) to the park. I ____ (see) my friend there. We ____ (play) football for two hours. Next, we ____ (eat) lunch at a cafe. After that, we ____ (watch) a movie. Finally, I ____ (come) home at 6pm. It ____ (be) a great day!',
+          answers: ['woke', 'had', 'went', 'saw', 'played', 'ate', 'watched', 'came', 'was']
+        },
+        {
+          type: 'sentence-scramble',
+          id: 'ex-past-2',
+          instruction: 'Put the words in order to make a correct sentence.',
+          words: ['yesterday', 'to', 'went', 'the', 'she', 'cinema'],
+          correctSentence: 'Yesterday she went to the cinema.'
+        },
+        {
+          type: 'sorting',
+          id: 'ex-past-3',
+          instruction: 'Sort these verbs into regular and irregular past forms.',
+          items: ['walked', 'played', 'watched', 'opened', 'arrived', 'went', 'saw', 'came', 'took', 'ate', 'said', 'had']
+        }
+      ]
+    },
+    freePractice: {
+      type: 'free',
+      exercises: [
+        {
+          type: 'free-text',
+          id: 'ex-past-4',
+          instruction: 'Write a story about an interesting or funny day you remember. Use past simple and sequencing words.',
+          prompt: 'Tell the story from beginning to end. Use: First, Then, Next, After that, Finally. Include at least 5 irregular verbs.',
+          minWords: 100
+        },
+        {
+          type: 'role-play',
+          id: 'ex-past-5',
+          instruction: 'Student A tells Student B about their last vacation. Student B asks questions.',
+          scenario: 'You recently came back from a trip. Tell your friend all about it.',
+          roles: [
+            {
+              name: 'Traveler',
+              description: 'Tell your friend about your vacation. Where did you go? What did you do? What did you see? Use sequencing words to organize your story.'
+            },
+            {
+              name: 'Friend',
+              description: 'Listen to your friend\'s story and ask questions: Where did you stay? What did you eat? Did you buy anything? Was it expensive?'
+            }
+          ],
+          targetLanguage: 'Past simple verbs, sequencing words, questions: Where did...? What did...? Did you...?',
+          duration: 8
+        }
+      ]
+    },
+    teacherNotes: 'This TTT structure allows you to see what they know, teach what they need, then test again. Common errors: "I go yesterday" (wrong tense), "I goed" (irregular verb). Encourage storytelling fluency over perfect accuracy in free practice.',
+    createdAt: new Date('2024-03-20').toISOString()
+  },
+  {
+    id: 'sample-ttt-directions',
+    title: 'Giving Directions - Finding Your Way',
+    level: 'A2 Elementary',
+    targetLanguage: 'English',
+    structure: 'TTT',
+    duration: 45,
+    objectives: [
+      'Students will be able to give and follow simple directions',
+      'Students will use prepositions of movement and location',
+      'Students will practice asking for directions politely'
+    ],
+    materials: [
+      'City map (printed or projected)',
+      'Direction cards',
+      'Compass rose visual',
+      'Preposition flashcards'
+    ],
+    leadIn: {
+      title: 'How Do I Get There?',
+      description: 'Test students\' existing knowledge of giving directions',
+      content: 'Show a simple map of the local area or school. Point to two locations. Ask students: "How do I get from here to here?" In pairs, students try to give directions using any language they know. Monitor what they can already say. Note vocabulary and structures they use.',
+      duration: 8,
+      mediaLinks: [],
+      teacherNotes: 'Diagnostic stage - see what direction language they know. Accept any attempts. Note if they know: go straight, turn left/right, next to, etc.'
+    },
+    presentation: {
+      title: 'Giving Clear Directions',
+      targetLanguage: 'Go straight. Turn left/right. It\'s on the left/right. Next to, opposite, between, at the corner, at the traffic lights.',
+      explanation: 'To give directions, we use:\n\nCommands:\n- Go straight (ahead)\n- Turn left / Turn right\n- Walk down this street\n- Cross the road\n- Take the first/second left/right\n\nPrepositions of location:\n- It\'s on your left/right\n- It\'s next to the bank\n- It\'s opposite the post office\n- It\'s between the cafe and the shop\n- It\'s at the corner\n\nAsking for directions:\n- Excuse me, where is...?\n- How do I get to...?\n- Is there a ... near here?',
+      examples: [
+        'Go straight for two blocks.',
+        'Turn left at the traffic lights.',
+        'The bank is on your right.',
+        'It\'s next to the supermarket.',
+        'Walk down this street and turn right at the corner.',
+        'Take the second left. The post office is opposite the park.',
+        'Excuse me, how do I get to the train station?'
+      ],
+      duration: 12,
+      mediaLinks: [],
+      teacherNotes: 'Use gestures for left/right. Practice on actual classroom map first. Drill "excuse me" for politeness.'
+    },
+    controlledPractice: {
+      type: 'controlled',
+      exercises: [
+        {
+          type: 'matching',
+          id: 'ex-dir-1',
+          instruction: 'Match the direction instruction with the correct meaning.',
+          pairs: [
+            { left: 'Go straight ahead', right: 'Continue forward, don\'t turn' },
+            { left: 'Turn left', right: 'Change direction to the left' },
+            { left: 'It\'s on your right', right: 'The location is on the right side' },
+            { left: 'Next to', right: 'Beside, very close to' },
+            { left: 'Opposite', right: 'Across from, on the other side' }
+          ]
+        },
+        {
+          type: 'gap-fill',
+          id: 'ex-dir-2',
+          instruction: 'Complete the directions with the correct words.',
+          text: 'Excuse me, how do I get to the library?\nYes, ____ straight down this street. ____ left at the traffic lights. The library is ____ your right, ____ to the cafe. You can\'t miss it!',
+          answers: ['go', 'Turn', 'on', 'next']
+        }
+      ]
+    },
+    freePractice: {
+      type: 'free',
+      exercises: [
+        {
+          type: 'information-gap',
+          id: 'ex-dir-3',
+          instruction: 'Student A and B have different maps with different locations marked. Ask for and give directions.',
+          scenario: 'You are at the train station. You need to find various places. Ask your partner for directions.',
+          studentAInfo: 'Your map shows: bank, post office, YOUR LOCATION (station). Ask where: 1) supermarket, 2) hospital, 3) cinema.',
+          studentBInfo: 'Your map shows: supermarket, hospital, cinema, YOUR LOCATION (station). Ask where: 1) bank, 2) post office, 3) restaurant.',
+          prompts: [
+            'Excuse me, where is the...?',
+            'How do I get to the...?',
+            'Is there a ... near here?'
+          ]
+        },
+        {
+          type: 'role-play',
+          id: 'ex-dir-4',
+          instruction: 'Student A is a tourist, Student B is a local. Practice asking for and giving directions to famous places.',
+          scenario: 'You are in the city center. Ask for directions to tourist attractions.',
+          roles: [
+            {
+              name: 'Tourist',
+              description: 'You are lost and looking for: the museum, a good restaurant, the nearest bus stop. Ask politely for directions.'
+            },
+            {
+              name: 'Local person',
+              description: 'Help the tourist find these places. Give clear directions using: go straight, turn left/right, it\'s next to..., opposite...'
+            }
+          ],
+          targetLanguage: 'Direction vocabulary, polite questions, prepositions of location',
+          duration: 7
+        }
+      ]
+    },
+    teacherNotes: 'TTT structure works well here - test their knowledge with the map task, teach missing vocabulary, then test again with role-play. Common errors: confusing left/right, forgetting "excuse me". Consider using real maps of your city for extra engagement.',
+    createdAt: new Date('2024-03-25').toISOString()
   }
 ];
 
