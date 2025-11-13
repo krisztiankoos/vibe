@@ -7,6 +7,7 @@ import LeadInForm from './components/LeadInForm';
 import PresentationForm from './components/PresentationForm';
 import ExerciseBuilder from './components/ExerciseBuilder';
 import LessonPreview from './components/LessonPreview';
+import SampleLessons from './components/SampleLessons';
 import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/lessonUtils';
 import './App.css';
 
@@ -39,6 +40,7 @@ function App() {
   });
 
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
+  const [showSampleLessons, setShowSampleLessons] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Show language selector if no language selected
@@ -120,6 +122,11 @@ function App() {
     }
   };
 
+  const handleLoadSample = (sampleLesson: Lesson) => {
+    setLesson(sampleLesson);
+    setCurrentStep('preview');
+  };
+
   const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
   const currentStepIndex = steps.indexOf(currentStep);
 
@@ -134,6 +141,7 @@ function App() {
           <div className="header-actions">
             <button onClick={() => setLanguage(null)} className="header-btn">{t.changeLanguage}</button>
             <button onClick={handleNewLesson} className="header-btn">{t.newLesson}</button>
+            <button onClick={() => setShowSampleLessons(true)} className="header-btn">📚 {language === 'en' ? 'Sample Lessons' : 'Зразки Уроків'}</button>
             <button onClick={() => fileInputRef.current?.click()} className="header-btn">{t.importJSON}</button>
             <input
               ref={fileInputRef}
@@ -285,6 +293,14 @@ function App() {
           </button>
         )}
       </footer>
+
+      {showSampleLessons && (
+        <SampleLessons
+          onLoadSample={handleLoadSample}
+          language={language}
+          onClose={() => setShowSampleLessons(false)}
+        />
+      )}
     </div>
   );
 }

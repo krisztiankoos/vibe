@@ -30,6 +30,7 @@ export interface FreeTextExercise {
   id: string;
   instruction: string;
   prompt: string;
+  minWords?: number; // Optional: minimum word count
 }
 
 export interface MultipleChoiceExercise {
@@ -64,6 +65,7 @@ export interface InformationGapExercise {
   scenario: string; // Description of the communicative task
   studentAInfo: string; // Information for Student A
   studentBInfo: string; // Information for Student B
+  prompts?: string[]; // Optional: suggested questions/prompts for students
   targetLanguage?: string; // Optional: target phrases/structures to use
 }
 
@@ -135,9 +137,15 @@ export interface Lesson {
   id: string;
   title: string;
   structure: LessonStructure;
+  level?: string; // e.g., "A1 Beginner", "B2 Upper-Intermediate"
+  targetLanguage?: string; // Target language being taught (e.g., "English", "Spanish")
+  duration?: number; // Total lesson duration in minutes
+  objectives?: string[]; // Learning objectives
+  materials?: string[]; // Required materials
   leadIn: LeadIn;
   presentation: Presentation;
   controlledPractice: PracticeSection;
   freePractice: PracticeSection;
+  teacherNotes?: string; // Overall lesson notes for teacher
   createdAt: string;
 }
