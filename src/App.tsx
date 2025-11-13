@@ -8,6 +8,7 @@ import PresentationForm from './components/PresentationForm';
 import ExerciseBuilder from './components/ExerciseBuilder';
 import LessonPreview from './components/LessonPreview';
 import SampleLessons from './components/SampleLessons';
+import SavedLessons from './components/SavedLessons';
 import StudentLessonView from './components/StudentLessonView';
 import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/lessonUtils';
 import './App.css';
@@ -42,6 +43,7 @@ function App() {
 
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
   const [showSampleLessons, setShowSampleLessons] = useState(false);
+  const [showSavedLessons, setShowSavedLessons] = useState(false);
   const [studentMode, setStudentMode] = useState(false);
   const [studentLesson, setStudentLesson] = useState<Lesson | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -168,6 +170,17 @@ function App() {
     setCurrentStep('preview');
   };
 
+  const handleDuplicateLesson = (lessonToDuplicate: Lesson) => {
+    const duplicated: Lesson = {
+      ...lessonToDuplicate,
+      id: crypto.randomUUID(),
+      title: `${lessonToDuplicate.title} (${language === 'en' ? 'Copy' : 'Копія'})`,
+      createdAt: new Date().toISOString(),
+    };
+    setLesson(duplicated);
+    setCurrentStep('preview');
+  };
+
   const handleShareLesson = () => {
     // First save the lesson
     const lessons = JSON.parse(localStorage.getItem('lessons') || '[]');
@@ -215,6 +228,7 @@ function App() {
           <div className="header-actions">
             <button onClick={() => setLanguage(null)} className="header-btn">{t.changeLanguage}</button>
             <button onClick={handleNewLesson} className="header-btn">{t.newLesson}</button>
+            <button onClick={() => setShowSavedLessons(true)} className="header-btn">💾 {language === 'en' ? 'My Lessons' : 'Мої Уроки'}</button>
             <button onClick={() => setShowSampleLessons(true)} className="header-btn">📚 {language === 'en' ? 'Sample Lessons' : 'Зразки Уроків'}</button>
             <button onClick={() => fileInputRef.current?.click()} className="header-btn">{t.importJSON}</button>
             <input
@@ -378,6 +392,15 @@ function App() {
           onLoadSample={handleLoadSample}
           language={language}
           onClose={() => setShowSampleLessons(false)}
+        />
+      )}
+
+      {showSavedLessons && (
+        <SavedLessons
+          language={language}
+          onClose={() => setShowSavedLessons(false)}
+          onLoadLesson={handleLoadSample}
+          onDuplicateLesson={handleDuplicateLesson}
         />
       )}
     </div>
