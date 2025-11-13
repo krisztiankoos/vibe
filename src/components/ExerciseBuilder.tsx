@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import type { Exercise, ExerciseType } from '../types';
+import type { Language } from '../translations';
+import { getTranslation } from '../translations';
 
 interface ExerciseBuilderProps {
   onAddExercise: (exercise: Exercise) => void;
+  language: Language;
 }
 
-export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps) {
+export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBuilderProps) {
+  const t = getTranslation(language);
   const [exerciseType, setExerciseType] = useState<ExerciseType>('gap-fill');
   const [instruction, setInstruction] = useState('');
 
@@ -144,7 +148,7 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
       onAddExercise(exercise);
       resetForm();
     } else {
-      alert('Please fill in all required fields');
+      alert(t.fillRequiredFields);
     }
   };
 
@@ -183,50 +187,50 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
 
   return (
     <div className="exercise-builder">
-      <h3>Add Exercise</h3>
+      <h3>{t.addExercise}</h3>
 
       <div className="form-group">
-        <label>Exercise Type</label>
+        <label>{t.exerciseType}</label>
         <select value={exerciseType} onChange={(e) => setExerciseType(e.target.value as ExerciseType)}>
-          <option value="gap-fill">Gap Fill</option>
-          <option value="multiple-choice">Multiple Choice</option>
-          <option value="true-false">True/False</option>
-          <option value="matching">Matching</option>
-          <option value="sorting">Sorting</option>
-          <option value="sentence-scramble">Sentence Scramble</option>
-          <option value="free-text">Free Text / Production</option>
+          <option value="gap-fill">{t.gapFill}</option>
+          <option value="multiple-choice">{t.multipleChoice}</option>
+          <option value="true-false">{t.trueFalse}</option>
+          <option value="matching">{t.matching}</option>
+          <option value="sorting">{t.sorting}</option>
+          <option value="sentence-scramble">{t.sentenceScramble}</option>
+          <option value="free-text">{t.freeText}</option>
         </select>
       </div>
 
       <div className="form-group">
-        <label>Instructions for Students</label>
+        <label>{t.instructionsForStudents}</label>
         <input
           type="text"
           value={instruction}
           onChange={(e) => setInstruction(e.target.value)}
-          placeholder="e.g., Complete the sentences with the correct form of the verb"
+          placeholder={t.instructionsPlaceholder}
         />
       </div>
 
       {exerciseType === 'gap-fill' && (
         <>
           <div className="form-group">
-            <label>Text with Gaps</label>
+            <label>{t.textWithGaps}</label>
             <textarea
               value={gapFillText}
               onChange={(e) => setGapFillText(e.target.value)}
-              placeholder="Write text and use [brackets] for gaps, e.g., I [have been] to Paris."
+              placeholder={t.textWithGapsPlaceholder}
               rows={4}
             />
-            <small>Use [brackets] to mark where gaps should appear</small>
+            <small>{t.gapsHint}</small>
           </div>
           <div className="form-group">
-            <label>Answers (comma-separated, optional)</label>
+            <label>{t.answersOptional}</label>
             <input
               type="text"
               value={gapAnswers}
               onChange={(e) => setGapAnswers(e.target.value)}
-              placeholder="have been, has gone, etc."
+              placeholder={t.answersPlaceholder}
             />
           </div>
         </>
@@ -234,51 +238,51 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
 
       {exerciseType === 'sorting' && (
         <div className="form-group">
-          <label>Items to Sort (one per line)</label>
+          <label>{t.itemsToSort}</label>
           <textarea
             value={sortingItems}
             onChange={(e) => setSortingItems(e.target.value)}
-            placeholder="Enter items, one per line"
+            placeholder={t.sortingPlaceholder}
             rows={6}
           />
-          <small>Students will need to arrange these in the correct order</small>
+          <small>{t.sortingHint}</small>
         </div>
       )}
 
       {exerciseType === 'matching' && (
         <div className="form-group">
-          <label>Matching Pairs</label>
+          <label>{t.matchingPairs}</label>
           {matchingPairs.map((pair, index) => (
             <div key={index} className="matching-pair">
               <input
                 type="text"
                 value={pair.left}
                 onChange={(e) => updateMatchingPair(index, 'left', e.target.value)}
-                placeholder="Left item"
+                placeholder={t.leftItem}
               />
               <span>↔</span>
               <input
                 type="text"
                 value={pair.right}
                 onChange={(e) => updateMatchingPair(index, 'right', e.target.value)}
-                placeholder="Right item"
+                placeholder={t.rightItem}
               />
               {matchingPairs.length > 1 && (
                 <button onClick={() => removeMatchingPair(index)}>×</button>
               )}
             </div>
           ))}
-          <button type="button" onClick={addMatchingPair}>Add Pair</button>
+          <button type="button" onClick={addMatchingPair}>{t.addPair}</button>
         </div>
       )}
 
       {exerciseType === 'free-text' && (
         <div className="form-group">
-          <label>Prompt / Question</label>
+          <label>{t.promptQuestion}</label>
           <textarea
             value={freeTextPrompt}
             onChange={(e) => setFreeTextPrompt(e.target.value)}
-            placeholder="e.g., Write about a memorable experience from your past..."
+            placeholder={t.promptPlaceholder}
             rows={4}
           />
         </div>
@@ -287,16 +291,16 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
       {exerciseType === 'multiple-choice' && (
         <>
           <div className="form-group">
-            <label>Question</label>
+            <label>{t.question}</label>
             <input
               type="text"
               value={mcQuestion}
               onChange={(e) => setMcQuestion(e.target.value)}
-              placeholder="e.g., Which sentence is correct?"
+              placeholder={t.questionPlaceholder}
             />
           </div>
           <div className="form-group">
-            <label>Options</label>
+            <label>{t.options}</label>
             {mcOptions.map((option, index) => (
               <div key={index} className="mc-option">
                 <input
@@ -304,21 +308,21 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
                   name="correctAnswer"
                   checked={mcCorrectAnswer === index}
                   onChange={() => setMcCorrectAnswer(index)}
-                  title="Mark as correct answer"
+                  title={t.markCorrectHint}
                 />
                 <input
                   type="text"
                   value={option}
                   onChange={(e) => updateMcOption(index, e.target.value)}
-                  placeholder={`Option ${index + 1}`}
+                  placeholder={`${t.optionPlaceholder} ${index + 1}`}
                 />
                 {mcOptions.length > 2 && (
                   <button onClick={() => removeMcOption(index)}>×</button>
                 )}
               </div>
             ))}
-            <button type="button" onClick={addMcOption}>Add Option</button>
-            <small>Click the radio button to mark the correct answer (optional)</small>
+            <button type="button" onClick={addMcOption}>{t.addOption}</button>
+            <small>{t.markCorrectHint}</small>
           </div>
         </>
       )}
@@ -326,16 +330,16 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
       {exerciseType === 'true-false' && (
         <>
           <div className="form-group">
-            <label>Statement</label>
+            <label>{t.statement}</label>
             <textarea
               value={tfStatement}
               onChange={(e) => setTfStatement(e.target.value)}
-              placeholder="e.g., The present perfect tense is used to describe completed actions."
+              placeholder={t.statementPlaceholder}
               rows={3}
             />
           </div>
           <div className="form-group">
-            <label>Correct Answer (optional)</label>
+            <label>{t.correctAnswer}</label>
             <div className="tf-options">
               <label>
                 <input
@@ -344,7 +348,7 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
                   checked={tfCorrectAnswer === true}
                   onChange={() => setTfCorrectAnswer(true)}
                 />
-                True
+                {t.trueLabel}
               </label>
               <label>
                 <input
@@ -353,7 +357,7 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
                   checked={tfCorrectAnswer === false}
                   onChange={() => setTfCorrectAnswer(false)}
                 />
-                False
+                {t.falseLabel}
               </label>
               <label>
                 <input
@@ -362,7 +366,7 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
                   checked={tfCorrectAnswer === undefined}
                   onChange={() => setTfCorrectAnswer(undefined)}
                 />
-                No answer key
+                {t.noAnswerKey}
               </label>
             </div>
           </div>
@@ -372,30 +376,30 @@ export default function ExerciseBuilder({ onAddExercise }: ExerciseBuilderProps)
       {exerciseType === 'sentence-scramble' && (
         <>
           <div className="form-group">
-            <label>Words (space-separated)</label>
+            <label>{t.wordsToArrange}</label>
             <input
               type="text"
               value={scrambleWords}
               onChange={(e) => setScrambleWords(e.target.value)}
-              placeholder="e.g., been have I Paris to"
+              placeholder={t.wordsPlaceholder}
             />
-            <small>Enter words separated by spaces. They will be presented in random order to students.</small>
+            <small>{t.scrambleHint}</small>
           </div>
           <div className="form-group">
-            <label>Correct Sentence (optional)</label>
+            <label>{t.correctSentence}</label>
             <input
               type="text"
               value={scrambleCorrect}
               onChange={(e) => setScrambleCorrect(e.target.value)}
-              placeholder="e.g., I have been to Paris"
+              placeholder={t.correctSentencePlaceholder}
             />
-            <small>Enter the correct sentence for your reference</small>
+            <small>{t.correctSentenceHint}</small>
           </div>
         </>
       )}
 
       <button className="add-exercise-btn" onClick={handleAddExercise}>
-        Add Exercise
+        {t.addExercise}
       </button>
     </div>
   );

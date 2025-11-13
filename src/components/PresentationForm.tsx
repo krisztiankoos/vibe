@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import type { Presentation } from '../types';
+import type { Language } from '../translations';
+import { getTranslation } from '../translations';
 
 interface PresentationFormProps {
   presentation: Presentation;
   onChange: (presentation: Presentation) => void;
+  language: Language;
 }
 
-export default function PresentationForm({ presentation, onChange }: PresentationFormProps) {
+export default function PresentationForm({ presentation, onChange, language }: PresentationFormProps) {
+  const t = getTranslation(language);
   const [newExample, setNewExample] = useState('');
   const [newMediaLink, setNewMediaLink] = useState('');
 
@@ -50,50 +54,50 @@ export default function PresentationForm({ presentation, onChange }: Presentatio
 
   return (
     <div className="step-content">
-      <h2>Presentation / Teaching</h2>
-      <p>Present the target language to your students</p>
+      <h2>{t.presentationTitle}</h2>
+      <p>{t.presentationSubtitle}</p>
 
       <div className="form-group">
-        <label>Section Title</label>
+        <label>{t.sectionTitle}</label>
         <input
           type="text"
           value={presentation.title}
           onChange={(e) => updateField('title', e.target.value)}
-          placeholder="e.g., Present Perfect Tense"
+          placeholder={t.sectionTitlePlaceholder}
         />
       </div>
 
       <div className="form-group">
-        <label>Target Language / Grammar Point</label>
+        <label>{t.targetLanguage}</label>
         <input
           type="text"
           value={presentation.targetLanguage}
           onChange={(e) => updateField('targetLanguage', e.target.value)}
-          placeholder="e.g., Present Perfect: have/has + past participle"
+          placeholder={t.targetLanguagePlaceholder}
         />
       </div>
 
       <div className="form-group">
-        <label>Explanation</label>
+        <label>{t.explanation}</label>
         <textarea
           value={presentation.explanation}
           onChange={(e) => updateField('explanation', e.target.value)}
-          placeholder="Explain the grammar point, usage, form, meaning..."
+          placeholder={t.explanationPlaceholder}
           rows={6}
         />
       </div>
 
       <div className="form-group">
-        <label>Example Sentences</label>
+        <label>{t.exampleSentences}</label>
         <div className="examples-input">
           <input
             type="text"
             value={newExample}
             onChange={(e) => setNewExample(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && addExample()}
-            placeholder="Add an example sentence..."
+            placeholder={t.examplePlaceholder}
           />
-          <button type="button" onClick={addExample}>Add</button>
+          <button type="button" onClick={addExample}>{t.addButton}</button>
         </div>
         <ul className="examples-list">
           {presentation.examples.map((example, index) => (
@@ -106,27 +110,27 @@ export default function PresentationForm({ presentation, onChange }: Presentatio
       </div>
 
       <div className="form-group">
-        <label>Duration (minutes, optional)</label>
+        <label>{t.durationMinutes}</label>
         <input
           type="number"
           min="1"
           value={presentation.duration || ''}
           onChange={(e) => updateField('duration', e.target.value ? parseInt(e.target.value) : '')}
-          placeholder="e.g., 15"
+          placeholder={t.durationPlaceholder}
         />
       </div>
 
       <div className="form-group">
-        <label>Media Links (YouTube, websites, optional)</label>
+        <label>{t.mediaLinks}</label>
         <div className="examples-input">
           <input
             type="text"
             value={newMediaLink}
             onChange={(e) => setNewMediaLink(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && addMediaLink()}
-            placeholder="Paste YouTube link or website URL..."
+            placeholder={t.mediaLinksPlaceholder}
           />
-          <button type="button" onClick={addMediaLink}>Add</button>
+          <button type="button" onClick={addMediaLink}>{t.addButton}</button>
         </div>
         {presentation.mediaLinks && presentation.mediaLinks.length > 0 && (
           <ul className="examples-list">
@@ -138,26 +142,26 @@ export default function PresentationForm({ presentation, onChange }: Presentatio
             ))}
           </ul>
         )}
-        <small>Add YouTube videos or external resources (grammar tutorials, etc.)</small>
+        <small>{t.mediaLinksHint}</small>
       </div>
 
       <div className="form-group">
-        <label>Teacher Notes (optional, private)</label>
+        <label>{t.teacherNotes}</label>
         <textarea
           value={presentation.teacherNotes || ''}
           onChange={(e) => updateField('teacherNotes', e.target.value)}
-          placeholder="Private notes for yourself (e.g., common errors, alternative explanations)..."
+          placeholder={t.teacherNotesPlaceholder}
           rows={3}
         />
-        <small>These notes are for you only and won't be shown to students</small>
+        <small>{t.teacherNotesHint}</small>
       </div>
 
       <div className="info-box">
-        <strong>Tip:</strong> Good presentation includes:
+        <strong>{t.tipLabel}</strong> Good presentation includes:
         <ul>
-          <li>Clear explanation of form, meaning, and use</li>
-          <li>Multiple examples in context</li>
-          <li>Visual aids or timelines (can be added later)</li>
+          <li>{t.presentationTip1}</li>
+          <li>{t.presentationTip2}</li>
+          <li>{t.presentationTip3}</li>
         </ul>
       </div>
     </div>

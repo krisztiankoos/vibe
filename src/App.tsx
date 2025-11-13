@@ -1,5 +1,8 @@
 import { useState, useRef } from 'react';
 import type { Lesson, Exercise } from './types';
+import type { Language } from './translations';
+import { getTranslation } from './translations';
+import LanguageSelector from './components/LanguageSelector';
 import LeadInForm from './components/LeadInForm';
 import PresentationForm from './components/PresentationForm';
 import ExerciseBuilder from './components/ExerciseBuilder';
@@ -8,6 +11,7 @@ import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/l
 import './App.css';
 
 function App() {
+  const [language, setLanguage] = useState<Language | null>(null);
   const [lesson, setLesson] = useState<Lesson>({
     id: crypto.randomUUID(),
     title: '',
@@ -36,6 +40,13 @@ function App() {
 
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Show language selector if no language selected
+  if (!language) {
+    return <LanguageSelector onSelectLanguage={setLanguage} />;
+  }
+
+  const t = getTranslation(language);
 
   const updateLesson = (updates: Partial<Lesson>) => {
     setLesson((prev) => ({ ...prev, ...updates }));
@@ -72,7 +83,7 @@ function App() {
     }
 
     localStorage.setItem('lessons', JSON.stringify(lessons));
-    alert('Lesson saved successfully!');
+    alert(t.lessonSaved);
   };
 
   const handleImportLesson = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,9 +94,9 @@ function App() {
       const importedLesson = await importLessonFromJSON(file);
       setLesson(importedLesson);
       setCurrentStep('preview');
-      alert('Lesson imported successfully!');
+      alert(t.lessonImported);
     } catch (error) {
-      alert('Failed to import lesson. Please check the file format.');
+      alert(t.importFailed);
     }
 
     if (fileInputRef.current) {
@@ -94,7 +105,7 @@ function App() {
   };
 
   const handleNewLesson = () => {
-    if (confirm('Create a new lesson? Any unsaved changes will be lost.')) {
+    if (confirm(t.createNewLesson)) {
       setLesson({
         id: crypto.randomUUID(),
         title: '',
@@ -117,12 +128,13 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <div>
-            <h1>English Lesson Builder</h1>
-            <p>Create engaging lessons following PPP & TTT methodologies</p>
+            <h1>{t.appTitle}</h1>
+            <p>{t.appSubtitle}</p>
           </div>
           <div className="header-actions">
-            <button onClick={handleNewLesson} className="header-btn">New Lesson</button>
-            <button onClick={() => fileInputRef.current?.click()} className="header-btn">Import JSON</button>
+            <button onClick={() => setLanguage(null)} className="header-btn">{t.changeLanguage}</button>
+            <button onClick={handleNewLesson} className="header-btn">{t.newLesson}</button>
+            <button onClick={() => fileInputRef.current?.click()} className="header-btn">{t.importJSON}</button>
             <input
               ref={fileInputRef}
               type="file"
@@ -135,12 +147,12 @@ function App() {
       </header>
 
       <div className="progress-bar">
-        {steps.map((step, index) => (
+        {[t.structure, t.leadIn, t.presentation, t.controlled, t.free, t.preview].map((stepLabel, index) => (
           <div
-            key={step}
+            key={steps[index]}
             className={`progress-step ${index <= currentStepIndex ? 'active' : ''} ${index === currentStepIndex ? 'current' : ''}`}
           >
-            {step.replace('-', ' ').toUpperCase()}
+            {stepLabel}
           </div>
         ))}
       </div>
@@ -148,40 +160,40 @@ function App() {
       <main className="app-main">
         {currentStep === 'structure' && (
           <div className="step-content">
-            <h2>Choose Lesson Structure</h2>
+            <h2>{t.chooseStructure}</h2>
             <div className="structure-selection">
               <div
                 className={`structure-card ${lesson.structure === 'PPP' ? 'selected' : ''}`}
                 onClick={() => updateLesson({ structure: 'PPP' })}
               >
-                <h3>PPP</h3>
-                <p>Presentation → Practice → Production</p>
+                <h3>{t.pppTitle}</h3>
+                <p>{t.pppDescription}</p>
                 <ul>
-                  <li>Present new language</li>
-                  <li>Practice with controlled activities</li>
-                  <li>Produce with free practice</li>
+                  <li>{t.pppStep1}</li>
+                  <li>{t.pppStep2}</li>
+                  <li>{t.pppStep3}</li>
                 </ul>
               </div>
               <div
                 className={`structure-card ${lesson.structure === 'TTT' ? 'selected' : ''}`}
                 onClick={() => updateLesson({ structure: 'TTT' })}
               >
-                <h3>TTT</h3>
-                <p>Test → Teach → Test</p>
+                <h3>{t.tttTitle}</h3>
+                <p>{t.tttDescription}</p>
                 <ul>
-                  <li>Test students' existing knowledge</li>
-                  <li>Teach the target language</li>
-                  <li>Test again to measure progress</li>
+                  <li>{t.tttStep1}</li>
+                  <li>{t.tttStep2}</li>
+                  <li>{t.tttStep3}</li>
                 </ul>
               </div>
             </div>
             <div className="form-group">
-              <label>Lesson Title</label>
+              <label>{t.lessonTitle}</label>
               <input
                 type="text"
                 value={lesson.title}
                 onChange={(e) => updateLesson({ title: e.target.value })}
-                placeholder="e.g., Present Perfect Tense"
+                placeholder={t.lessonTitlePlaceholder}
               />
             </div>
           </div>
@@ -191,6 +203,7 @@ function App() {
           <LeadInForm
             leadIn={lesson.leadIn}
             onChange={(leadIn) => updateLesson({ leadIn })}
+            language={language}
           />
         )}
 
@@ -198,22 +211,24 @@ function App() {
           <PresentationForm
             presentation={lesson.presentation}
             onChange={(presentation) => updateLesson({ presentation })}
+            language={language}
           />
         )}
 
         {currentStep === 'controlled' && (
           <div className="step-content">
-            <h2>Controlled Practice</h2>
-            <p>Add exercises where students practice the target language with guidance</p>
+            <h2>{t.controlledPracticeTitle}</h2>
+            <p>{t.controlledPracticeSubtitle}</p>
             <ExerciseBuilder
               onAddExercise={(exercise) => addExercise('controlled', exercise)}
+              language={language}
             />
             <div className="exercises-list">
               {lesson.controlledPractice.exercises.map((exercise) => (
                 <div key={exercise.id} className="exercise-item">
                   <h4>{exercise.type.toUpperCase()}</h4>
                   <p>{exercise.instruction}</p>
-                  <button onClick={() => removeExercise('controlled', exercise.id)}>Remove</button>
+                  <button onClick={() => removeExercise('controlled', exercise.id)}>{t.remove}</button>
                 </div>
               ))}
             </div>
@@ -222,17 +237,18 @@ function App() {
 
         {currentStep === 'free' && (
           <div className="step-content">
-            <h2>Free Practice / Production</h2>
-            <p>Add exercises where students use the language more freely</p>
+            <h2>{t.freePracticeTitle}</h2>
+            <p>{t.freePracticeSubtitle}</p>
             <ExerciseBuilder
               onAddExercise={(exercise) => addExercise('free', exercise)}
+              language={language}
             />
             <div className="exercises-list">
               {lesson.freePractice.exercises.map((exercise) => (
                 <div key={exercise.id} className="exercise-item">
                   <h4>{exercise.type.toUpperCase()}</h4>
                   <p>{exercise.instruction}</p>
-                  <button onClick={() => removeExercise('free', exercise.id)}>Remove</button>
+                  <button onClick={() => removeExercise('free', exercise.id)}>{t.remove}</button>
                 </div>
               ))}
             </div>
@@ -244,6 +260,7 @@ function App() {
             lesson={lesson}
             onExport={() => exportLessonToJSON(lesson)}
             onPrint={printLesson}
+            language={language}
           />
         )}
       </main>
@@ -253,18 +270,18 @@ function App() {
           onClick={() => setCurrentStep(steps[Math.max(0, currentStepIndex - 1)] as any)}
           disabled={currentStepIndex === 0}
         >
-          Previous
+          {t.previous}
         </button>
         {currentStep !== 'preview' && (
           <button
             onClick={() => setCurrentStep(steps[currentStepIndex + 1] as any)}
           >
-            Next
+            {t.next}
           </button>
         )}
         {currentStep === 'preview' && (
           <button onClick={saveLesson} className="save-button">
-            Save Lesson
+            {t.saveLesson}
           </button>
         )}
       </footer>
