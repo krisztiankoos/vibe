@@ -4,6 +4,8 @@ A comprehensive bilingual web application for creating, sharing, and delivering 
 
 **Live Demo**: [https://krisztiankoos.github.io/vibe/](https://krisztiankoos.github.io/vibe/)
 
+**Version**: 1.0.0
+
 ## ✨ Features
 
 ### For Teachers
@@ -12,7 +14,8 @@ A comprehensive bilingual web application for creating, sharing, and delivering 
 - **Dual Methodology Support**: Choose between PPP (Presentation, Practice, Production) or TTT (Test, Teach, Test)
 - **Bilingual Interface**: Full support for English and Ukrainian UI languages
 - **Step-by-Step Wizard**: Intuitive lesson creation workflow
-- **Sample Lessons**: 8 pre-built templates (4 English + 4 Ukrainian) demonstrating best practices
+- **Sample Lessons**: 14 pre-built templates (7 English + 7 Ukrainian) demonstrating authentic teaching methodologies
+- **Comprehensive Help System**: Context-sensitive help for all 11 exercise types with examples and best practices
 
 #### Lesson Components
 - **Lead-In Activities**: Engaging warm-up activities with media links and teacher notes
@@ -23,11 +26,14 @@ A comprehensive bilingual web application for creating, sharing, and delivering 
 - **Duration Planning**: Time estimates for each lesson section
 
 #### Lesson Management
+- **My Lessons Library**: Browse, search, and manage all saved lessons with visual cards
 - **Export to JSON**: Save and share lessons as portable files
-- **Import from JSON**: Load lessons from other teachers
+- **Import from JSON**: Load lessons from other teachers with security validation
+- **Duplicate Lessons**: Create copies of existing lessons for quick modifications
 - **Print-Friendly**: Professional printable lesson plans
-- **Local Storage**: Automatic saving to browser
+- **Local Storage**: Automatic saving to browser with progress persistence
 - **Lesson Sharing**: Generate shareable URLs for students
+- **Keyboard Shortcuts**: 8 productivity shortcuts for common actions (Ctrl+S, Ctrl+N, Ctrl+L, etc.)
 
 ### For Students
 
@@ -161,21 +167,52 @@ Word partnerships showing which words naturally go together.
 ### Lexical Set
 Vocabulary organized by topic with chunks and fixed expressions.
 
+## ⌨️ Keyboard Shortcuts
+
+Boost your productivity with these keyboard shortcuts (available in teacher mode):
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Ctrl+S` (⌘+S on Mac) | Save Lesson | Saves current lesson to My Lessons library |
+| `Ctrl+N` (⌘+N) | New Lesson | Creates a new lesson (confirms if unsaved changes) |
+| `Ctrl+L` (⌘+L) | My Lessons | Opens the saved lessons library |
+| `Ctrl+K` (⌘+K) | Sample Lessons | Opens sample lessons browser |
+| `Ctrl+E` (⌘+E) | Export | Exports lesson to JSON (in preview mode) |
+| `Ctrl+P` (⌘+P) | Print | Prints lesson plan (in preview mode) |
+| `Ctrl+/` (⌘+/) | Shortcuts Help | Shows keyboard shortcuts reference |
+| `Escape` | Close Modal | Closes any open modal dialog |
+
+**Platform Detection**: The app automatically detects your operating system and displays ⌘ symbols on Mac or Ctrl on Windows/Linux.
+
 ## 🌍 Bilingual Support
 
 ### English (ESL Methodology)
 - Communicative approach
 - Focus on fluency and real-world usage
 - PPP and TTT structures
-- Sample lessons: Present Simple, Phrasal Verbs, Travel, Weather
+- **7 Sample Lessons**:
+  - Present Perfect - Life Experiences
+  - Used To - Past Habits and States
+  - Phrasal Verbs - Business Communication
+  - Conditionals - Real and Hypothetical Situations
+  - Relative Clauses - Describing People and Things
+  - Passive Voice - Formal Writing
+  - Reported Speech - Communication Strategies
 
 ### Ukrainian (Traditional Grammar)
 - Grammar-translation approach
 - Focus on правопис (correct spelling) and morphology
-- Traditional Ukrainian pedagogy
-- Sample lessons: Відмінки, Дієслова, Прикметники, Правопис
+- Traditional Ukrainian pedagogical practices
+- **7 Sample Lessons**:
+  - Минулий доконаний час (Past Perfect)
+  - Наказовий спосіб (Imperative)
+  - Орудний відмінок іменників (Instrumental Case)
+  - Числівники та вимова чисел (Numerals)
+  - Дієприкметники та дієприслівники (Participles)
+  - Складнопідрядні речення з часовими сполучниками (Complex Sentences)
+  - Давальний відмінок іменників (Dative Case)
 
-The application automatically shows culturally and pedagogically appropriate sample lessons based on your selected interface language.
+The application automatically shows culturally and pedagogically appropriate sample lessons based on your selected interface language. Ukrainian samples include subtle references to Ukrainian culture and national pride.
 
 ## 🔒 Security Features
 
@@ -188,12 +225,13 @@ The application automatically shows culturally and pedagogically appropriate sam
 
 ## 🛠 Technology Stack
 
-- **Frontend**: React 18 with TypeScript
-- **Build Tool**: Vite
+- **Frontend**: React 19 with TypeScript
+- **Build Tool**: Vite 7
 - **Styling**: CSS3 with responsive design
 - **Storage**: Browser localStorage
 - **Deployment**: GitHub Pages
 - **CI/CD**: GitHub Actions
+- **Security**: CSP headers, input sanitization, file validation
 
 ## 📋 Project Structure
 
@@ -207,14 +245,20 @@ vibe/
 │   │   ├── ExerciseBuilder.tsx
 │   │   ├── LessonPreview.tsx
 │   │   ├── SampleLessons.tsx
+│   │   ├── SavedLessons.tsx          # NEW: Saved lessons library
+│   │   ├── KeyboardShortcutsHelp.tsx # NEW: Shortcuts help modal
 │   │   ├── StudentLessonView.tsx
-│   │   └── StudentExercise.tsx
+│   │   ├── StudentExercise.tsx
+│   │   └── Tooltip.tsx
 │   ├── data/                # Sample lessons
-│   │   ├── sampleLessons.ts
-│   │   └── sampleLessonsUkrainian.ts
+│   │   ├── sampleLessons.ts          # 7 English samples
+│   │   └── sampleLessonsUkrainian.ts # 7 Ukrainian samples
+│   ├── hooks/               # Custom React hooks
+│   │   └── useKeyboardShortcuts.ts   # NEW: Keyboard shortcuts hook
 │   ├── utils/               # Utility functions
 │   │   ├── lessonUtils.ts
-│   │   └── security.ts
+│   │   ├── security.ts
+│   │   └── helpText.ts               # NEW: Help content for exercises
 │   ├── types.ts             # TypeScript type definitions
 │   ├── translations.ts      # Bilingual translations
 │   ├── App.tsx              # Main application component
@@ -222,7 +266,10 @@ vibe/
 │   └── main.tsx             # Application entry point
 ├── public/                  # Static assets
 ├── dist/                    # Production build
+├── LICENSE                  # MIT License
 ├── CHANGELOG.md             # Version history
+├── SECURITY_AUDIT.md        # Security audit report
+├── TESTING_PLAN_V1.md       # Comprehensive testing plan
 ├── README.md                # This file
 └── package.json             # Dependencies and scripts
 ```
@@ -231,14 +278,16 @@ vibe/
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history and release notes.
 
-**Latest Version**: 2.0.0
+**Latest Version**: 1.0.0 (2025-11-13)
+- 14 authentic sample lessons (7 English + 7 Ukrainian)
+- Saved Lessons Library with search and management
+- Keyboard shortcuts for productivity
+- Comprehensive help system for all exercise types
+- Duplicate lesson functionality
+- Enhanced security (zero vulnerabilities)
 - Student interactive learning platform
-- Ukrainian language samples
-- 8 pre-built lesson templates
-- Lesson sharing via URL
-- Progress tracking
-- Security enhancements
-- 11 interactive exercise types
+- 11 interactive exercise types with instant feedback
+- Lesson sharing via URL with progress tracking
 
 ## 🤝 Contributing
 
