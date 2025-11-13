@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { LeadIn } from '../types';
 import type { Language } from '../translations';
 import { getTranslation } from '../translations';
+import { validateURL } from '../utils/security';
 
 interface LeadInFormProps {
   leadIn: LeadIn;
@@ -12,19 +13,34 @@ interface LeadInFormProps {
 export default function LeadInForm({ leadIn, onChange, language }: LeadInFormProps) {
   const t = getTranslation(language);
   const [newMediaLink, setNewMediaLink] = useState('');
+  const [urlError, setUrlError] = useState('');
 
   const updateField = (field: keyof LeadIn, value: string | number | string[]) => {
     onChange({ ...leadIn, [field]: value });
   };
 
   const addMediaLink = () => {
-    if (newMediaLink.trim()) {
-      onChange({
-        ...leadIn,
-        mediaLinks: [...(leadIn.mediaLinks || []), newMediaLink.trim()],
-      });
-      setNewMediaLink('');
+    const trimmed = newMediaLink.trim();
+    if (!trimmed) return;
+
+    // Validate URL
+    if (!validateURL(trimmed)) {
+      setUrlError('Invalid URL. Please enter a valid http:// or https:// link.');
+      return;
     }
+
+    // Limit number of links
+    if ((leadIn.mediaLinks || []).length >= 10) {
+      setUrlError('Maximum 10 media links allowed.');
+      return;
+    }
+
+    onChange({
+      ...leadIn,
+      mediaLinks: [...(leadIn.mediaLinks || []), trimmed],
+    });
+    setNewMediaLink('');
+    setUrlError('');
   };
 
   const removeMediaLink = (index: number) => {
@@ -84,14 +100,18 @@ export default function LeadInForm({ leadIn, onChange, language }: LeadInFormPro
         <label>{t.mediaLinks}</label>
         <div className="examples-input">
           <input
-            type="text"
+            type="url"
             value={newMediaLink}
-            onChange={(e) => setNewMediaLink(e.target.value)}
+            onChange={(e) => {
+              setNewMediaLink(e.target.value);
+              setUrlError('');
+            }}
             onKeyPress={(e) => e.key === 'Enter' && addMediaLink()}
             placeholder={t.mediaLinksPlaceholder}
           />
           <button type="button" onClick={addMediaLink}>{t.addButton}</button>
         </div>
+        {urlError && <small style={{ color: 'red' }}>{urlError}</small>}
         {leadIn.mediaLinks && leadIn.mediaLinks.length > 0 && (
           <ul className="examples-list">
             {leadIn.mediaLinks.map((link, index) => (
