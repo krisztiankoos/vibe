@@ -422,34 +422,54 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
 
       {exerciseType === 'sorting' && (
         <div className="form-group">
-          <label>{t.itemsToSort}</label>
+          <div className="field-label-with-help">
+            <label htmlFor="sortingItems" className="required">
+              {t.itemsToSort}
+            </label>
+            <HelpIcon text={help.sorting.items} />
+          </div>
           <textarea
+            id="sortingItems"
             value={sortingItems}
             onChange={(e) => setSortingItems(e.target.value)}
-            placeholder={t.sortingPlaceholder}
+            placeholder={language === 'en'
+              ? 'e.g., "Category 1: apple, banana, orange | Category 2: carrot, broccoli, lettuce"'
+              : 'напр., "Категорія 1: яблуко, банан, апельсин | Категорія 2: морква, брокколі, салат"'}
             rows={6}
           />
-          <small>{t.sortingHint}</small>
+          <div className="field-hint example">
+            <strong>{language === 'en' ? '💡 Tip:' : '💡 Порада:'}</strong> {t.sortingHint}
+          </div>
         </div>
       )}
 
       {exerciseType === 'matching' && (
         <div className="form-group">
-          <label>{t.matchingPairs}</label>
+          <div className="field-label-with-help">
+            <label className="required">{t.matchingPairs}</label>
+            <HelpIcon text={help.matching.pairs} />
+          </div>
+          <div className="field-hint">
+            {language === 'en'
+              ? '🔗 Create pairs to match (e.g., words with definitions, questions with answers)'
+              : '🔗 Створіть пари для співставлення (напр., слова з визначеннями, питання з відповідями)'}
+          </div>
           {matchingPairs.map((pair, index) => (
-            <div key={index} className="matching-pair">
+            <div key={index} className="matching-pair" style={{ marginBottom: '0.5rem' }}>
               <input
                 type="text"
                 value={pair.left}
                 onChange={(e) => updateMatchingPair(index, 'left', e.target.value)}
-                placeholder={t.leftItem}
+                placeholder={language === 'en' ? 'Left item (e.g., word)' : 'Лівий елемент (напр., слово)'}
+                style={{ marginRight: '0.5rem' }}
               />
               <span>↔</span>
               <input
                 type="text"
                 value={pair.right}
                 onChange={(e) => updateMatchingPair(index, 'right', e.target.value)}
-                placeholder={t.rightItem}
+                placeholder={language === 'en' ? 'Right item (e.g., definition)' : 'Правий елемент (напр., визначення)'}
+                style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
               />
               {matchingPairs.length > 1 && (
                 <button onClick={() => removeMatchingPair(index)}>×</button>
