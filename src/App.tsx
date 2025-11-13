@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { Lesson, Exercise } from './types';
 import LeadInForm from './components/LeadInForm';
 import PresentationForm from './components/PresentationForm';
 import ExerciseBuilder from './components/ExerciseBuilder';
 import LessonPreview from './components/LessonPreview';
+import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/lessonUtils';
 import './App.css';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
   });
 
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateLesson = (updates: Partial<Lesson>) => {
     setLesson((prev) => ({ ...prev, ...updates }));
@@ -73,14 +75,63 @@ function App() {
     alert('Lesson saved successfully!');
   };
 
+  const handleImportLesson = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const importedLesson = await importLessonFromJSON(file);
+      setLesson(importedLesson);
+      setCurrentStep('preview');
+      alert('Lesson imported successfully!');
+    } catch (error) {
+      alert('Failed to import lesson. Please check the file format.');
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleNewLesson = () => {
+    if (confirm('Create a new lesson? Any unsaved changes will be lost.')) {
+      setLesson({
+        id: crypto.randomUUID(),
+        title: '',
+        structure: 'PPP',
+        leadIn: { title: '', description: '', content: '' },
+        presentation: { title: '', targetLanguage: '', examples: [], explanation: '' },
+        controlledPractice: { type: 'controlled', exercises: [] },
+        freePractice: { type: 'free', exercises: [] },
+        createdAt: new Date().toISOString(),
+      });
+      setCurrentStep('structure');
+    }
+  };
+
   const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
   const currentStepIndex = steps.indexOf(currentStep);
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>English Lesson Builder</h1>
-        <p>Create engaging lessons following PPP & TTT methodologies</p>
+        <div className="header-content">
+          <div>
+            <h1>English Lesson Builder</h1>
+            <p>Create engaging lessons following PPP & TTT methodologies</p>
+          </div>
+          <div className="header-actions">
+            <button onClick={handleNewLesson} className="header-btn">New Lesson</button>
+            <button onClick={() => fileInputRef.current?.click()} className="header-btn">Import JSON</button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleImportLesson}
+              style={{ display: 'none' }}
+            />
+          </div>
+        </div>
       </header>
 
       <div className="progress-bar">
@@ -189,7 +240,11 @@ function App() {
         )}
 
         {currentStep === 'preview' && (
-          <LessonPreview lesson={lesson} />
+          <LessonPreview
+            lesson={lesson}
+            onExport={() => exportLessonToJSON(lesson)}
+            onPrint={printLesson}
+          />
         )}
       </main>
 

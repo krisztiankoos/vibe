@@ -2,12 +2,28 @@ import type { Lesson } from '../types';
 
 interface LessonPreviewProps {
   lesson: Lesson;
+  onExport?: () => void;
+  onPrint?: () => void;
 }
 
-export default function LessonPreview({ lesson }: LessonPreviewProps) {
+export default function LessonPreview({ lesson, onExport, onPrint }: LessonPreviewProps) {
   return (
     <div className="lesson-preview">
-      <h2>Lesson Preview</h2>
+      <div className="preview-header">
+        <h2>Lesson Preview</h2>
+        <div className="preview-actions">
+          {onExport && (
+            <button onClick={onExport} className="export-btn">
+              Export JSON
+            </button>
+          )}
+          {onPrint && (
+            <button onClick={onPrint} className="print-btn">
+              Print Lesson
+            </button>
+          )}
+        </div>
+      </div>
 
       <div className="preview-section">
         <h3>Lesson Information</h3>
