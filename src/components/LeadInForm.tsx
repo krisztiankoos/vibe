@@ -80,6 +80,17 @@ export default function LeadInForm({ leadIn, onChange, language }: LeadInFormPro
         </div>
       </div>
 
+      <div className="quick-tips">
+        <h4>
+          💡 {language === 'en' ? 'Quick Tips for Lead-Ins' : 'Швидкі поради для вступу'}
+        </h4>
+        <ul>
+          {tips.map((tip, index) => (
+            <li key={index} dangerouslySetInnerHTML={{ __html: tip }} />
+          ))}
+        </ul>
+      </div>
+
       <div className="form-group">
         <div className="field-label-with-help">
           <label htmlFor="leadInTitle" className="required">
@@ -260,17 +271,6 @@ export default function LeadInForm({ leadIn, onChange, language }: LeadInFormPro
             ? '📝 These notes are only for you - students won\'t see them'
             : '📝 Ці нотатки тільки для вас - учні їх не побачать'}
         </div>
-      </div>
-
-      <div className="quick-tips">
-        <h4>
-          💡 {language === 'en' ? 'Quick Tips for Lead-Ins' : 'Швидкі поради для вступу'}
-        </h4>
-        <ul>
-          {tips.map((tip, index) => (
-            <li key={index} dangerouslySetInnerHTML={{ __html: tip }} />
-          ))}
-        </ul>
       </div>
     </div>
   );
