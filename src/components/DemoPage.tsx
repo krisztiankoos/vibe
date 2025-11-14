@@ -4,6 +4,8 @@ import type { ContentItem, ContentType, ActivityType } from '../types';
 import ContentCreator from './ContentCreator';
 import AnagramActivity from './AnagramActivity';
 import RankOrderActivity from './RankOrderActivity';
+import MissingWordActivity from './MissingWordActivity';
+import UnjumbleActivity from './UnjumbleActivity';
 
 interface DemoPageProps {
   language: Language;
@@ -2174,11 +2176,17 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             )}
           </div>
 
-          {/* 11. Anagram - NEW */}
+          {/* 11. Anagram */}
           <AnagramActivity language={language} content={sharedContent} />
 
-          {/* 12. Rank Order - NEW */}
+          {/* 12. Rank Order */}
           <RankOrderActivity language={language} content={sharedContent} />
+
+          {/* 13. Missing Word */}
+          <MissingWordActivity language={language} content={sharedContent} />
+
+          {/* 14. Unjumble (Improved with Drag & Drop) */}
+          <UnjumbleActivity language={language} content={sharedContent} />
 
         </div>
       </main>

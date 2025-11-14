@@ -357,6 +357,7 @@ export type ActivityType =
   | 'true-false'
   | 'whack-a-mole'
   | 'gap-fill'
+  | 'missing-word'
   | 'gameshow-quiz'
   | 'group-sort'
   | 'unjumble'

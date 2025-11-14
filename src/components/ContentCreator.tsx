@@ -19,7 +19,9 @@ export default function ContentCreator({
     'random-wheel',
     'quiz',
     'flash-cards',
-    'anagram'
+    'missing-word',
+    'anagram',
+    'unjumble'
   ]);
 
   const t = {
@@ -79,6 +81,7 @@ export default function ContentCreator({
     { type: 'true-false', label: { en: 'True/False', uk: 'Правда/Хибність' } },
     { type: 'whack-a-mole', label: { en: 'Whack-a-Mole', uk: 'Вдар Крота' } },
     { type: 'gap-fill', label: { en: 'Gap Fill', uk: 'Заповни Пропуски' } },
+    { type: 'missing-word', label: { en: 'Missing Word', uk: 'Пропущене Слово' } },
     { type: 'gameshow-quiz', label: { en: 'Gameshow Quiz', uk: 'Вікторина-Шоу' } },
     { type: 'group-sort', label: { en: 'Group Sort', uk: 'Сортування' } },
     { type: 'unjumble', label: { en: 'Unjumble', uk: 'Розплутай' } },
