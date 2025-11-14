@@ -72,7 +72,7 @@ function App() {
         }
       }
     }
-  }, []);
+  }, [language]);
 
   // Show student view if in student mode
   if (studentMode && studentLesson && language) {
