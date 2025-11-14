@@ -151,7 +151,11 @@ export default function SampleLessons({ onLoadSample, language, onClose }: Sampl
                   <h3>Presentation: {selectedLesson.presentation.title}</h3>
                   <p><strong>{language === 'en' ? 'Duration' : 'Тривалість'}:</strong> {selectedLesson.presentation.duration} {language === 'en' ? 'min' : 'хв'}</p>
                   <p><strong>{language === 'en' ? 'Target Language' : 'Цільова Мова'}:</strong> {selectedLesson.presentation.targetLanguage}</p>
-                  <p>{selectedLesson.presentation.explanation.substring(0, 200)}...</p>
+                  <p>
+                    {typeof selectedLesson.presentation.explanation === 'string'
+                      ? selectedLesson.presentation.explanation.substring(0, 200)
+                      : selectedLesson.presentation.explanation.uk.substring(0, 200)}...
+                  </p>
                 </section>
 
                 <section className="preview-section">

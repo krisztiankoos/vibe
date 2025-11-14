@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Lesson } from '../types';
 import type { Language } from '../translations';
+import { getTranslation } from '../translations';
 import StudentExercise from './StudentExercise';
 
 interface StudentLessonViewProps {
@@ -19,6 +20,12 @@ interface ExerciseProgress {
 export default function StudentLessonView({ lesson, language, onExit }: StudentLessonViewProps) {
   const [currentSection, setCurrentSection] = useState<'lead-in' | 'presentation' | 'controlled' | 'free'>('lead-in');
   const [progress, setProgress] = useState<ExerciseProgress[]>([]);
+
+  // For bilingual explanations (Ukrainian lessons)
+  const [explanationLang, setExplanationLang] = useState<'uk' | 'en'>('uk');
+  const isBilingualExplanation = typeof lesson.presentation.explanation === 'object';
+
+  const t = getTranslation(language);
 
   // Load progress from localStorage
   useEffect(() => {
@@ -150,14 +157,46 @@ export default function StudentLessonView({ lesson, language, onExit }: StudentL
           <section className="student-section">
             <h2>{lesson.presentation.title}</h2>
 
+            {lesson.cefrLevel && (
+              <div className="lesson-meta" style={{ marginBottom: '1rem' }}>
+                <span className="meta-badge">CEFR: {lesson.cefrLevel}</span>
+              </div>
+            )}
+
             <div className="presentation-box">
               <h3>{language === 'en' ? 'Target Language' : 'Цільова Мова'}:</h3>
               <p className="target-language">{lesson.presentation.targetLanguage}</p>
             </div>
 
             <div className="presentation-box">
-              <h3>{language === 'en' ? 'Explanation' : 'Пояснення'}:</h3>
-              <p className="explanation">{lesson.presentation.explanation}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <h3 style={{ margin: 0 }}>{language === 'en' ? 'Explanation' : 'Пояснення'}:</h3>
+                {isBilingualExplanation && (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      className={`language-toggle ${explanationLang === 'uk' ? 'active' : ''}`}
+                      onClick={() => setExplanationLang('uk')}
+                      style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
+                    >
+                      {t.showInUkrainian}
+                    </button>
+                    <button
+                      className={`language-toggle ${explanationLang === 'en' ? 'active' : ''}`}
+                      onClick={() => setExplanationLang('en')}
+                      style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
+                    >
+                      {t.showInEnglish}
+                    </button>
+                  </div>
+                )}
+              </div>
+              <p className="explanation">
+                {isBilingualExplanation && typeof lesson.presentation.explanation === 'object'
+                  ? lesson.presentation.explanation[explanationLang]
+                  : typeof lesson.presentation.explanation === 'string'
+                  ? lesson.presentation.explanation
+                  : ''}
+              </p>
             </div>
 
             {lesson.presentation.examples.length > 0 && (

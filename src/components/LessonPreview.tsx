@@ -220,7 +220,11 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
           <p><strong>{t.duration}:</strong> {lesson.presentation.duration} minutes</p>
         )}
         <p><strong>{t.targetLanguage}:</strong> {lesson.presentation.targetLanguage}</p>
-        <div className="content-box">{lesson.presentation.explanation}</div>
+        <div className="content-box">
+          {typeof lesson.presentation.explanation === 'string'
+            ? lesson.presentation.explanation
+            : `${lesson.presentation.explanation.uk}\n\n---\n\n${lesson.presentation.explanation.en}`}
+        </div>
         {lesson.presentation.examples.length > 0 && (
           <>
             <p><strong>{t.examples}:</strong></p>

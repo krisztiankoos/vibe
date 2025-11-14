@@ -25,18 +25,86 @@ interface Translations {
   free: string;
   preview: string;
 
+  // v1.1.0: Context-aware phase labels for GPPC
+  topicIntroduction: string;
+  grammarPresentation: string;
+  controlledPracticePhase: string;
+  communicativePractice: string;
+
+  // v1.1.0: Context-aware phase labels for CEFR
+  taskIntroduction: string;
+  preparation: string;
+  taskExecution: string;
+  reflectionAndLanguageFocus: string;
+
   // Structure page
   chooseStructure: string;
+  phases: string;
+  bestFor: string;
+
+  // PPP Structure (English ESL)
   pppTitle: string;
   pppDescription: string;
+  pppFullDescription: string;
   pppStep1: string;
   pppStep2: string;
   pppStep3: string;
+  pppBestFor: string;
+
+  // TTT Structure (English ESL)
   tttTitle: string;
   tttDescription: string;
+  tttFullDescription: string;
   tttStep1: string;
   tttStep2: string;
   tttStep3: string;
+  tttBestFor: string;
+
+  // GPPC Structure (Ukrainian UFL) - NEW
+  gppcTitle: string;
+  gppcDescription: string;
+  gppcFullDescription: string;
+  gppcStep1: string;
+  gppcStep2: string;
+  gppcStep3: string;
+  gppcStep4: string;
+  gppcBestFor: string;
+
+  // CEFR Structure (Ukrainian UFL) - NEW
+  cefrTitle: string;
+  cefrDescription: string;
+  cefrFullDescription: string;
+  cefrStep1: string;
+  cefrStep2: string;
+  cefrStep3: string;
+  cefrStep4: string;
+  cefrBestFor: string;
+
+  // Methodology explanations
+  eslMethodologyNote: string;
+  uflMethodologyNote: string;
+
+  // CEFR Level Selector - NEW
+  cefrLevel: string;
+  cefrLevelOptional: string;
+  selectCefrLevel: string;
+  cefrA1: string;
+  cefrA2: string;
+  cefrB1: string;
+  cefrB2: string;
+  cefrC1: string;
+
+  // Bilingual explanations - NEW
+  bilingualExplanation: string;
+  bilingualExplanationHint: string;
+  ukrainianExplanation: string;
+  englishTranslation: string;
+  ukrainianPlaceholder: string;
+  englishPlaceholder: string;
+  languageToggle: string;
+  showInUkrainian: string;
+  showInEnglish: string;
+
   lessonTitle: string;
   lessonTitlePlaceholder: string;
 
@@ -238,18 +306,86 @@ export const translations: Record<Language, Translations> = {
     free: 'FREE',
     preview: 'PREVIEW',
 
+    // v1.1.0: Context-aware phase labels for GPPC
+    topicIntroduction: 'TOPIC',
+    grammarPresentation: 'GRAMMAR',
+    controlledPracticePhase: 'PRACTICE',
+    communicativePractice: 'COMMUNICATION',
+
+    // v1.1.0: Context-aware phase labels for CEFR
+    taskIntroduction: 'TASK INTRO',
+    preparation: 'PREPARATION',
+    taskExecution: 'TASK',
+    reflectionAndLanguageFocus: 'REFLECTION',
+
     // Structure page
     chooseStructure: 'Choose Lesson Structure',
+    phases: 'Phases',
+    bestFor: 'Best for',
+
+    // PPP Structure (English ESL)
     pppTitle: 'PPP',
     pppDescription: 'Presentation → Practice → Production',
-    pppStep1: 'Present new language',
-    pppStep2: 'Practice with controlled activities',
-    pppStep3: 'Produce with free practice',
+    pppFullDescription: 'Communicative grammar instruction with fluency focus',
+    pppStep1: 'Presentation',
+    pppStep2: 'Controlled Practice',
+    pppStep3: 'Free Production',
+    pppBestFor: 'Grammar lessons (verb tenses, modals, conditionals), A1-B2 levels',
+
+    // TTT Structure (English ESL)
     tttTitle: 'TTT',
     tttDescription: 'Test → Teach → Test',
-    tttStep1: "Test students' existing knowledge",
-    tttStep2: 'Teach the target language',
-    tttStep3: 'Test again to measure progress',
+    tttFullDescription: 'Discovery-based learning through authentic tasks',
+    tttStep1: 'Test 1 (Diagnostic)',
+    tttStep2: 'Teach (Gap Filling)',
+    tttStep3: 'Test 2 (Assessment)',
+    tttBestFor: 'Revision, authentic texts, student-led discovery, B1+ levels',
+
+    // GPPC Structure (Ukrainian UFL) - NEW
+    gppcTitle: 'GPPC',
+    gppcDescription: 'Grammar → Presentation → Practice → Communication',
+    gppcFullDescription: 'Grammar foundation with explicit rules and communicative practice',
+    gppcStep1: 'Topic Introduction',
+    gppcStep2: 'Grammar Presentation',
+    gppcStep3: 'Controlled Practice',
+    gppcStep4: 'Communicative Practice',
+    gppcBestFor: 'Cases (all 6), verb aspects, declensions, motion verbs, A1-B1 levels',
+
+    // CEFR Structure (Ukrainian UFL) - NEW
+    cefrTitle: 'CEFR Task-Based',
+    cefrDescription: 'Task Introduction → Preparation → Task → Reflection',
+    cefrFullDescription: 'Real-world tasks with language focus after completion',
+    cefrStep1: 'Task Introduction',
+    cefrStep2: 'Preparation',
+    cefrStep3: 'Task Execution',
+    cefrStep4: 'Reflection & Language Focus',
+    cefrBestFor: 'Formal writing, debates, presentations, literature analysis, B1-C1 levels',
+
+    // Methodology explanations
+    eslMethodologyNote: 'English (ESL) uses communicative teaching methods: PPP (grammar-focused) and TTT (discovery-based).',
+    uflMethodologyNote: 'Ukrainian (UFL) uses hybrid methodology: GPPC (grammar foundation) and CEFR (task-based learning).',
+
+    // CEFR Level Selector - NEW
+    cefrLevel: 'CEFR Level',
+    cefrLevelOptional: 'CEFR Level (optional)',
+    selectCefrLevel: 'Select CEFR Level',
+    cefrA1: 'A1 - Beginner',
+    cefrA2: 'A2 - Elementary',
+    cefrB1: 'B1 - Intermediate',
+    cefrB2: 'B2 - Upper-Intermediate',
+    cefrC1: 'C1 - Advanced',
+
+    // Bilingual explanations - NEW
+    bilingualExplanation: 'Bilingual Explanation (Ukrainian + English)',
+    bilingualExplanationHint: 'Provide explanations in both Ukrainian and English for student clarity',
+    ukrainianExplanation: 'Ukrainian Explanation',
+    englishTranslation: 'English Translation',
+    ukrainianPlaceholder: 'Explain in Ukrainian...',
+    englishPlaceholder: 'English translation...',
+    languageToggle: 'Language',
+    showInUkrainian: '🇺🇦 Українська',
+    showInEnglish: '🇬🇧 English',
+
     lessonTitle: 'Lesson Title',
     lessonTitlePlaceholder: 'e.g., Present Perfect Tense',
 
@@ -428,7 +564,7 @@ export const translations: Record<Language, Translations> = {
   uk: {
     // Home page
     homeTitle: 'Конструктор Мовних Уроків',
-    homeSubtitle: 'Створюйте цікаві мовні уроки за методиками PPP та TTT',
+    homeSubtitle: 'Створюйте цікаві мовні уроки за методиками ГППК та CEFR',
     selectLanguage: 'Оберіть Мову для Ваших Уроків',
     englishLessonBuilder: 'Конструктор Англійських Уроків',
     ukrainianLessonBuilder: 'Конструктор Українських Уроків',
@@ -437,7 +573,7 @@ export const translations: Record<Language, Translations> = {
 
     // Header
     appTitle: 'Конструктор Українських Уроків',
-    appSubtitle: 'Створюйте цікаві уроки за методиками PPP та TTT',
+    appSubtitle: 'Створюйте цікаві уроки за методиками ГППК та CEFR',
     newLesson: 'Новий Урок',
     importJSON: 'Імпорт JSON',
     changeLanguage: 'Змінити Мову',
@@ -450,20 +586,88 @@ export const translations: Record<Language, Translations> = {
     free: 'ВІЛЬНА',
     preview: 'ПЕРЕГЛЯД',
 
+    // v1.1.0: Context-aware phase labels for GPPC
+    topicIntroduction: 'ТЕМА',
+    grammarPresentation: 'ГРАМАТИКА',
+    controlledPracticePhase: 'ПРАКТИКА',
+    communicativePractice: 'КОМУНІКАЦІЯ',
+
+    // v1.1.0: Context-aware phase labels for CEFR
+    taskIntroduction: 'ВСТУП',
+    preparation: 'ПІДГОТОВКА',
+    taskExecution: 'ЗАВДАННЯ',
+    reflectionAndLanguageFocus: 'РЕФЛЕКСІЯ',
+
     // Structure page
     chooseStructure: 'Оберіть Структуру Уроку',
+    phases: 'Фази',
+    bestFor: 'Найкраще для',
+
+    // PPP Structure (English ESL)
     pppTitle: 'PPP',
     pppDescription: 'Презентація → Практика → Продукування',
-    pppStep1: 'Представте нову мову',
-    pppStep2: 'Практикуйте з керованими вправами',
-    pppStep3: 'Продукуйте з вільною практикою',
+    pppFullDescription: 'Комунікативне навчання граматики з акцентом на плинність',
+    pppStep1: 'Презентація',
+    pppStep2: 'Керована Практика',
+    pppStep3: 'Вільне Продукування',
+    pppBestFor: 'Граматичні уроки (часи дієслів, модальні, умовні), рівні A1-B2',
+
+    // TTT Structure (English ESL)
     tttTitle: 'TTT',
     tttDescription: 'Тест → Навчання → Тест',
-    tttStep1: 'Перевірте наявні знання студентів',
-    tttStep2: 'Навчіть цільової мови',
-    tttStep3: 'Перевірте знову, щоб виміряти прогрес',
+    tttFullDescription: 'Навчання через відкриття за допомогою автентичних завдань',
+    tttStep1: 'Тест 1 (Діагностика)',
+    tttStep2: 'Навчання (Заповнення Прогалин)',
+    tttStep3: 'Тест 2 (Оцінка)',
+    tttBestFor: 'Повторення, автентичні тексти, навчання через відкриття, рівні B1+',
+
+    // GPPC Structure (Ukrainian UFL) - NEW
+    gppcTitle: 'ГППК',
+    gppcDescription: 'Граматика → Презентація → Практика → Комунікація',
+    gppcFullDescription: 'Граматична основа з явними правилами та комунікативною практикою',
+    gppcStep1: 'Введення Теми',
+    gppcStep2: 'Презентація Граматики',
+    gppcStep3: 'Керована Практика',
+    gppcStep4: 'Комунікативна Практика',
+    gppcBestFor: 'Відмінки (всі 6), види дієслів, відміни, дієслова руху, рівні A1-B1',
+
+    // CEFR Structure (Ukrainian UFL) - NEW
+    cefrTitle: 'CEFR Завдання',
+    cefrDescription: 'Вступ → Підготовка → Завдання → Рефлексія',
+    cefrFullDescription: 'Реальні завдання з мовним фокусом після виконання',
+    cefrStep1: 'Введення Завдання',
+    cefrStep2: 'Підготовка',
+    cefrStep3: 'Виконання Завдання',
+    cefrStep4: 'Рефлексія та Мовний Фокус',
+    cefrBestFor: 'Офіційне листування, дебати, презентації, літературний аналіз, рівні B1-C1',
+
+    // Methodology explanations
+    eslMethodologyNote: 'Англійська (ESL) використовує комунікативні методи: PPP (граматичний фокус) та TTT (навчання через відкриття).',
+    uflMethodologyNote: 'Українська (УІМ) використовує гібридний підхід: ГППК (граматична основа) та CEFR (навчання через завдання).',
+
+    // CEFR Level Selector - NEW
+    cefrLevel: 'Рівень CEFR',
+    cefrLevelOptional: 'Рівень CEFR (необов\'язково)',
+    selectCefrLevel: 'Оберіть Рівень CEFR',
+    cefrA1: 'A1 - Початківець',
+    cefrA2: 'A2 - Елементарний',
+    cefrB1: 'B1 - Середній',
+    cefrB2: 'B2 - Вище-Середній',
+    cefrC1: 'C1 - Просунутий',
+
+    // Bilingual explanations - NEW
+    bilingualExplanation: 'Двомовне Пояснення (Українська + Англійська)',
+    bilingualExplanationHint: 'Надайте пояснення українською та англійською для ясності студентів',
+    ukrainianExplanation: 'Пояснення Українською',
+    englishTranslation: 'Переклад Англійською',
+    ukrainianPlaceholder: 'Поясніть українською...',
+    englishPlaceholder: 'Переклад англійською...',
+    languageToggle: 'Мова',
+    showInUkrainian: '🇺🇦 Українська',
+    showInEnglish: '🇬🇧 English',
+
     lessonTitle: 'Назва Уроку',
-    lessonTitlePlaceholder: 'напр., Минулий доконаний час',
+    lessonTitlePlaceholder: 'напр., Орудний відмінок',
 
     // Lead-in form
     leadInTitle: 'Вступна Активність',
