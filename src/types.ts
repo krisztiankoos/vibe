@@ -154,6 +154,7 @@ export interface Lesson {
   id: string;
   title: string;
   structure: LessonStructure;
+  version?: 'v1'; // Version flag for backward compatibility
   level?: string; // e.g., "A1 Beginner", "B2 Upper-Intermediate"
   cefrLevel?: CEFRLevel; // CEFR level tag (A1-C1)
   targetLanguage?: string; // Target language being taught (e.g., "English", "Spanish")
@@ -166,4 +167,149 @@ export interface Lesson {
   freePractice: PracticeSection;
   teacherNotes?: string; // Overall lesson notes for teacher
   createdAt: string;
+}
+
+// ============================================================================
+// ACTIVITY-BASED ARCHITECTURE (v2)
+// New flexible activity-based system for building lessons
+// See: docs/plans/ACTIVITY_BASED_ARCHITECTURE.md
+// ============================================================================
+
+/**
+ * Activity Types - Core building blocks for lessons
+ * Activities can be composed in any order to create flexible lesson structures
+ */
+export type ActivityType =
+  | 'warm-up'        // Engage students, activate prior knowledge
+  | 'presentation'   // Teach new content, explain concepts
+  | 'exercise'       // Practice activity (controlled or free)
+  | 'discussion'     // Communicative discussion activity
+  | 'task'           // Real-world task or project
+  | 'reflection';    // Review, self-assessment, analyze learning
+
+/**
+ * Content Types for Different Activities
+ */
+
+export interface WarmUpContent {
+  description: string;
+  questions?: string[];
+  mediaLinks?: string[];
+  duration?: number;
+}
+
+export interface PresentationActivityContent {
+  targetLanguage: string;
+  explanation: string | BilingualText;
+  examples: string[];
+  mediaLinks?: string[];
+  duration?: number;
+}
+
+export interface ExerciseContent {
+  exercise: Exercise;  // Reuses existing exercise types
+  practiceType?: 'controlled' | 'free';
+}
+
+export interface DiscussionContent {
+  topic: string;
+  questions: string[];
+  format?: 'pairs' | 'groups' | 'whole-class';
+  roles?: Array<{ name: string; description: string }>;
+  duration?: number;
+}
+
+export interface TaskContent {
+  taskDescription: string;
+  scenario: string;
+  roles?: Array<{ name: string; description: string }>;
+  expectedOutcome?: string;
+  rubric?: string;
+  duration?: number;
+}
+
+export interface ReflectionContent {
+  prompts: string[];
+  format?: 'written' | 'discussion' | 'self-assessment';
+  duration?: number;
+}
+
+/**
+ * ActivityContent - Union type for all activity content types
+ */
+export type ActivityContent =
+  | { type: 'warm-up'; data: WarmUpContent }
+  | { type: 'presentation'; data: PresentationActivityContent }
+  | { type: 'exercise'; data: ExerciseContent }
+  | { type: 'discussion'; data: DiscussionContent }
+  | { type: 'task'; data: TaskContent }
+  | { type: 'reflection'; data: ReflectionContent };
+
+/**
+ * Activity - Core building block
+ * Activities are atomic units that can be composed into lessons
+ */
+export interface Activity {
+  id: string;
+  type: ActivityType;
+  title: string;
+  duration?: number;
+  content: ActivityContent;
+  tags?: string[];
+  teacherNotes?: string;
+}
+
+/**
+ * ActivityLesson - New v2 lesson structure
+ * Lessons are ordered collections of activities
+ * Methodology (PPP/TTT/GPPC/CEFR) is metadata, not enforced structure
+ */
+export interface ActivityLesson {
+  id: string;
+  title: string;
+  version: 'v2';  // Version flag to distinguish from old phase-based lessons
+  language: string;  // Language being taught (e.g., "English", "Ukrainian")
+  level?: string;
+  cefrLevel?: CEFRLevel;
+  methodologyTag?: 'PPP' | 'TTT' | 'GPPC' | 'CEFR' | 'custom';
+  objectives?: string[];
+  materials?: string[];
+  activities: Activity[];  // Ordered list - flexible composition
+  totalDuration?: number;
+  teacherNotes?: string;
+  createdAt: string;
+}
+
+/**
+ * LessonTemplate - Pre-configured activity sequences
+ * Templates provide starting points for common lesson structures
+ */
+export interface LessonTemplate {
+  id: string;
+  name: string;
+  description: string;
+  methodologyTag: 'PPP' | 'TTT' | 'GPPC' | 'CEFR';
+  language: string;
+  level?: string;
+  activityStructure: Array<{
+    type: ActivityType;
+    title: string;
+    suggestedDuration?: number;
+    description?: string;
+  }>;
+  previewImage?: string;
+  tags?: string[];
+}
+
+/**
+ * Union type for all lesson types
+ * Allows the app to handle both old (v1) and new (v2) lessons
+ */
+export type AnyLesson = Lesson | ActivityLesson;
+
+/**
+ * Type guard to check if lesson is activity-based (v2)
+ */
+export function isActivityLesson(lesson: AnyLesson): lesson is ActivityLesson {
+  return 'version' in lesson && lesson.version === 'v2';
 }
