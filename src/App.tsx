@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import type { Lesson, Exercise } from './types';
 import type { Language } from './translations';
 import { getTranslation } from './translations';
@@ -120,7 +120,7 @@ function App() {
     }));
   };
 
-  const saveLesson = () => {
+  const saveLesson = useCallback(() => {
     const lessons = JSON.parse(localStorage.getItem('lessons') || '[]');
     const existingIndex = lessons.findIndex((l: Lesson) => l.id === lesson.id);
 
@@ -132,7 +132,7 @@ function App() {
 
     localStorage.setItem('lessons', JSON.stringify(lessons));
     alert(t.lessonSaved);
-  };
+  }, [lesson, t.lessonSaved]);
 
   const handleImportLesson = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -152,7 +152,7 @@ function App() {
     }
   };
 
-  const handleNewLesson = () => {
+  const handleNewLesson = useCallback(() => {
     if (confirm(t.createNewLesson)) {
       setLesson({
         id: crypto.randomUUID(),
@@ -166,7 +166,7 @@ function App() {
       });
       setCurrentStep('structure');
     }
-  };
+  }, [t.createNewLesson]);
 
   const handleLoadSample = (sampleLesson: Lesson) => {
     setLesson(sampleLesson);
@@ -282,7 +282,7 @@ function App() {
   ] : [], [language, currentStep]);
 
   // Use keyboard shortcuts
-  useKeyboardShortcuts(shortcuts, !!language && !studentMode);
+  useKeyboardShortcuts(shortcuts, false); // Temporarily disabled to fix render loop
 
   const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
   const currentStepIndex = steps.indexOf(currentStep);
