@@ -279,7 +279,7 @@ function App() {
       description: language === 'en' ? 'Close modal' : 'Закрити модальне вікно',
       preventDefault: false,
     },
-  ] : [], [language, currentStep, lesson, showSampleLessons, showSavedLessons, showShortcutsHelp]);
+  ] : [], [language, currentStep]);
 
   // Use keyboard shortcuts
   useKeyboardShortcuts(shortcuts, !!language && !studentMode);
