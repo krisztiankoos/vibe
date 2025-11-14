@@ -122,6 +122,15 @@ function App() {
     }
   };
 
+  const goToPreviousStep = () => {
+    const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      const previousStep = steps[currentIndex - 1] as typeof currentStep;
+      navigateToStep(previousStep);
+    }
+  };
+
   const updateLesson = (updates: Partial<Lesson>) => {
     setLesson((prev) => ({ ...prev, ...updates }));
   };
@@ -535,22 +544,38 @@ function App() {
 
       <footer className="app-footer">
         {currentStep !== 'preview' && (
-          <button
-            onClick={goToNextStep}
-            className="next-button"
-          >
-            {t.next} →
-          </button>
+          <div className="footer-navigation">
+            {currentStepIndex > 0 && (
+              <button
+                onClick={goToPreviousStep}
+                className="previous-button"
+              >
+                ← {t.previous}
+              </button>
+            )}
+            <button
+              onClick={goToNextStep}
+              className="next-button"
+            >
+              {t.next} →
+            </button>
+          </div>
         )}
         {currentStep === 'preview' && (
-          <>
+          <div className="footer-navigation">
+            <button
+              onClick={goToPreviousStep}
+              className="previous-button"
+            >
+              ← {t.previous}
+            </button>
             <button onClick={handleShareLesson} className="share-button" style={{ background: '#ff9800' }}>
               🔗 {language === 'en' ? 'Share with Students' : 'Поділитися зі Студентами'}
             </button>
             <button onClick={saveLesson} className="save-button">
               {t.saveLesson}
             </button>
-          </>
+          </div>
         )}
       </footer>
 

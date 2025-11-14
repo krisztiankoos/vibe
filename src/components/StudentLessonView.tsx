@@ -20,6 +20,7 @@ interface ExerciseProgress {
 export default function StudentLessonView({ lesson, language, onExit }: StudentLessonViewProps) {
   const [currentSection, setCurrentSection] = useState<'lead-in' | 'presentation' | 'controlled' | 'free'>('lead-in');
   const [progress, setProgress] = useState<ExerciseProgress[]>([]);
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
 
   // For bilingual explanations (Ukrainian lessons)
   const [explanationLang, setExplanationLang] = useState<'uk' | 'en'>('uk');
@@ -69,6 +70,36 @@ export default function StudentLessonView({ lesson, language, onExit }: StudentL
   const completedCount = progress.filter(p => p.completed).length;
   const totalExercises = allExercises.length;
   const progressPercentage = totalExercises > 0 ? (completedCount / totalExercises) * 100 : 0;
+
+  // Reset exercise index when changing sections
+  useEffect(() => {
+    setCurrentExerciseIndex(0);
+  }, [currentSection]);
+
+  const getCurrentSectionExercises = () => {
+    if (currentSection === 'controlled') {
+      return lesson.controlledPractice.exercises;
+    } else if (currentSection === 'free') {
+      return lesson.freePractice.exercises;
+    }
+    return [];
+  };
+
+  const sectionExercises = getCurrentSectionExercises();
+  const hasExercises = sectionExercises.length > 0;
+  const currentExercise = sectionExercises[currentExerciseIndex];
+
+  const goToNextExercise = () => {
+    if (currentExerciseIndex < sectionExercises.length - 1) {
+      setCurrentExerciseIndex(prev => prev + 1);
+    }
+  };
+
+  const goToPreviousExercise = () => {
+    if (currentExerciseIndex > 0) {
+      setCurrentExerciseIndex(prev => prev - 1);
+    }
+  };
 
   return (
     <div className="student-lesson-view">
@@ -229,48 +260,124 @@ export default function StudentLessonView({ lesson, language, onExit }: StudentL
 
         {currentSection === 'controlled' && (
           <section className="student-section">
-            <h2>{language === 'en' ? 'Controlled Practice' : 'Контрольована Практика'}</h2>
-            {lesson.controlledPractice.exercises.length === 0 ? (
+            <div className="section-header">
+              <h2>{language === 'en' ? 'Controlled Practice' : 'Контрольована Практика'}</h2>
+              {hasExercises && (
+                <div className="exercise-counter">
+                  {language === 'en' ? 'Exercise' : 'Вправа'} {currentExerciseIndex + 1} {language === 'en' ? 'of' : 'з'} {sectionExercises.length}
+                </div>
+              )}
+            </div>
+            {!hasExercises ? (
               <p className="empty-message">
                 {language === 'en' ? 'No exercises in this section.' : 'Немає вправ у цьому розділі.'}
               </p>
             ) : (
-              <div className="exercises-list">
-                {lesson.controlledPractice.exercises.map((exercise, index) => (
+              <>
+                <div className="current-exercise">
                   <StudentExercise
-                    key={exercise.id}
-                    exercise={exercise}
-                    exerciseNumber={index + 1}
+                    key={currentExercise.id}
+                    exercise={currentExercise}
+                    exerciseNumber={currentExerciseIndex + 1}
                     language={language}
-                    progress={getExerciseProgress(exercise.id)}
-                    onComplete={(score) => updateExerciseProgress(exercise.id, true, score)}
+                    progress={getExerciseProgress(currentExercise.id)}
+                    onComplete={(score) => updateExerciseProgress(currentExercise.id, true, score)}
                   />
-                ))}
-              </div>
+                </div>
+                <div className="exercise-navigation">
+                  <button
+                    onClick={goToPreviousExercise}
+                    disabled={currentExerciseIndex === 0}
+                    className="exercise-nav-btn prev-btn"
+                  >
+                    ← {language === 'en' ? 'Previous' : 'Назад'}
+                  </button>
+                  <div className="exercise-dots">
+                    {sectionExercises.map((ex, idx) => {
+                      const exerciseProgress = getExerciseProgress(ex.id);
+                      return (
+                        <button
+                          key={ex.id}
+                          className={`exercise-dot ${idx === currentExerciseIndex ? 'active' : ''} ${exerciseProgress?.completed ? 'completed' : ''}`}
+                          onClick={() => setCurrentExerciseIndex(idx)}
+                          title={`${language === 'en' ? 'Exercise' : 'Вправа'} ${idx + 1}`}
+                        >
+                          {exerciseProgress?.completed ? '✓' : idx + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    onClick={goToNextExercise}
+                    disabled={currentExerciseIndex === sectionExercises.length - 1}
+                    className="exercise-nav-btn next-btn"
+                  >
+                    {language === 'en' ? 'Next' : 'Далі'} →
+                  </button>
+                </div>
+              </>
             )}
           </section>
         )}
 
         {currentSection === 'free' && (
           <section className="student-section">
-            <h2>{language === 'en' ? 'Free Practice' : 'Вільна Практика'}</h2>
-            {lesson.freePractice.exercises.length === 0 ? (
+            <div className="section-header">
+              <h2>{language === 'en' ? 'Free Practice' : 'Вільна Практика'}</h2>
+              {hasExercises && (
+                <div className="exercise-counter">
+                  {language === 'en' ? 'Exercise' : 'Вправа'} {currentExerciseIndex + 1} {language === 'en' ? 'of' : 'з'} {sectionExercises.length}
+                </div>
+              )}
+            </div>
+            {!hasExercises ? (
               <p className="empty-message">
                 {language === 'en' ? 'No exercises in this section.' : 'Немає вправ у цьому розділі.'}
               </p>
             ) : (
-              <div className="exercises-list">
-                {lesson.freePractice.exercises.map((exercise, index) => (
+              <>
+                <div className="current-exercise">
                   <StudentExercise
-                    key={exercise.id}
-                    exercise={exercise}
-                    exerciseNumber={index + 1}
+                    key={currentExercise.id}
+                    exercise={currentExercise}
+                    exerciseNumber={currentExerciseIndex + 1}
                     language={language}
-                    progress={getExerciseProgress(exercise.id)}
-                    onComplete={(score) => updateExerciseProgress(exercise.id, true, score)}
+                    progress={getExerciseProgress(currentExercise.id)}
+                    onComplete={(score) => updateExerciseProgress(currentExercise.id, true, score)}
                   />
-                ))}
-              </div>
+                </div>
+                <div className="exercise-navigation">
+                  <button
+                    onClick={goToPreviousExercise}
+                    disabled={currentExerciseIndex === 0}
+                    className="exercise-nav-btn prev-btn"
+                  >
+                    ← {language === 'en' ? 'Previous' : 'Назад'}
+                  </button>
+                  <div className="exercise-dots">
+                    {sectionExercises.map((ex, idx) => {
+                      const exerciseProgress = getExerciseProgress(ex.id);
+                      return (
+                        <button
+                          key={ex.id}
+                          className={`exercise-dot ${idx === currentExerciseIndex ? 'active' : ''} ${exerciseProgress?.completed ? 'completed' : ''}`}
+                          onClick={() => setCurrentExerciseIndex(idx)}
+                          title={`${language === 'en' ? 'Exercise' : 'Вправа'} ${idx + 1}`}
+                        >
+                          {exerciseProgress?.completed ? '✓' : idx + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    onClick={goToNextExercise}
+                    disabled={currentExerciseIndex === sectionExercises.length - 1}
+                    className="exercise-nav-btn next-btn"
+                  >
+                    {language === 'en' ? 'Next' : 'Далі'} →
+                  </button>
+                </div>
+              </>
             )}
           </section>
         )}
