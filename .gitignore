@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Claude local configuration
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/                          # Generated from claude_extensions/
+.claude_backup_*/                 # Deployment backups
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
