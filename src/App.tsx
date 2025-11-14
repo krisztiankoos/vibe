@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Lesson, Exercise } from './types';
 import type { Language } from './translations';
 import { getTranslation } from './translations';
@@ -10,9 +10,6 @@ import LessonPreview from './components/LessonPreview';
 import SampleLessons from './components/SampleLessons';
 import SavedLessons from './components/SavedLessons';
 import StudentLessonView from './components/StudentLessonView';
-import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import type { KeyboardShortcut } from './hooks/useKeyboardShortcuts';
 import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/lessonUtils';
 import './App.css';
 
@@ -47,7 +44,6 @@ function App() {
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
   const [showSampleLessons, setShowSampleLessons] = useState(false);
   const [showSavedLessons, setShowSavedLessons] = useState(false);
-  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [studentMode, setStudentMode] = useState(false);
   const [studentLesson, setStudentLesson] = useState<Lesson | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -216,73 +212,6 @@ function App() {
       );
     });
   };
-
-  // Define keyboard shortcuts
-  const shortcuts: KeyboardShortcut[] = useMemo(() => language ? [
-    {
-      key: 's',
-      ctrlKey: true,
-      action: saveLesson,
-      description: language === 'en' ? 'Save lesson' : 'Зберегти урок',
-    },
-    {
-      key: 'n',
-      ctrlKey: true,
-      action: handleNewLesson,
-      description: language === 'en' ? 'New lesson' : 'Новий урок',
-    },
-    {
-      key: 'l',
-      ctrlKey: true,
-      action: () => setShowSavedLessons(true),
-      description: language === 'en' ? 'Open My Lessons' : 'Відкрити Мої Уроки',
-    },
-    {
-      key: 'k',
-      ctrlKey: true,
-      action: () => setShowSampleLessons(true),
-      description: language === 'en' ? 'Open Sample Lessons' : 'Відкрити Зразки Уроків',
-    },
-    {
-      key: 'e',
-      ctrlKey: true,
-      action: () => {
-        if (currentStep === 'preview') {
-          exportLessonToJSON(lesson);
-        }
-      },
-      description: language === 'en' ? 'Export lesson (in preview)' : 'Експортувати урок (у перегляді)',
-    },
-    {
-      key: 'p',
-      ctrlKey: true,
-      action: () => {
-        if (currentStep === 'preview') {
-          printLesson();
-        }
-      },
-      description: language === 'en' ? 'Print lesson (in preview)' : 'Друкувати урок (у перегляді)',
-    },
-    {
-      key: '/',
-      ctrlKey: true,
-      action: () => setShowShortcutsHelp(true),
-      description: language === 'en' ? 'Show keyboard shortcuts' : 'Показати клавіатурні скорочення',
-    },
-    {
-      key: 'Escape',
-      action: () => {
-        if (showSampleLessons) setShowSampleLessons(false);
-        else if (showSavedLessons) setShowSavedLessons(false);
-        else if (showShortcutsHelp) setShowShortcutsHelp(false);
-      },
-      description: language === 'en' ? 'Close modal' : 'Закрити модальне вікно',
-      preventDefault: false,
-    },
-  ] : [], [language, currentStep]);
-
-  // Use keyboard shortcuts
-  useKeyboardShortcuts(shortcuts, !!language && !studentMode);
 
   const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
   const currentStepIndex = steps.indexOf(currentStep);
@@ -455,15 +384,6 @@ function App() {
             </button>
           </>
         )}
-        <div className="keyboard-shortcuts-indicator">
-          <button
-            onClick={() => setShowShortcutsHelp(true)}
-            className="shortcuts-btn"
-            title={language === 'en' ? 'Keyboard shortcuts' : 'Клавіатурні скорочення'}
-          >
-            ⌨️ {language === 'en' ? 'Shortcuts' : 'Скорочення'} <kbd>Ctrl+/</kbd>
-          </button>
-        </div>
       </footer>
 
       {showSampleLessons && (
@@ -480,14 +400,6 @@ function App() {
           onClose={() => setShowSavedLessons(false)}
           onLoadLesson={handleLoadSample}
           onDuplicateLesson={handleDuplicateLesson}
-        />
-      )}
-
-      {showShortcutsHelp && (
-        <KeyboardShortcutsHelp
-          language={language}
-          shortcuts={shortcuts}
-          onClose={() => setShowShortcutsHelp(false)}
         />
       )}
     </div>
