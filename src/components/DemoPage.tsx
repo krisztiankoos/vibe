@@ -44,6 +44,8 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   // Whack-a-Mole state
   const [molePosition, setMolePosition] = useState(-1);
   const [moleScore, setMoleScore] = useState(0);
+  const [moleTargetWord, setMoleTargetWord] = useState('🐹');
+  const [moleDistractorWord, setMoleDistractorWord] = useState('🕳️');
 
   // True/False state
   const [tfStatement, setTfStatement] = useState('English is a Romance language');
@@ -52,18 +54,18 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [tfCorrect, setTfCorrect] = useState<boolean | null>(null);
 
   // Gap Fill state
-  const [_gapSentence, _setGapSentence] = useState('I ___ to school yesterday and ___ my friends.');
-  const [_gapCorrectAnswers, _setGapCorrectAnswers] = useState(['went', 'saw']);
+  const [gapSentence, setGapSentence] = useState('I ___ to school yesterday and ___ my friends.');
+  const [gapCorrectAnswers, setGapCorrectAnswers] = useState(['went', 'saw']);
   const [gapAnswers, setGapAnswers] = useState<string[]>(['', '']);
 
   // Unjumble state
-  const [unjumbleCorrectSentence, _setUnjumbleCorrectSentence] = useState('I went to school yesterday');
+  const [unjumbleCorrectSentence, setUnjumbleCorrectSentence] = useState('I went to school yesterday');
   const [unjumbledWords, setUnjumbledWords] = useState<string[]>(['went', 'I', 'yesterday', 'school', 'to']);
 
   // Gameshow Quiz state
-  const [gameshowQuestion, _setGameshowQuestion] = useState('What is the capital of France?');
-  const [gameshowOptions, _setGameshowOptions] = useState(['London', 'Paris', 'Berlin', 'Madrid']);
-  const [gameshowCorrectIndex, _setGameshowCorrectIndex] = useState(1);
+  const [gameshowQuestion, setGameshowQuestion] = useState('What is the capital of France?');
+  const [gameshowOptions, setGameshowOptions] = useState(['London', 'Paris', 'Berlin', 'Madrid']);
+  const [gameshowCorrectIndex, setGameshowCorrectIndex] = useState(1);
   const [gameshowAnswer, setGameshowAnswer] = useState<number | null>(null);
   const [gameshowTimer, setGameshowTimer] = useState(30);
   const [gameshowActive, setGameshowActive] = useState(false);
@@ -71,17 +73,19 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [removedOptions, setRemovedOptions] = useState<number[]>([]);
 
   // Group Sort state
-  const [_groupSortItems, _setGroupSortItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
-  const [_groupSortCategory1, _setGroupSortCategory1] = useState('Nouns');
-  const [_groupSortCategory2, _setGroupSortCategory2] = useState('Verbs');
+  const [groupSortItems, setGroupSortItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
+  const [groupSortCategory1, setGroupSortCategory1] = useState('Nouns');
+  const [groupSortCategory2, setGroupSortCategory2] = useState('Verbs');
+  const [newGroupSortItem, setNewGroupSortItem] = useState('');
   const [unsortedItems, setUnsortedItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
   const [sortedNouns, setSortedNouns] = useState<string[]>([]);
   const [sortedVerbs, setSortedVerbs] = useState<string[]>([]);
 
   // Find Match state
-  const [findMatchItems] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊']);
+  const [findMatchItems, setFindMatchItems] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊']);
   const [findMatchSelected, setFindMatchSelected] = useState<number[]>([]);
   const [findMatchMatched, setFindMatchMatched] = useState<number[]>([]);
+  const [newFindMatchItem, setNewFindMatchItem] = useState('');
 
   const t = {
     en: {
@@ -1404,86 +1408,434 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
 
           {/* 7. Whack-a-Mole */}
           <div className="activity-demo-card">
-            <h3>🔨 {text.whackAMole}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.moleInstructions}</p>
-              <p style={{ fontSize: '1.2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '1rem' }}>
-                {text.score} {moleScore}
-              </p>
-              <div className="mole-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '0.5rem',
-                maxWidth: '300px',
-                margin: '0 auto 1rem'
-              }}>
-                {[0, 1, 2, 3, 4, 5].map((idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleMoleClick(idx)}
-                    style={{
-                      aspectRatio: '1',
-                      border: '2px solid #8b4513',
-                      borderRadius: '50%',
-                      background: idx === molePosition ? '#f59e0b' : '#d2691e',
-                      fontSize: '2rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {idx === molePosition ? '🐹' : '🕳️'}
-                  </button>
-                ))}
-              </div>
-              <button onClick={handleStartMole} className="demo-btn">
-                {text.startGame}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🔨 {text.whackAMole}</h3>
+              <button
+                onClick={() => toggleView('whackmole')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('whackmole') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('whackmole') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
               </button>
             </div>
+
+            {getView('whackmole') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Target Item (what students should click):
+                  </label>
+                  <input
+                    type="text"
+                    value={moleTargetWord}
+                    onChange={(e) => setMoleTargetWord(e.target.value)}
+                    placeholder="e.g., 🐹, verb, or word"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Background/Empty Item:
+                  </label>
+                  <input
+                    type="text"
+                    value={moleDistractorWord}
+                    onChange={(e) => setMoleDistractorWord(e.target.value)}
+                    placeholder="e.g., 🕳️, noun, or ___"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+
+                <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px', marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Preview:
+                  </p>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '0.5rem',
+                    maxWidth: '300px',
+                    margin: '0 auto'
+                  }}>
+                    {[0, 1, 2, 3, 4, 5].map((idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          aspectRatio: '1',
+                          border: '2px solid #8b4513',
+                          borderRadius: '50%',
+                          background: idx === 1 ? '#f59e0b' : '#d2691e',
+                          fontSize: '2rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        {idx === 1 ? moleTargetWord : moleDistractorWord}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleView('whackmole')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.moleInstructions}</p>
+                <p style={{ fontSize: '1.2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '1rem' }}>
+                  {text.score} {moleScore}
+                </p>
+                <div className="mole-grid" style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '0.5rem',
+                  maxWidth: '300px',
+                  margin: '0 auto 1rem'
+                }}>
+                  {[0, 1, 2, 3, 4, 5].map((idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleMoleClick(idx)}
+                      style={{
+                        aspectRatio: '1',
+                        border: '2px solid #8b4513',
+                        borderRadius: '50%',
+                        background: idx === molePosition ? '#f59e0b' : '#d2691e',
+                        fontSize: '2rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {idx === molePosition ? moleTargetWord : moleDistractorWord}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={handleStartMole} className="demo-btn" style={{ marginBottom: '1rem' }}>
+                  {text.startGame}
+                </button>
+
+                <button
+                  onClick={() => toggleView('whackmole')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 8. Gap Fill */}
           <div className="activity-demo-card">
-            <h3>📝 {text.missingWord}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.gapInstructions}</p>
-              <div style={{ fontSize: '1.1rem', lineHeight: '2.5' }}>
-                I{' '}
-                <input
-                  type="text"
-                  value={gapAnswers[0]}
-                  onChange={(e) => setGapAnswers([e.target.value, gapAnswers[1]])}
-                  style={{
-                    padding: '0.25rem 0.5rem',
-                    border: '2px solid #667eea',
-                    borderRadius: '4px',
-                    width: '100px',
-                    textAlign: 'center'
-                  }}
-                />
-                {' '}to school yesterday and{' '}
-                <input
-                  type="text"
-                  value={gapAnswers[1]}
-                  onChange={(e) => setGapAnswers([gapAnswers[0], e.target.value])}
-                  style={{
-                    padding: '0.25rem 0.5rem',
-                    border: '2px solid #667eea',
-                    borderRadius: '4px',
-                    width: '100px',
-                    textAlign: 'center'
-                  }}
-                />
-                {' '}my friends.
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>📝 {text.missingWord}</h3>
+              <button
+                onClick={() => toggleView('gapfill')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('gapfill') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('gapfill') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('gapfill') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Sentence (use ___ for gaps):
+                  </label>
+                  <input
+                    type="text"
+                    value={gapSentence}
+                    onChange={(e) => {
+                      setGapSentence(e.target.value);
+                      // Count gaps and reset answers array
+                      const gapCount = (e.target.value.match(/___/g) || []).length;
+                      setGapAnswers(new Array(gapCount).fill(''));
+                      setGapCorrectAnswers(new Array(gapCount).fill(''));
+                    }}
+                    placeholder="e.g., I ___ to school and ___ my friends."
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                  <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem', fontStyle: 'italic' }}>
+                    Use three underscores (___ ) to mark each gap
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Correct Answers:
+                  </label>
+                  {gapCorrectAnswers.map((answer, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+                      <span style={{ minWidth: '60px', fontSize: '0.9rem' }}>Gap {idx + 1}:</span>
+                      <input
+                        type="text"
+                        value={answer}
+                        onChange={(e) => {
+                          const newAnswers = [...gapCorrectAnswers];
+                          newAnswers[idx] = e.target.value;
+                          setGapCorrectAnswers(newAnswers);
+                        }}
+                        placeholder={`Answer for gap ${idx + 1}`}
+                        style={{
+                          flex: 1,
+                          padding: '0.5rem',
+                          border: '2px solid #10b981',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem'
+                        }}
+                      />
+                    </div>
+                  ))}
+                  {gapCorrectAnswers.length === 0 && (
+                    <p style={{ fontSize: '0.85rem', color: '#999', fontStyle: 'italic' }}>
+                      Add ___ to your sentence to create gaps
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => toggleView('gapfill')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.gapInstructions}</p>
+                <div style={{ fontSize: '1.1rem', lineHeight: '2.5', marginBottom: '1rem' }}>
+                  {gapSentence.split('___').map((part, idx) => (
+                    <span key={idx}>
+                      {part}
+                      {idx < gapSentence.split('___').length - 1 && (
+                        <input
+                          type="text"
+                          value={gapAnswers[idx] || ''}
+                          onChange={(e) => {
+                            const newAnswers = [...gapAnswers];
+                            newAnswers[idx] = e.target.value;
+                            setGapAnswers(newAnswers);
+                          }}
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            border: '2px solid',
+                            borderColor: gapAnswers[idx] === gapCorrectAnswers[idx] && gapAnswers[idx] ? '#10b981' : '#667eea',
+                            borderRadius: '4px',
+                            width: '100px',
+                            textAlign: 'center',
+                            background: gapAnswers[idx] === gapCorrectAnswers[idx] && gapAnswers[idx] ? '#d1fae5' : 'white'
+                          }}
+                        />
+                      )}
+                    </span>
+                  ))}
+                </div>
+                {gapAnswers.every((ans, idx) => ans === gapCorrectAnswers[idx] && ans !== '') && gapAnswers.length > 0 && (
+                  <p style={{ textAlign: 'center', marginBottom: '1rem', color: '#10b981', fontWeight: 'bold' }}>
+                    ✅ {text.correct}
+                  </p>
+                )}
+
+                <button
+                  onClick={() => toggleView('gapfill')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 9. Gameshow Quiz */}
           <div className="activity-demo-card">
-            <h3>🎯 {text.gameshowQuiz}</h3>
-            <div className="demo-interactive">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🎯 {text.gameshowQuiz}</h3>
+              <button
+                onClick={() => toggleView('gameshow')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('gameshow') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('gameshow') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
+            </div>
+
+            {getView('gameshow') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Question:</label>
+                  <input
+                    type="text"
+                    value={gameshowQuestion}
+                    onChange={(e) => setGameshowQuestion(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Answer Options:</label>
+                  {gameshowOptions.map((option, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+                      <input
+                        type="radio"
+                        name="gameshow-correct"
+                        checked={gameshowCorrectIndex === idx}
+                        onChange={() => setGameshowCorrectIndex(idx)}
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) => {
+                          const newOptions = [...gameshowOptions];
+                          newOptions[idx] = e.target.value;
+                          setGameshowOptions(newOptions);
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: '0.5rem',
+                          border: '2px solid',
+                          borderColor: gameshowCorrectIndex === idx ? '#10b981' : '#ddd',
+                          borderRadius: '6px',
+                          fontSize: '1rem',
+                          background: gameshowCorrectIndex === idx ? '#d1fae5' : 'white'
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => toggleView('gameshow')}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
               {!gameshowActive && gameshowAnswer === null && (
                 <button onClick={handleStartGameshow} className="demo-btn" style={{ marginBottom: '1rem' }}>
                   {text.startQuiz}
@@ -1569,161 +1921,616 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
                   </button>
                 </div>
               )}
-            </div>
+                <button
+                  onClick={() => toggleView('gameshow')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 10. Group Sort */}
           <div className="activity-demo-card">
-            <h3>🗂️ {text.groupSort}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.sortInstructions}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🗂️ {text.groupSort}</h3>
+              <button
+                onClick={() => toggleView('groupsort')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('groupsort') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('groupsort') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
+            </div>
 
-              {unsortedItems.length > 0 && (
+            {getView('groupsort') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
                 <div style={{ marginBottom: '1rem' }}>
-                  <p style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>{text.unsorted}:</p>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Category Names:
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <input
+                      type="text"
+                      value={groupSortCategory1}
+                      onChange={(e) => setGroupSortCategory1(e.target.value)}
+                      placeholder="Category 1 (e.g., Nouns)"
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '2px solid #667eea',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <input
+                      type="text"
+                      value={groupSortCategory2}
+                      onChange={(e) => setGroupSortCategory2(e.target.value)}
+                      placeholder="Category 2 (e.g., Verbs)"
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '2px solid #10b981',
+                        borderRadius: '6px'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Items to Sort:
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <input
+                      type="text"
+                      value={newGroupSortItem}
+                      onChange={(e) => setNewGroupSortItem(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && newGroupSortItem.trim()) {
+                          setGroupSortItems([...groupSortItems, newGroupSortItem.trim()]);
+                          setNewGroupSortItem('');
+                        }
+                      }}
+                      placeholder="Add item to sort"
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '2px solid #667eea',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (newGroupSortItem.trim()) {
+                          setGroupSortItems([...groupSortItems, newGroupSortItem.trim()]);
+                          setNewGroupSortItem('');
+                        }
+                      }}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#667eea',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      + Add
+                    </button>
+                  </div>
+
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {unsortedItems.map((item, idx) => (
-                      <div key={idx} style={{ display: 'flex', gap: '0.25rem' }}>
+                    {groupSortItems.map((item, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          padding: '0.5rem 0.75rem',
+                          background: 'white',
+                          border: '2px solid #ddd',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        <span>{item}</span>
                         <button
-                          onClick={() => handleSortItem(item, 'noun')}
-                          style={{
-                            padding: '0.5rem 0.75rem',
-                            background: 'white',
-                            border: '2px solid #667eea',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem'
+                          onClick={() => {
+                            setGroupSortItems(groupSortItems.filter((_, i) => i !== idx));
                           }}
-                          title={`Sort as ${text.nouns}`}
-                        >
-                          {item} → N
-                        </button>
-                        <button
-                          onClick={() => handleSortItem(item, 'verb')}
                           style={{
-                            padding: '0.5rem 0.75rem',
-                            background: 'white',
-                            border: '2px solid #10b981',
-                            borderRadius: '6px',
+                            background: 'none',
+                            border: 'none',
+                            color: '#ef4444',
                             cursor: 'pointer',
-                            fontSize: '0.9rem'
+                            fontWeight: 'bold',
+                            fontSize: '1.1rem',
+                            padding: '0 0.25rem'
                           }}
-                          title={`Sort as ${text.verbs}`}
                         >
-                          {item} → V
+                          ×
                         </button>
                       </div>
                     ))}
                   </div>
                 </div>
-              )}
 
-              <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px' }}>
-                <p style={{ marginBottom: '0.5rem' }}>
-                  <strong style={{ color: '#667eea' }}>{text.nouns}:</strong>{' '}
-                  {sortedNouns.length > 0 ? sortedNouns.join(', ') : '—'}
-                </p>
-                <p style={{ margin: 0 }}>
-                  <strong style={{ color: '#10b981' }}>{text.verbs}:</strong>{' '}
-                  {sortedVerbs.length > 0 ? sortedVerbs.join(', ') : '—'}
-                </p>
+                <button
+                  onClick={() => toggleView('groupsort')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
               </div>
-
-              {unsortedItems.length === 0 && (
-                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold' }}>
-                  ✅ All sorted!
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
                 </p>
-              )}
-            </div>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.sortInstructions}</p>
+
+                {unsortedItems.length > 0 && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <p style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>{text.unsorted}:</p>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {unsortedItems.map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', gap: '0.25rem' }}>
+                          <button
+                            onClick={() => handleSortItem(item, 'noun')}
+                            style={{
+                              padding: '0.5rem 0.75rem',
+                              background: 'white',
+                              border: '2px solid #667eea',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '0.9rem'
+                            }}
+                            title={`Sort as ${groupSortCategory1}`}
+                          >
+                            {item} → {groupSortCategory1.charAt(0).toUpperCase()}
+                          </button>
+                          <button
+                            onClick={() => handleSortItem(item, 'verb')}
+                            style={{
+                              padding: '0.5rem 0.75rem',
+                              background: 'white',
+                              border: '2px solid #10b981',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '0.9rem'
+                            }}
+                            title={`Sort as ${groupSortCategory2}`}
+                          >
+                            {item} → {groupSortCategory2.charAt(0).toUpperCase()}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px' }}>
+                  <p style={{ marginBottom: '0.5rem' }}>
+                    <strong style={{ color: '#667eea' }}>{groupSortCategory1}:</strong>{' '}
+                    {sortedNouns.length > 0 ? sortedNouns.join(', ') : '—'}
+                  </p>
+                  <p style={{ margin: 0 }}>
+                    <strong style={{ color: '#10b981' }}>{groupSortCategory2}:</strong>{' '}
+                    {sortedVerbs.length > 0 ? sortedVerbs.join(', ') : '—'}
+                  </p>
+                </div>
+
+                {unsortedItems.length === 0 && (
+                  <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold' }}>
+                    ✅ All sorted!
+                  </p>
+                )}
+
+                <button
+                  onClick={() => toggleView('groupsort')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%',
+                    marginTop: '1rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 11. Unjumble */}
           <div className="activity-demo-card">
-            <h3>🔀 {text.unjumble}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Click words to move them to the end:</p>
-              <div className="unjumble-words" style={{
-                display: 'flex',
-                gap: '0.5rem',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                marginBottom: '1rem'
-              }}>
-                {unjumbledWords.map((word, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleWordClick(idx)}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      background: '#667eea',
-                      color: 'white',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      border: 'none',
-                      fontSize: '1rem',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {word}
-                  </button>
-                ))}
-              </div>
-              <div style={{
-                padding: '1rem',
-                background: '#f0f0f0',
-                borderRadius: '8px',
-                textAlign: 'center',
-                fontSize: '1.1rem'
-              }}>
-                <strong>Current:</strong> {unjumbledWords.join(' ')}
-              </div>
-              {unjumbledWords.join(' ') === unjumbleCorrectSentence && (
-                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold' }}>
-                  ✅ {text.correct}
-                </p>
-              )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🔀 {text.unjumble}</h3>
+              <button
+                onClick={() => toggleView('unjumble')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('unjumble') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('unjumble') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('unjumble') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Correct Sentence:
+                  </label>
+                  <input
+                    type="text"
+                    value={unjumbleCorrectSentence}
+                    onChange={(e) => {
+                      setUnjumbleCorrectSentence(e.target.value);
+                      // Auto-scramble the words
+                      const words = e.target.value.split(' ').filter(w => w.trim());
+                      const scrambled = [...words].sort(() => Math.random() - 0.5);
+                      setUnjumbledWords(scrambled);
+                    }}
+                    placeholder="Enter a sentence"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                  <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem', fontStyle: 'italic' }}>
+                    Words will be automatically scrambled for students
+                  </p>
+                </div>
+
+                <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px', marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Preview - Scrambled words:
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {unjumbledWords.map((word, idx) => (
+                      <span
+                        key={idx}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          background: '#667eea',
+                          color: 'white',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        {word}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleView('unjumble')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Click words to move them to the end:</p>
+                <div className="unjumble-words" style={{
+                  display: 'flex',
+                  gap: '0.5rem',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  marginBottom: '1rem'
+                }}>
+                  {unjumbledWords.map((word, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleWordClick(idx)}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#667eea',
+                        color: 'white',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        fontSize: '1rem',
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {word}
+                    </button>
+                  ))}
+                </div>
+                <div style={{
+                  padding: '1rem',
+                  background: '#f0f0f0',
+                  borderRadius: '8px',
+                  textAlign: 'center',
+                  fontSize: '1.1rem',
+                  marginBottom: '1rem'
+                }}>
+                  <strong>Current:</strong> {unjumbledWords.join(' ')}
+                </div>
+                {unjumbledWords.join(' ') === unjumbleCorrectSentence && (
+                  <p style={{ textAlign: 'center', marginBottom: '1rem', color: '#10b981', fontWeight: 'bold' }}>
+                    ✅ {text.correct}
+                  </p>
+                )}
+
+                <button
+                  onClick={() => toggleView('unjumble')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 12. Find the Match */}
           <div className="activity-demo-card">
-            <h3>🔍 {text.findMatch}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.findMatchInstructions}</p>
-              <div className="find-match-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '0.5rem'
-              }}>
-                {findMatchItems.map((item, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleFindMatchClick(idx)}
-                    disabled={findMatchMatched.includes(idx)}
-                    style={{
-                      padding: '1rem',
-                      fontSize: '2rem',
-                      border: '2px solid',
-                      borderColor: findMatchSelected.includes(idx) ? '#f59e0b' : (findMatchMatched.includes(idx) ? '#10b981' : '#667eea'),
-                      borderRadius: '8px',
-                      background: findMatchMatched.includes(idx) ? '#d1fae5' : (findMatchSelected.includes(idx) ? '#fef3c7' : 'white'),
-                      cursor: findMatchMatched.includes(idx) ? 'not-allowed' : 'pointer',
-                      opacity: findMatchMatched.includes(idx) ? 0.3 : 1,
-                      transition: 'all 0.3s ease',
-                      transform: findMatchSelected.includes(idx) ? 'scale(1.1)' : 'scale(1)'
-                    }}
-                  >
-                    {findMatchMatched.includes(idx) ? '✓' : item}
-                  </button>
-                ))}
-              </div>
-              {findMatchMatched.length === 6 && (
-                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                  🎉 All matched!
-                </p>
-              )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🔍 {text.findMatch}</h3>
+              <button
+                onClick={() => toggleView('findmatch')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('findmatch') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('findmatch') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('findmatch') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Add Matching Pairs:
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <input
+                      type="text"
+                      value={newFindMatchItem}
+                      onChange={(e) => setNewFindMatchItem(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && newFindMatchItem.trim()) {
+                          setFindMatchItems([...findMatchItems, newFindMatchItem.trim(), newFindMatchItem.trim()]);
+                          setNewFindMatchItem('');
+                        }
+                      }}
+                      placeholder="Add item (will create a pair)"
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '2px solid #667eea',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (newFindMatchItem.trim()) {
+                          setFindMatchItems([...findMatchItems, newFindMatchItem.trim(), newFindMatchItem.trim()]);
+                          setNewFindMatchItem('');
+                        }
+                      }}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#667eea',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      + Add Pair
+                    </button>
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: '#666', fontStyle: 'italic' }}>
+                    Each item will be added twice to create a matching pair
+                  </p>
+                </div>
+
+                <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px', marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    Current Pairs ({findMatchItems.length / 2}):
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {Array.from(new Set(findMatchItems)).map((item, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          padding: '0.5rem 0.75rem',
+                          background: 'white',
+                          border: '2px solid #ddd',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        <span style={{ fontSize: '1.5rem' }}>{item}</span>
+                        <span style={{ fontSize: '0.8rem', color: '#666' }}>×2</span>
+                        <button
+                          onClick={() => {
+                            setFindMatchItems(findMatchItems.filter(i => i !== item));
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#ef4444',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            fontSize: '1.1rem',
+                            padding: '0 0.25rem'
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleView('findmatch')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.findMatchInstructions}</p>
+                <div className="find-match-grid" style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '0.5rem',
+                  marginBottom: '1rem'
+                }}>
+                  {findMatchItems.map((item, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleFindMatchClick(idx)}
+                      disabled={findMatchMatched.includes(idx)}
+                      style={{
+                        padding: '1rem',
+                        fontSize: '2rem',
+                        border: '2px solid',
+                        borderColor: findMatchSelected.includes(idx) ? '#f59e0b' : (findMatchMatched.includes(idx) ? '#10b981' : '#667eea'),
+                        borderRadius: '8px',
+                        background: findMatchMatched.includes(idx) ? '#d1fae5' : (findMatchSelected.includes(idx) ? '#fef3c7' : 'white'),
+                        cursor: findMatchMatched.includes(idx) ? 'not-allowed' : 'pointer',
+                        opacity: findMatchMatched.includes(idx) ? 0.3 : 1,
+                        transition: 'all 0.3s ease',
+                        transform: findMatchSelected.includes(idx) ? 'scale(1.1)' : 'scale(1)'
+                      }}
+                    >
+                      {findMatchMatched.includes(idx) ? '✓' : item}
+                    </button>
+                  ))}
+                </div>
+                {findMatchMatched.length === findMatchItems.length && findMatchItems.length > 0 && (
+                  <p style={{ textAlign: 'center', marginBottom: '1rem', color: '#10b981', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                    🎉 All matched!
+                  </p>
+                )}
+
+                <button
+                  onClick={() => toggleView('findmatch')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    width: '100%'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
         </div>
