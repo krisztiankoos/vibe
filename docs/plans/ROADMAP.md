@@ -1,592 +1,719 @@
-# Vibe Lesson Builder - Development Roadmap
-
-## Current Features (v1.0.0) ✅
-- PPP (Presentation-Practice-Production) and TTT (Test-Teach-Test) methodologies
-- 11 exercise types (gap-fill, sorting, matching, free-text, multiple-choice, true-false, sentence-scramble, information-gap, role-play, collocation, lexical-set)
-- Lesson builder interface with multi-step workflow
-- Sample lessons library (8 English + 7 Ukrainian)
-- Saved lessons management with duplicate feature
-- Student lesson view with shareable links
-- JSON export/import for lesson portability
-- Print-friendly lesson format
-- Bilingual support (English/Ukrainian)
-
----
-
-## Phase 1: AI-Powered Content Generation 🤖
-
-### Priority: HIGH | Estimated: 4-6 weeks
-
-**Goal:** Integrate AI to help teachers generate lesson content faster and more creatively.
-
-### 1.1 AI Lesson Generator
-**Problem:** Creating lessons from scratch is time-consuming.
-**Solution:** Generate complete lesson outlines from simple prompts.
-
-**Features:**
-- **Prompt Input:** "Create a B1 lesson about ordering food in a restaurant"
-- **AI generates:**
-  - Lesson title and structure recommendation
-  - Lead-in ideas with warm-up activities
-  - Target language with examples
-  - 3-5 exercises across different types
-  - Learning objectives
-  - Time estimates
-
-**Technical Implementation:**
-```typescript
-interface AILessonPrompt {
-  topic: string;
-  level: string; // CEFR level (A1-C2)
-  lessonLength: number; // minutes
-  focusSkills: ('speaking' | 'listening' | 'reading' | 'writing' | 'grammar' | 'vocabulary')[];
-  methodology?: 'PPP' | 'TTT';
-  additionalNotes?: string;
-}
-```
-
-**UI/UX:**
-- New "✨ AI Generate" button on homepage
-- Modal with prompt form
-- Loading animation while generating
-- Preview generated lesson before accepting
-- Edit any part before saving
-
-### 1.2 Exercise Auto-Generator
-**Problem:** Creating varied exercises for the same content is repetitive.
-**Solution:** Generate multiple exercise variations from target language.
-
-**Features:**
-- **Input:** Target language/vocabulary
-- **Output:** 3-5 exercises of different types
-- **Smart suggestions:** AI recommends best exercise types for content
-- **Difficulty adjustment:** Generate easier/harder versions
-
-**Example:**
-```
-Target: "Present Perfect for experiences (have been, have visited)"
-AI generates:
-1. Gap-fill: "I ___ (visit) Paris three times."
-2. Sentence scramble: "never / I / sushi / eaten / have"
-3. True/False: "You use Present Perfect with specific past times like 'yesterday'"
-4. Information gap: Student A has experiences, Student B asks questions
-```
-
-### 1.3 Smart Content Suggestions
-**Problem:** Teachers need inspiration and examples.
-**Solution:** Context-aware AI suggestions as you type.
-
-**Features:**
-- **Example generator:** Click "Generate Examples" → AI provides 5-10 example sentences
-- **Vocabulary expander:** Input one word → AI suggests collocations, synonyms, lexical sets
-- **Scenario builder:** For role-plays and information gaps → AI creates realistic scenarios
-- **Question generator:** For discussion activities → AI generates thought-provoking questions
-
-### 1.4 Grammar Explanation Assistant
-**Problem:** Writing clear grammar explanations is difficult.
-**Solution:** AI generates student-friendly explanations.
-
-**Features:**
-- Input: Grammar topic
-- Output:
-  - Clear explanation at appropriate level
-  - Form (structure)
-  - Use (when/why we use it)
-  - Common mistakes to avoid
-  - Visual timeline/diagram suggestions
-
----
-
-## Phase 2: Enhanced Teacher Workflow 👩‍🏫
-
-### Priority: HIGH | Estimated: 3-4 weeks
-
-### 2.1 Lesson Templates Library
-**Features:**
-- Pre-built templates for common lesson types
-- Templates organized by:
-  - CEFR level (A1-C2)
-  - Topic (travel, business, academic, etc.)
-  - Skill focus
-  - Lesson type (grammar, vocabulary, skills-based)
-- One-click duplication with customization
-- Community-shared templates (opt-in)
-
-### 2.2 Lesson Customization Tools
-**Features:**
-- **Bulk edit:** Change all exercise instructions at once
-- **Reorder exercises:** Drag-and-drop interface
-- **Clone exercises:** Duplicate and modify
-- **Exercise bank:** Save favorite exercises for reuse
-- **Quick actions:**
-  - "Make this harder/easier"
-  - "Add 2 more similar exercises"
-  - "Convert to different exercise type"
-
-### 2.3 Lesson Analytics & Insights
-**Features:**
-- **Time calculator:** Automatic lesson duration estimation
-- **Balance checker:** Visualize speaking/writing/reading/listening ratio
-- **Difficulty meter:** Estimate cognitive load
-- **Objectives checker:** Ensure exercises match objectives
-- **Warnings:** "No free practice activities", "Too many fill-in exercises"
-
-### 2.4 Collaborative Features
-**Features:**
-- **Share with colleagues:** Generate edit links (not just view links)
-- **Version history:** Track changes, restore previous versions
-- **Comments/notes:** Add feedback on specific exercises
-- **Co-teaching mode:** Multiple teachers edit same lesson
-- **Department library:** Shared lesson repository for schools
-
----
-
-## Phase 3: Student Experience Enhancement 📚
-
-### Priority: MEDIUM | Estimated: 4-5 weeks
-
-### 3.1 Interactive Student View
-**Current:** Static view only
-**Planned:**
-- **Fillable exercises:** Students can type answers directly
-- **Auto-check:** Instant feedback for objective exercises
-- **Save progress:** Students can pause and resume
-- **Self-assessment:** Students rate their understanding
-- **Digital submission:** Teachers receive completed work
-
-### 3.2 Student Progress Tracking
-**Features:**
-- **Performance data:** Which exercises completed, scores, time spent
-- **Class overview:** Teacher dashboard showing class progress
-- **Individual reports:** Export per-student results
-- **Insights:** "80% of students struggled with exercise 3"
-
-### 3.3 Adaptive Learning Paths
-**Features:**
-- **Differentiation:** Generate 3 versions (below level, at level, above level)
-- **Smart hints:** AI provides scaffolded support
-- **Extension tasks:** Automatic bonus exercises for fast finishers
-- **Remedial content:** Additional practice for struggling students
-
-### 3.4 Gamification Elements
-**Features:**
-- **Progress badges:** Complete lessons, streak rewards
-- **Leaderboards:** Optional class rankings
-- **Challenges:** Weekly vocabulary challenges
-- **Achievements:** "Grammar Master", "Conversation Champion"
-
----
-
-## Phase 4: AI Prompt Engineering Integration 🎯
-
-### Priority: HIGH | Estimated: 5-6 weeks
-
-**This is your requested feature!**
-
-### 4.1 Prompt Template Library
-**Goal:** Help teachers who don't know prompt engineering get great results.
-
-**Features:**
-- **Pre-built prompts for common tasks:**
-  ```
-  📝 Lesson Creation Prompts:
-  - "Generate a communicative lesson about [topic] for [level] students"
-  - "Create a flipped classroom lesson on [grammar point]"
-  - "Design a task-based lesson using real-world [context]"
-
-  ✍️ Exercise Creation Prompts:
-  - "Create 10 gap-fill sentences using [vocabulary] in context"
-  - "Generate a role-play scenario for practicing [function]"
-  - "Design an information gap activity about [topic]"
-
-  💡 Content Enhancement Prompts:
-  - "Provide 5 authentic examples of [grammar] from [context]"
-  - "Suggest common collocations with [word]"
-  - "Create discussion questions for B2 learners about [theme]"
-
-  🎨 Creative Prompts:
-  - "Design a story-based lesson introducing [vocabulary set]"
-  - "Create a project-based learning unit on [topic]"
-  - "Generate cross-curricular content connecting English with [subject]"
-  ```
-
-### 4.2 Prompt Builder Wizard
-**Problem:** Teachers aren't familiar with effective prompting.
-**Solution:** Guided wizard that builds optimal prompts.
-
-**Interface:**
-```
-Step 1: What do you want to create?
-[ ] Complete Lesson
-[ ] Exercise Only
-[ ] Example Sentences
-[ ] Explanation
-[ ] Assessment
-
-Step 2: Specify details
-Level: [Dropdown: A1-C2]
-Topic: [Text field]
-Focus: [Grammar / Vocabulary / Skills]
-Length: [15/30/45/60 minutes]
-
-Step 3: Teaching Context
-[ ] Online class
-[ ] In-person class
-[ ] Homework
-[ ] Self-study
-Student age: [Children / Teens / Adults]
-
-Step 4: Special Requirements
-[ ] Include visuals
-[ ] Real-world tasks
-[ ] Exam preparation (IELTS/TOEFL/Cambridge)
-[ ] Business English
-[ ] Academic English
-
-→ [Generate with AI]
-```
-
-### 4.3 Custom Prompt Playground
-**For advanced users:**
-
-**Features:**
-- **System prompt editor:** Customize AI behavior
-- **Variable insertion:** {{level}}, {{topic}}, {{skill}}
-- **Prompt chaining:** Output of one becomes input of next
-- **A/B testing:** Compare outputs from different prompts
-- **Prompt library:** Save and organize your best prompts
-- **Share prompts:** Community-shared prompt marketplace
-
-**Example Custom Prompt:**
-```
-You are an expert TESOL teacher trainer specializing in {{level}} learners.
-
-Create a {{lesson_type}} lesson about {{topic}} that:
-1. Uses authentic materials from {{context}}
-2. Includes {{exercise_count}} varied practice activities
-3. Promotes {{skills}} skills
-4. Follows {{methodology}} methodology
-5. Incorporates formative assessment
-
-Ensure all activities are:
-- Age-appropriate for {{age_group}}
-- Culturally sensitive
-- Clearly scaffolded
-- Time-efficient ({{duration}} minutes total)
-
-Output format: [JSON structure matching app schema]
-```
-
-### 4.4 AI Customization Settings
-**Features:**
-- **Tone control:** Formal/casual/playful
-- **Creativity level:** Conservative (safe) ↔ Creative (innovative)
-- **Regional English:** British/American/Australian
-- **Content filters:** Avoid topics (politics, religion, etc.)
-- **Difficulty calibration:** Strict CEFR vs. flexible interpretation
-- **Output preferences:** Brief vs. detailed explanations
-
-### 4.5 Prompt Refinement Assistant
-**Problem:** First AI output isn't always perfect.
-**Solution:** Iterative refinement through conversation.
-
-**Features:**
-- **Chat interface:** "Make this more communicative", "Add more context", "Simplify vocabulary"
-- **Quick refinements:**
-  - 🎚️ Adjust difficulty (slider)
-  - 📏 Make longer/shorter
-  - 🎯 More/less formal
-  - 🌍 Change cultural context
-  - 🔄 Regenerate keeping structure
-- **Explanation mode:** Ask "Why did you suggest this?" → AI explains pedagogical reasoning
-
----
-
-## Phase 5: Advanced Features 🚀
-
-### Priority: MEDIUM | Estimated: 6-8 weeks
-
-### 5.1 Multi-Language Support
-**Current:** English and Ukrainian
-**Planned:**
-- Spanish, French, German, Italian, Portuguese, Polish, Japanese, Chinese
-- AI-powered translation of interface
-- Localized sample lessons
-- Regional teaching methodology variants
-
-### 5.2 Mobile App
-**Features:**
-- Native iOS/Android apps
-- Offline mode for lesson delivery
-- Voice recording for speaking exercises
-- Camera integration for realia-based lessons
-- Push notifications for assignment reminders
-
-### 5.3 LMS Integration
-**Features:**
-- Google Classroom sync
-- Moodle plugin
-- Canvas integration
-- Microsoft Teams for Education
-- Export to SCORM format
-
-### 5.4 Advanced Assessment Tools
-**Features:**
-- **Rubric builder:** Create custom grading rubrics
-- **Peer assessment:** Students evaluate each other
-- **Self-reflection prompts:** Metacognitive questions
-- **Portfolio compilation:** Collect student work over time
-- **Standards alignment:** Map to CEFR, ACTFL, state standards
-
-### 5.5 Media Integration
-**Features:**
-- **YouTube embeds:** Clip selection for listening activities
-- **Image library:** Royalty-free images for visual prompts
-- **Audio recorder:** Record pronunciation models
-- **Interactive presentations:** Embed slide decks
-- **Whiteboard mode:** Draw/annotate during lessons
-
----
-
-## Phase 6: Platform & Infrastructure 🏗️
-
-### Priority: LOW-MEDIUM | Estimated: 4-6 weeks
-
-### 6.1 Backend API Development
-**Current:** Fully client-side (localStorage)
-**Planned:**
-- User authentication (Google, Microsoft, Email)
-- Cloud storage for lessons
-- Real-time collaboration
-- Usage analytics
-- API for third-party integrations
-
-### 6.2 Paid Features (Freemium Model)
-**Free Tier:**
-- 10 saved lessons
-- Basic AI generation (5/month)
-- Standard exercise types
-- Personal use only
-
-**Pro Tier ($9.99/month):**
-- Unlimited lessons
-- Unlimited AI generation
-- Advanced exercise types
-- Collaborative features
-- Priority support
-- Custom branding
-
-**School License ($99/year per teacher):**
-- All Pro features
-- Department-wide sharing
-- Admin dashboard
-- Bulk operations
-- Training sessions
-- Custom integrations
-
-### 6.3 Performance Optimizations
-- **Lazy loading:** Load exercise types on demand
-- **Code splitting:** Reduce initial bundle size
-- **PWA features:** Installable, offline-capable
-- **Caching strategies:** Faster load times
-- **Image optimization:** WebP format, lazy loading
-
----
-
-## Technical Stack Recommendations
-
-### AI Integration Options
-
-#### Option 1: OpenAI API (Recommended)
-**Pros:**
-- Best quality output
-- Excellent for educational content
-- Function calling for structured data
-- GPT-4 reasoning capabilities
-
-**Cons:**
-- Cost per request ($0.01-0.03 per generation)
-- Requires API key management
-- Rate limits
-
-**Implementation:**
-```typescript
-// Server-side API route (Next.js/Express)
-async function generateLesson(prompt: AILessonPrompt) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      { role: "system", content: "You are an expert TESOL instructor..." },
-      { role: "user", content: JSON.stringify(prompt) }
-    ],
-    temperature: 0.7,
-    response_format: { type: "json_object" }
-  });
-  return JSON.parse(response.choices[0].message.content);
-}
-```
-
-#### Option 2: Anthropic Claude API
-**Pros:**
-- Longer context windows
-- Strong reasoning
-- Good at following instructions
-- Competitive pricing
-
-**Cons:**
-- Similar cost structure
-- Less popular (fewer examples)
-
-#### Option 3: Local Models (Llama 3, Mistral)
-**Pros:**
-- No API costs
-- Privacy (data stays local)
-- No rate limits
-
-**Cons:**
-- Requires server infrastructure
-- Lower quality than GPT-4
-- More complex setup
-
-#### Recommended Approach:
-**Hybrid Model:**
-1. **Free tier:** Use Llama 3.1 for basic generation
-2. **Pro tier:** Use GPT-4 for best quality
-3. **Fallback:** If API fails, use templates
-4. **Caching:** Store common generations to reduce costs
-
-### Frontend Enhancements
-
-```bash
-# Add these packages for AI features:
-npm install openai ai  # AI SDK
-npm install @tiptap/react @tiptap/starter-kit  # Rich text editor
-npm install framer-motion  # Animations
-npm install recharts  # Analytics charts
-npm install react-hook-form zod  # Form validation
-```
-
----
-
-## Implementation Priority Matrix
-
-### Sprint 1-2 (Weeks 1-4): Quick Wins
-1. ✨ AI Exercise Generator (1.2)
-2. 📝 Lesson Templates Library (2.1)
-3. 🎯 Basic Prompt Templates (4.1)
-
-### Sprint 3-4 (Weeks 5-8): Core AI Features
-4. 🤖 AI Lesson Generator (1.1)
-5. 💡 Smart Content Suggestions (1.3)
-6. 🧙‍♂️ Prompt Builder Wizard (4.2)
-
-### Sprint 5-6 (Weeks 9-12): Teacher Tools
-7. 📊 Lesson Analytics (2.3)
-8. 🔧 Lesson Customization Tools (2.2)
-9. 🎨 Custom Prompt Playground (4.3)
-
-### Sprint 7-8 (Weeks 13-16): Student Features
-10. 📱 Interactive Student View (3.1)
-11. 📈 Student Progress Tracking (3.2)
-12. ⚙️ AI Customization Settings (4.4)
-
----
-
-## Success Metrics
-
-### User Engagement
-- **Daily Active Users:** Track lesson creations per day
-- **Retention:** % of users returning after 7/30 days
-- **Lesson Creation Rate:** Avg lessons per user per week
-- **AI Usage:** % of lessons using AI assistance
-
-### Quality Metrics
-- **AI Accuracy:** Teacher acceptance rate of AI suggestions
-- **Time Savings:** Avg time to create lesson (with vs without AI)
-- **User Satisfaction:** NPS score, feature ratings
-- **Bug Reports:** Issues per 1000 active users
-
-### Business Metrics (if monetizing)
-- **Conversion Rate:** Free → Pro tier
-- **Churn Rate:** Monthly subscription cancellations
-- **LTV:** Lifetime value per user
-- **CAC:** Customer acquisition cost
-
----
-
-## Next Steps
-
-### Immediate Actions (This Week)
-1. ✅ Create this roadmap document
-2. 🎨 Design mockups for AI features
-3. 🔑 Set up OpenAI API access
-4. 📋 Create issues for Sprint 1 tasks
-5. 🗳️ Survey teachers for feature preferences
-
-### Month 1
-- [ ] Implement basic AI exercise generator
-- [ ] Create 20 lesson templates
-- [ ] Design prompt template library
-- [ ] Set up analytics tracking
-
-### Month 2-3
-- [ ] Full AI lesson generator
-- [ ] Prompt builder wizard
-- [ ] Smart suggestions system
-- [ ] User testing with real teachers
-
-### Month 4-6
-- [ ] Advanced prompt features
-- [ ] Student interactive mode
-- [ ] Progress tracking
-- [ ] Performance optimizations
-
----
-
-## Open Questions for Discussion
-
-1. **AI Provider:** OpenAI vs Anthropic vs Local models?
-2. **Pricing Model:** Free forever vs Freemium vs Paid-only?
-3. **Data Privacy:** How to handle teacher-created content?
-4. **Community Features:** Public lesson sharing marketplace?
-5. **Platform Focus:** Web-first or mobile-first?
-6. **Target Market:** Primary/secondary schools, universities, language schools, private tutors?
-7. **Internationalization:** Which languages to support first?
-8. **Accessibility:** WCAG compliance level?
-
----
-
-## Resources & References
-
-### AI in Education
-- [OpenAI for Education](https://platform.openai.com/docs/guides/education)
-- [Teaching with AI - Best Practices](https://www.technologyreview.com/ai-education)
-- [Prompt Engineering Guide](https://www.promptingguide.ai/)
-
-### TESOL Methodologies
-- PPP vs TTT comparison
-- Task-Based Language Teaching (TBLT)
-- Content and Language Integrated Learning (CLIL)
-
-### Similar Tools (Competition Analysis)
-- **Lessonwriter.io** - Good templates, no AI
-- **ESL Library** - Huge content library, subscription
-- **Teacherbot** - AI tools, limited lesson structure
-- **BusyTeacher** - Free worksheets, not interactive
-
-### Differentiators
-✅ **Vibe's Unique Value:**
-1. AI-powered with customizable prompts
-2. Full lesson structure (not just exercises)
-3. Both teacher AND student view
-4. Bilingual (expanding to multi-language)
-5. Evidence-based pedagogy (PPP/TTT)
-6. Open-source friendly
-7. Works offline (PWA)
-
----
+# Vibe Lesson Builder - Teacher-Driven Roadmap (2025)
 
 **Last Updated:** 2025-11-14
-**Version:** 1.0 (Initial Roadmap)
-**Maintained By:** Development Team
-**Status:** 🔥 Active Planning
+**Status:** 🎯 Based on Direct Teacher Feedback
+
+---
+
+## 🎯 Core Mission
+
+**"Create interactive lessons in minutes, not hours"**
+
+Inspired by Wordwall's simplicity + TalkEn.Cloud's completeness, without the complexity.
+
+---
+
+## ❌ What Teachers Said is WRONG
+
+1. **"Too many steps"** - Current: 6-step workflow is too linear
+2. **"Too many fields to fill in"** - Overwhelming number of inputs
+3. **"Can't go back and fix things"** - Navigation is confusing
+4. **"Want to see how it works"** - Need test/preview mode
+5. **"Need pictures everywhere"** - Text-only is boring
+6. **"Takes too long"** - Creating one lesson = 30+ minutes
+
+---
+
+## ✅ What Teachers Want (Priority Order)
+
+### **TOP PRIORITY: Make it work like Wordwall**
+- Select template → Enter content → Done in 1 minute
+- Drag-and-drop everything
+- Images everywhere
+- One-click switch between activity types
+- Spinning wheel for random selection
+- Sentence tokenizer (type sentence → auto-create gaps)
+
+### **ESSENTIAL:**
+1. Interactive Student View (test what they built)
+2. Lesson Templates Library (80% time savings)
+3. All 4 structures for Ukrainian (PPP, TTT, GPPC, CEFR)
+4. Example lessons for ALL 4 structures
+
+---
+
+## 📋 Release Plan
+
+---
+
+## **v1.1.1 - HOTFIX** ✅ COMPLETE
+**Fix navigation pain points IMMEDIATELY**
+
+### Issues Fixed:
+1. ✅ Add "Edit" buttons to every section in preview
+2. ✅ Allow jumping to any step from anywhere
+3. ✅ Add "Back" and "Skip" buttons to all steps
+4. ✅ Reduce required fields (make 80% optional)
+5. ✅ Auto-save progress every 30 seconds
+6. ✅ Add progress indicator that's clickable (jump to any step)
+
+---
+
+## **v1.1.2 - Automated UI/UX Audit** (NOW - 2-3 days)
+**Establish baseline, identify quick wins**
+
+### Goal:
+Run automated audits to identify current UX issues before building new features.
+
+### Automated Tools to Use:
+
+#### 1. **Lighthouse Audit** (Chrome DevTools)
+```bash
+# Run in production build
+npm run build
+npm run preview
+
+# Open Chrome DevTools → Lighthouse
+# Run audit for:
+- Performance
+- Accessibility
+- Best Practices
+- SEO
+```
+
+**Target Scores:**
+- Performance: >90
+- Accessibility: >90
+- Best Practices: >90
+- SEO: >80
+
+#### 2. **axe DevTools** (Accessibility)
+- Install browser extension
+- Check for WCAG 2.1 AA compliance
+- Identify color contrast issues
+- Verify ARIA labels
+- Check keyboard navigation
+
+#### 3. **Responsive Design Testing**
+Test on multiple viewports:
+- Mobile: 375px, 414px
+- Tablet: 768px, 1024px
+- Desktop: 1280px, 1920px
+
+Check for:
+- Touch target sizes (min 44x44px)
+- Readable font sizes
+- Proper spacing
+- No horizontal scroll
+
+#### 4. **Bundle Size Analysis**
+```bash
+npm run build -- --mode production
+
+# Analyze bundle
+npx vite-bundle-visualizer
+```
+
+**Target:**
+- Total bundle < 500KB
+- Individual chunks < 200KB
+- No unused dependencies
+
+#### 5. **Performance Profiling**
+- React DevTools Profiler
+- Identify slow components
+- Check for unnecessary re-renders
+- Measure interaction latency
+
+### Deliverables:
+- [ ] Lighthouse report (PDF)
+- [ ] Accessibility audit results
+- [ ] Responsive design screenshots
+- [ ] Bundle size analysis
+- [ ] Performance profiling data
+- [ ] **Priority list of issues to fix**
+- [ ] Document in `docs/review/UIUX_AUDIT_V1.md`
+
+**Estimated Time:** 2-3 days
+**Output:** Baseline metrics + priority fixes for v1.2.2
+
+---
+
+## **v1.2.0 - Wordwall-Style Builder** (Week 2-3 - 2 weeks)
+**"Create exercises in 1 minute like Wordwall"**
+
+### Core Features:
+
+#### 1. Exercise Template Selector
+**Before:** Fill out forms
+**After:** Visual template gallery (like Wordwall)
+
+```
+┌─────────────────────────────────────────────┐
+│  Choose Exercise Type:                      │
+│                                             │
+│  [📝 Gap Fill]  [🔤 Match]  [✓ Quiz]       │
+│  [🎡 Spinner]   [🎲 Random] [🧩 Puzzle]     │
+│  [🗣️ Role-Play] [📊 Sort]  [✍️ Free Text]  │
+└─────────────────────────────────────────────┘
+```
+
+Click template → Quick content entry → Done!
+
+#### 2. Smart Content Entry
+**Gap Fill Example:**
+```
+Type complete sentence:
+"I am going to the supermarket tomorrow"
+
+Click "Auto-create gaps" →
+
+Automatically becomes:
+"I ___ going to the ___ tomorrow"
+
+OR manually select words to blank out:
+"I am going to the [supermarket] tomorrow"
+```
+
+#### 3. Image Upload Everywhere
+- Add image to any exercise
+- Drag-and-drop upload
+- Image library (search free images - Unsplash API)
+- Resize/crop tool
+
+#### 4. Spinning Wheel Activity
+New exercise type inspired by Wordwall
+
+#### 5. Drag-and-Drop Exercise Builder
+For matching, sorting, ordering
+
+#### 6. One-Click Activity Conversion
+Convert between exercise types automatically
+
+**Estimated Time:** 2 weeks
+
+---
+
+## **v1.2.1 - Interactive Student View** (Week 4-5 - 1.5 weeks)
+**"Students can DO the exercises, teachers can TEST their lessons"**
+
+### Core Features:
+
+#### 1. Test Mode for Teachers
+```
+[👁️ Preview Lesson] → [🎮 Test as Student]
+```
+
+#### 2. Interactive Exercise Types
+- Gap Fill (type answers, instant feedback)
+- Multiple Choice (click to select)
+- Matching (drag & drop)
+- Sorting (drag into categories)
+- Sentence Scramble (reorder words)
+- Spinning Wheel (click to spin)
+
+#### 3. Progress Tracking
+```
+Exercise 1/10: ✓ Completed (90%)
+Exercise 2/10: ✓ Completed (100%)
+Exercise 3/10: ⏳ In Progress
+Exercise 4/10: ⬜ Not Started
+
+Overall: 2/10 complete (20%)
+```
+
+#### 4. Auto-Grading
+- Objective exercises: Instant feedback
+- Subjective exercises: Teacher review
+- Score display with visual feedback
+
+**Estimated Time:** 1.5 weeks
+
+---
+
+## **v1.2.2 - UI/UX Review & Fixes** (Week 6 - 1 week)
+**Critical checkpoint after major UI changes**
+
+### Goal:
+Review Wordwall-style builder and interactive student view before proceeding.
+
+### Review Process:
+
+#### 1. **Automated Re-audit**
+- Run Lighthouse again
+- Compare to v1.1.2 baseline
+- Identify regressions
+
+#### 2. **Manual Testing**
+- Test with 2-3 real teachers
+- Observe them using new features
+- Collect feedback forms
+- Record pain points
+
+#### 3. **Usability Issues**
+Check for:
+- Confusing navigation
+- Unclear instructions
+- Missing feedback
+- Slow interactions
+- Broken responsive design
+- Accessibility issues
+
+#### 4. **Cross-Language Testing**
+- Test all new features in English
+- Test all new features in Ukrainian
+- Verify translations are correct
+- Check text overflow issues
+
+#### 5. **Quick Fixes**
+Priority fixes (must do):
+- P0: Broken functionality
+- P1: Major UX issues
+- P2: Visual polish
+
+Nice-to-have fixes (defer to v1.6.0):
+- P3: Minor improvements
+- P4: Future enhancements
+
+### Deliverables:
+- [ ] Automated audit report (compare to baseline)
+- [ ] Teacher feedback summary (3+ teachers)
+- [ ] List of P0/P1 issues fixed
+- [ ] List of P2/P3/P4 deferred to v1.6.0
+- [ ] Updated screenshots
+- [ ] Document in `docs/review/UIUX_REVIEW_V1_2_2.md`
+
+**Estimated Time:** 1 week
+**Testing:** 3+ teachers test for 2-3 days, 2 days for fixes
+
+---
+
+## **v1.3.0 - Ukrainian All Structures** (Week 7 - 1 week)
+**"Full support for all 4 Ukrainian teaching methodologies"**
+
+### What's Needed:
+
+Currently Ukrainian only has GPPC and CEFR.
+Teachers want PPP and TTT as well (all 4 options).
+
+#### Changes Required:
+
+1. **Structure Selection** - Show all 4 for Ukrainian:
+```
+Ukrainian Language:
+┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐
+│    PPP     │ │    TTT     │ │   GPPC     │ │   CEFR     │
+│ (Grammar)  │ │ (Discovery)│ │ (Grammar+) │ │  (Tasks)   │
+└────────────┘ └────────────┘ └────────────┘ └────────────┘
+```
+
+2. **Update Types**:
+```typescript
+// Already done - just need to use it!
+type LessonStructure = 'PPP' | 'TTT' | 'GPPC' | 'CEFR';
+```
+
+3. **Update App.tsx** - Allow all 4 structures for Ukrainian
+
+4. **Context-aware labels** - Already implemented in v1.1.0!
+
+5. **Sample Lessons** - Need examples for PPP and TTT in Ukrainian:
+   - 5 PPP Ukrainian sample lessons
+   - 5 TTT Ukrainian sample lessons
+   - Already have: 7 GPPC + 7 CEFR = 14 Ukrainian samples
+   - Total: 24 Ukrainian sample lessons across all 4 structures
+
+**Estimated Time:** 1 week
+**Deliverables:**
+- All 4 structures available for Ukrainian
+- 10 new sample lessons (5 PPP + 5 TTT Ukrainian)
+- Updated structure selection UI
+
+**Why this comes before v1.4.0:** Need all 4 structures enabled BEFORE creating templates for all structures!
+
+---
+
+## **v1.4.0 - Lesson Templates Library** (Week 8-9 - 2 weeks)
+**"80% time savings - start from templates, not scratch"**
+
+### Core Features:
+
+#### 1. Template Browser
+```
+┌─────────────────────────────────────────────┐
+│  📚 Lesson Template Library                 │
+│                                             │
+│  Filter by:                                 │
+│  Language: [English ▼] [Ukrainian ▼]       │
+│  Structure: [PPP] [TTT] [GPPC] [CEFR]      │
+│  Level: [A1] [A2] [B1] [B2] [C1] [C2]      │
+│  Topic: [Grammar] [Vocabulary] [Skills]    │
+│                                             │
+│  ┌──────────────┐ ┌──────────────┐        │
+│  │ PPP: Present │ │ TTT: Phrasal │        │
+│  │ Simple       │ │ Verbs        │        │
+│  │ Level: A2    │ │ Level: B1    │        │
+│  │ [Use This]   │ │ [Use This]   │        │
+│  └──────────────┘ └──────────────┘        │
+└─────────────────────────────────────────────┘
+```
+
+#### 2. Template Types
+
+**English ESL Templates:**
+- **PPP Templates** (20 lessons)
+  - Present Simple - Daily Routines (A2)
+  - Past Simple - Storytelling (A2)
+  - Present Perfect - Experiences (B1)
+  - First Conditional - Possibilities (B1)
+  - Comparative/Superlative (A2)
+  - Modal Verbs - Advice (B1)
+  - Passive Voice (B2)
+  - Reported Speech (B2)
+  - Relative Clauses (B2)
+  - Phrasal Verbs - Relationships (B1)
+  - *...10 more*
+
+- **TTT Templates** (10 lessons)
+  - Travel Vocabulary Discovery (B1)
+  - Business Email Writing (B2)
+  - Debate Skills (C1)
+  - Academic Writing (C1)
+  - *...6 more*
+
+**Ukrainian UFL Templates:**
+- **PPP Templates** (10 lessons) ← NOW POSSIBLE because v1.3.0 enabled it!
+  - Відмінки іменників - Орудний (6 клас)
+  - Дієслова доконаного/недоконаного виду (7 клас)
+  - Прикметник - Ступені порівняння (6 клас)
+  - *...7 more*
+
+- **TTT Templates** (5 lessons) ← NOW POSSIBLE because v1.3.0 enabled it!
+  - Написання есе (9 клас)
+  - Аналіз поезії (10 клас)
+  - *...3 more*
+
+- **GPPC Templates** (10 lessons)
+  - Числівники - Узгодження (7 клас)
+  - М'який знак - Правопис (5 клас)
+  - Дієприкметники (9 клас)
+  - *...7 more*
+
+- **CEFR Templates** (10 lessons)
+  - Комунікативна компетенція - Знайомство (A1)
+  - Розповідь про себе (A2)
+  - Обговорення новин (B1)
+  - *...7 more*
+
+**Total: 65 pre-built templates** (we create these together)
+
+#### 3. One-Click Template Use
+```
+Template: "Present Simple - Daily Routines"
+
+[🎯 Use This Template]
+  ↓
+Opens in lesson builder with:
+✓ All sections pre-filled
+✓ Example exercises included
+✓ Instructions and teacher notes
+✓ Ready to customize or use as-is!
+
+Customization: Change topic, add/remove exercises, adjust level
+Save as: New lesson or save changes to template
+```
+
+#### 4. Template Creation Tool
+**Teachers can save their own lessons as templates**
+
+### Creating the Templates
+
+**How we'll create 65 templates:**
+1. **You** provide the curriculum topics (what teachers teach)
+2. **I (Claude)** generate complete lesson content
+3. **You** review and approve each one
+4. **We iterate** until templates are perfect
+5. **I implement** them in the app
+
+**Estimated time per template:** 15-20 minutes (with my help)
+**Total creation time:** ~20 hours spread over 2 weeks
+
+**Estimated Time:** 2 weeks (1 week creating content with you, 1 week implementing)
+**Deliverables:**
+- 65 complete lesson templates (20 PPP English, 10 TTT English, 35 Ukrainian all structures)
+- Template browser with search/filter
+- One-click template loading
+- Custom template creation tool
+
+---
+
+## **v1.5.0 - Images Everywhere** (Week 10-12 - 2-3 weeks)
+**"Visual learning - pictures in every exercise"**
+
+### Core Features:
+
+#### 1. Image Upload System
+```
+Upload Options:
+1. [📁 Upload from computer]
+2. [🔍 Search free images (Unsplash)]
+3. [🎨 Generate with AI] ← Future (when affordable)
+4. [📚 My Image Library]
+```
+
+#### 2. Image Integration Points
+
+**Lead-In:**
+- Add context images
+- Upload or search
+
+**Presentation:**
+- Example images
+- Diagram/visual aids
+
+**Exercises:**
+- Gap Fill: Context images
+- Matching: Match words to images
+- Multiple Choice: Image-based questions
+- Flashcards: Image on one side
+- Role-play: Scenario images
+- Information Gap: Different images for A/B
+
+#### 3. Image Library Integration
+- Unsplash API (Free tier: 50 requests/hour)
+- Search by keyword
+- Auto-attribution
+
+#### 4. Image Storage
+- Small images (<200KB): Base64 in JSON
+- Large images (>200KB): CDN (Cloudinary free tier)
+
+#### 5. Image Editor (Simple)
+- Crop
+- Resize
+- Rotate
+- Brightness
+
+**Estimated Time:** 2-3 weeks
+**Deliverables:**
+- Image upload to all forms
+- Unsplash integration
+- Image storage solution
+- Simple image editor
+- Image-based exercise types
+
+---
+
+## **v1.6.0 - UI/UX Review & Improvements** (Week 13 - 1 week)
+**Final review before production polish**
+
+### Goal:
+Comprehensive review of ALL features before final v2.0.0 polish.
+
+### Review Process:
+
+#### 1. **Full Automated Audit**
+- Lighthouse (all pages)
+- Accessibility (WCAG 2.1 AA)
+- Performance profiling
+- Bundle size check
+- Responsive design test
+
+#### 2. **Teacher User Testing**
+- 5+ teachers test complete workflow
+- Build lesson from scratch
+- Use templates
+- Add images
+- Test interactive mode
+- Export/print
+
+#### 3. **Student User Testing**
+- 10+ students complete lessons
+- Test all exercise types
+- Check on different devices
+- Measure engagement
+
+#### 4. **Cross-Browser Testing**
+- Chrome
+- Firefox
+- Safari
+- Edge
+- Mobile browsers
+
+#### 5. **Comprehensive Fix List**
+Priority fixes:
+- P0/P1: Must fix before v2.0.0
+- P2: Should fix before v2.0.0
+- P3/P4: Nice to have (post-v2.0.0)
+
+### Deliverables:
+- [ ] Full audit report (all metrics)
+- [ ] Teacher testing summary (5+ teachers)
+- [ ] Student testing summary (10+ students)
+- [ ] Cross-browser compatibility report
+- [ ] **All P0/P1 issues fixed**
+- [ ] P2 issues prioritized for v2.0.0
+- [ ] Document in `docs/review/UIUX_REVIEW_V1_6_0.md`
+
+**Estimated Time:** 1 week
+**Testing:** 3 days user testing, 2 days fixes
+
+---
+
+## **v2.0.0 - Polish & Professional Features** (Week 14-17 - 4 weeks)
+
+### Final touches before launch:
+
+1. **Improved UI/UX**
+   - Animations and transitions
+   - Responsive design (mobile-friendly)
+   - Dark mode
+   - Accessibility (keyboard navigation, screen readers)
+
+2. **Export Improvements**
+   - PDF export with images
+   - Print-friendly format with pictures
+   - Share via link (read-only interactive view)
+
+3. **Teacher Dashboard**
+   - All saved lessons in one place
+   - Quick actions: Edit, Duplicate, Delete, Share
+   - Folders/categories for organization
+   - Search and filter
+
+4. **Performance Optimizations**
+   - Lazy loading
+   - Code splitting
+   - Image optimization
+   - PWA (install as app, works offline)
+
+5. **Help & Onboarding**
+   - Quick start tutorial
+   - Tooltips and help text everywhere
+   - Video tutorials
+   - Sample workflows
+
+**Estimated Time:** 4 weeks
+**Deliverables:** Production-ready app
+
+---
+
+## 📊 Timeline Summary
+
+| Version | Focus | Duration | Total Weeks |
+|---------|-------|----------|-------------|
+| **v1.1.1** | Navigation fixes ✅ | 2-3 days | Week 1 |
+| **v1.1.2** | Automated UI/UX audit | 2-3 days | Week 1 |
+| **v1.2.0** | Wordwall-style builder | 2 weeks | Week 2-3 |
+| **v1.2.1** | Interactive student view | 1.5 weeks | Week 4-5 |
+| **v1.2.2** | UI/UX review & fixes | 1 week | Week 6 |
+| **v1.3.0** | Ukrainian all structures | 1 week | Week 7 |
+| **v1.4.0** | Lesson templates (65) | 2 weeks | Week 8-9 |
+| **v1.5.0** | Images everywhere | 2-3 weeks | Week 10-12 |
+| **v1.6.0** | UI/UX review & improvements | 1 week | Week 13 |
+| **v2.0.0** | Polish & production | 4 weeks | Week 14-17 |
+
+**Total: ~17 weeks (4.5 months) to production**
+
+---
+
+## 🎯 Success Metrics
+
+### Teacher Satisfaction:
+- ⏱️ **Time to create lesson:** From 30+ min → 5 min (with templates)
+- 📝 **Steps to create exercise:** From 10+ fields → 3 clicks
+- 😊 **Ease of use rating:** Target 4.5/5 stars
+- 🔄 **Template usage:** 80%+ of lessons start from templates
+
+### Student Engagement:
+- 🎮 **Interactive completion rate:** >70% students complete exercises
+- 📊 **Average score:** Track performance over time
+- ⏰ **Time on task:** Engaged 15-30 min per lesson
+
+### Platform Health:
+- 🐛 **Bug reports:** <5 per 100 users
+- 🚀 **Load time:** <2 seconds
+- 📱 **Mobile usage:** 40%+ of sessions
+
+### UI/UX Metrics (Tracked across versions):
+- **Lighthouse Performance:** >90
+- **Lighthouse Accessibility:** >90
+- **WCAG 2.1 AA Compliance:** 100%
+- **Bundle Size:** <500KB
+- **Interaction Latency:** <100ms
+
+---
+
+## 💰 Cost Analysis (Free/Low-Cost)
+
+| Service | Free Tier | Our Usage | Cost |
+|---------|-----------|-----------|------|
+| **Unsplash API** | 50 req/hour | Image search | $0 |
+| **Cloudinary** | 25GB storage, 25GB bandwidth | Image CDN | $0 |
+| **GitHub Pages** | Unlimited | Hosting | $0 |
+| **Firebase** | 10k users, 1GB storage | Future backend | $0 |
+| **Lighthouse CI** | Free | Automated audits | $0 |
+| **Your time** | Building with Claude | - | Priceless! |
+
+**Total Monthly Cost: $0** 🎉
+
+---
+
+## 🚫 What We're NOT Doing (And Why)
+
+1. ❌ **AI API Features** - Too expensive for teachers
+2. ❌ **Video Recording** - Complex, large file sizes
+3. ❌ **Live Classes** - Out of scope (use Zoom/Meet)
+4. ❌ **Automated Grading for Essays** - Needs AI (expensive)
+5. ❌ **Mobile Apps (Native)** - PWA is enough for now
+
+---
+
+## 🤝 Next Steps
+
+### Immediate (This Week):
+1. ✅ Review this roadmap together
+2. ✅ Swap v1.3.0 and v1.4.0 (Ukrainian structures before templates)
+3. ✅ Add UI/UX review checkpoints (v1.1.2, v1.2.2, v1.6.0)
+4. ▶️ **Start v1.1.2 - Automated UI/UX Audit**
+
+### Week 1:
+- Complete v1.1.2 automated audit
+- Establish baseline metrics
+- Identify priority issues
+
+### Weeks 2-6:
+- v1.2.0: Wordwall-style builder
+- v1.2.1: Interactive student view
+- v1.2.2: UI/UX review & fixes
+- Test with real teachers
+
+### Weeks 7-12:
+- v1.3.0: Ukrainian all structures
+- v1.4.0: Create 65 lesson templates together
+- v1.5.0: Images everywhere
+
+### Weeks 13-17:
+- v1.6.0: Final UI/UX review
+- v2.0.0: Polish and launch! 🚀
+
+---
+
+## ❓ Questions for You
+
+1. ✅ **Order confirmed** - Ukrainian structures (v1.3.0) before templates (v1.4.0)?
+2. ✅ **UI/UX checkpoints** - After v1.2.1 and before v2.0.0?
+3. **Template Topics** - What are the most common lessons Ukrainian teachers teach?
+4. **Testing** - Do you have teachers who can test each version?
+5. **Wordwall Features** - Which specific Wordwall features are most important?
+   - Spinning wheel? ✅
+   - Sentence tokenizer? ✅
+   - Drag-and-drop? ✅
+   - One-click conversion? ✅
+   - Others?
+
+---
+
+**Ready to start v1.1.2 - Automated UI/UX Audit?** 🚀
+
+This will give us a baseline and identify quick wins before we start building new features.

@@ -1,277 +1,375 @@
-# Session Handoff - 2025-11-14
+# Session Handoff - 2025-11-14 (Roadmap Update)
 
-## Session Summary
-
-This session completed v1.1.1 and v1.1.2 hotfixes addressing critical UX issues and teacher feedback.
+**Session Focus:** Roadmap Consolidation & UI/UX Review Planning
+**Duration:** ~1 hour
+**Status:** ✅ Complete
 
 ---
 
-## ✅ What Was Completed
+## 🎯 What We Accomplished This Session
 
-### v1.1.1 Hotfix (Deployed Earlier)
-- ✅ Clickable progress bar with visitedSteps tracking
-- ✅ Auto-save every 30 seconds to localStorage
-- ✅ Back/Skip buttons on all forms (later removed in v1.1.2)
-- ✅ Edit buttons in preview mode for all sections
-- ✅ New exercise type: Ordering/Sequencing
-- ✅ Made 80% of fields optional
+### 1. Cleaned Up Planning Files
+**Problem:** Too many roadmap files causing confusion
+- Had: `ROADMAP.md` (old/unwanted AI focus), `ROADMAP_V2_TEACHER_DRIVEN.md`, `DEVELOPMENT_PLAN.md` (too technical)
+- **Solution:** Consolidated into single `docs/plans/ROADMAP.md`
 
-**Files Modified**: src/App.tsx, src/types.ts, src/translations.ts, src/components/ExerciseBuilder.tsx, src/components/LessonPreview.tsx, src/components/StudentExercise.tsx, src/components/LeadInForm.tsx, src/components/PresentationForm.tsx
+**Changes:**
+- ✅ Deleted old `ROADMAP.md` (AI-focused, not aligned with goals)
+- ✅ Deleted `DEVELOPMENT_PLAN.md` (too technical/outdated)
+- ✅ Renamed `ROADMAP_V2_TEACHER_DRIVEN.md` → `ROADMAP.md`
+- ✅ Kept `TESTING_PLAN_V1.md` (separate purpose)
 
-### v1.1.2 Hotfix (Just Deployed)
+**Result:** Clean file structure with single source of truth for roadmap.
 
-#### Critical UX Fixes
-1. **Navigation Simplification**
-   - Removed redundant Back/Skip buttons from all forms
-   - Removed footer Previous button
-   - Kept: Clickable progress bar + Footer Next button
-   - Result: Single clean navigation system
+### 2. Fixed Version Ordering
+**Issue:** v1.3.0 (Templates) came before v1.4.0 (Ukrainian structures)
+**Problem:** Can't create Ukrainian PPP/TTT templates before enabling those structures!
 
-2. **Visual Indicators**
-   - Added "(Optional)" labels to all optional fields in LeadInForm
-   - Added "(Optional)" labels to all optional fields in PresentationForm
-   - Added "required" class to lesson title field
-   - Teachers can now clearly see what's required vs optional
+**Solution - Swapped Order:**
+- v1.3.0 → **Ukrainian All Structures** (enable PPP/TTT for Ukrainian) - Week 7
+- v1.4.0 → **Lesson Templates Library** (create 65 templates including Ukrainian PPP/TTT) - Week 8-9
 
-3. **Corrected Methodology Descriptions**
-   - Updated LanguageSelector.tsx info banner (all 4 methodologies)
-   - Updated translations.ts homeSubtitle (EN & UK)
-   - Updated translations.ts appSubtitle (EN & UK)
-   - Before: Only mentioned PPP & TTT (EN) or ГППК & CEFR (UK)
-   - After: All pages mention "PPP, TTT, GPPC & CEFR"
+**Why:** Logical dependency - need all 4 Ukrainian structures enabled BEFORE creating templates for them.
 
-#### Moderate UX Improvements
-4. **Manual Save Button**
-   - Added green "💾 Save Progress" button in header (src/App.tsx:260-271)
-   - Disabled until lesson has title
-   - Shows confirmation alert
-   - Complements auto-save for teacher confidence
+### 3. Added UI/UX Review Checkpoints
+**User Request:** Automated + manual UI/UX reviews throughout development
 
-5. **Exercise Counters**
-   - Added live counter to Controlled Practice header (src/App.tsx:467-469)
-   - Added live counter to Free Practice header (src/App.tsx:492-494)
-   - Format: "(3 exercises)" in gray text
-   - Updates automatically as exercises are added/removed
+**Added 3 Strategic Review Points:**
 
-6. **Continue Button**
-   - Added prominent "Continue →" button on structure step (src/App.tsx:443-453)
-   - Only appears after lesson title is entered
-   - Large, centered, primary styling
-   - Clear call-to-action to proceed
+#### v1.1.2 - Automated UI/UX Audit (START NOW - 2-3 days)
+- **Goal:** Establish baseline metrics before building new features
+- **Tools:** Lighthouse, axe DevTools, bundle analyzer, React Profiler, responsive testing
+- **Target Scores:** Performance >90, Accessibility >90, Bundle <500KB
+- **Output:** Baseline metrics, priority issues list
+- **Document:** `docs/review/UIUX_AUDIT_V1.md`
 
-**Files Modified**: src/App.tsx, src/components/LeadInForm.tsx, src/components/PresentationForm.tsx, src/components/LanguageSelector.tsx, src/translations.ts, docs/ (added planning documentation)
+#### v1.2.2 - UI/UX Review & Fixes (Week 6 - 1 week)
+- **Goal:** Review after Wordwall builder + interactive student view (major UI changes)
+- **Process:** Automated re-audit + test with 2-3 real teachers
+- **Output:** Fix P0/P1 issues, defer P2/P3 to v1.6.0
+- **Document:** `docs/review/UIUX_REVIEW_V1_2_2.md`
+
+#### v1.6.0 - UI/UX Review & Improvements (Week 13 - 1 week)
+- **Goal:** Comprehensive review of ALL features before v2.0.0 polish
+- **Process:** Full audit + 5+ teachers + 10+ students + cross-browser testing
+- **Output:** All P0/P1 fixed, P2 prioritized for v2.0.0
+- **Document:** `docs/review/UIUX_REVIEW_V1_6_0.md`
+
+---
+
+## 📋 Updated Roadmap (Final Version)
+
+```
+✅ v1.1.1 - Navigation fixes (COMPLETE)
+▶️ v1.1.2 - Automated UI/UX Audit (START NOW - 2-3 days)
+   v1.2.0 - Wordwall-style builder (2 weeks)
+   v1.2.1 - Interactive student view (1.5 weeks)
+   v1.2.2 - UI/UX Review & Fixes (1 week) ← NEW CHECKPOINT
+   v1.3.0 - Ukrainian all structures (1 week) ← MOVED EARLIER
+   v1.4.0 - Lesson templates (2 weeks) ← MOVED LATER
+   v1.5.0 - Images everywhere (2-3 weeks)
+   v1.6.0 - UI/UX Review & Improvements (1 week) ← NEW CHECKPOINT
+   v2.0.0 - Polish & production (4 weeks)
+```
+
+**Timeline:** ~17 weeks (4.5 months) to production
+**Added Time:** +3 weeks for UI/UX reviews (worth it for quality)
+
+---
+
+## 🎯 Next Immediate Actions
+
+### THIS WEEK - v1.1.2: Automated UI/UX Audit (2-3 days)
+
+#### Day 1: Performance & Accessibility
+```bash
+# 1. Build production version
+npm run build
+npm run preview
+
+# 2. Run Lighthouse audit
+# Open Chrome DevTools → Lighthouse tab
+# Run for: Performance, Accessibility, Best Practices, SEO
+# Target scores: All >90 (SEO >80)
+# Save report as PDF: docs/review/lighthouse-baseline.pdf
+
+# 3. Install and run axe DevTools
+# Chrome extension: https://chrome.google.com/webstore
+# Run accessibility scan on all pages
+# Check for WCAG 2.1 AA compliance
+# Export results: docs/review/axe-baseline.json
+```
+
+#### Day 2: Bundle & Responsive
+```bash
+# 4. Analyze bundle size
+npm run build -- --mode production
+npx vite-bundle-visualizer
+
+# Target: <500KB total, <200KB per chunk
+# Identify large dependencies
+# Screenshot: docs/review/bundle-analysis.png
+
+# 5. Test responsive design
+# Test viewports: 375px, 414px, 768px, 1024px, 1280px, 1920px
+# Check:
+#   - Touch targets ≥44x44px
+#   - Font sizes ≥16px
+#   - No horizontal scroll
+#   - Proper spacing
+# Screenshots: docs/review/responsive-*.png
+```
+
+#### Day 3: Profiling & Documentation
+```bash
+# 6. React profiling (Chrome React DevTools)
+# Record interactions:
+#   - Create new lesson
+#   - Add 5 exercises
+#   - Switch languages
+#   - Preview lesson
+#   - Student view
+# Identify: Slow components, unnecessary re-renders
+# Screenshot slow interactions
+
+# 7. Document findings
+# Create: docs/review/UIUX_AUDIT_V1.md
+# Sections:
+#   - Lighthouse scores (with screenshots)
+#   - Accessibility issues (categorized by severity)
+#   - Bundle analysis (with recommendations)
+#   - Responsive design issues
+#   - Performance bottlenecks
+#   - **Priority list** (P0/P1/P2/P3)
+#   - Recommendations for v1.2.2 and v1.6.0
+```
+
+**Success Criteria:**
+- [ ] Lighthouse report saved (PDF)
+- [ ] axe accessibility results documented
+- [ ] Bundle size analyzed and documented
+- [ ] Responsive screenshots captured (6 viewports)
+- [ ] React profiling completed
+- [ ] Priority list created (P0-P3)
+- [ ] Full documentation in `docs/review/UIUX_AUDIT_V1.md`
+
+---
+
+## 💡 Key Decisions Made
+
+### 1. Order: Ukrainian Structures Before Templates ✅
+**Decision:** Swap v1.3.0 and v1.4.0
+**Rationale:** Can't create templates for structures that don't exist yet
+**Impact:** Logical dependency resolved, can create all 65 templates (including Ukrainian PPP/TTT) in v1.4.0
+
+### 2. Three UI/UX Review Checkpoints ✅
+**Decision:** Add v1.1.2, v1.2.2, v1.6.0
+**Rationale:** Catch issues early, prevent costly rework, ensure quality
+**Impact:** +3 weeks total timeline (17 weeks instead of 14), but significantly higher quality
+
+### 3. Automated + Manual Testing Strategy ✅
+**Decision:** Combine automated tools with real teacher/student testing
+**Rationale:** Automated finds technical issues (performance, a11y), manual finds UX issues (confusion, workflows)
+**Impact:** More comprehensive quality assurance, better final product
+
+### 4. Single Consolidated Roadmap ✅
+**Decision:** One ROADMAP.md file instead of multiple planning docs
+**Rationale:** Reduce confusion, single source of truth, easier to maintain
+**Impact:** Clearer communication, easier progress tracking
+
+---
+
+## 📂 File Changes This Session
+
+### Created/Modified:
+- ✅ `docs/plans/ROADMAP.md` - Consolidated and updated with UI/UX reviews
+- ✅ `docs/SESSION_HANDOFF.md` - This file (updated)
+
+### Deleted:
+- ❌ `docs/plans/ROADMAP.md` (old version - AI-focused)
+- ❌ `docs/plans/ROADMAP_V2_TEACHER_DRIVEN.md` - Renamed to ROADMAP.md
+- ❌ `docs/plans/DEVELOPMENT_PLAN.md` - Too technical, outdated
+
+### Unchanged (Still Relevant):
+- `docs/plans/TESTING_PLAN_V1.md` - Manual testing procedures
+- `docs/guides/DEVELOPMENT_GUIDE.md` - Development workflows
+- `docs/security/SECURITY_AUDIT.md` - Security patterns
+- `CLAUDE.md` - Main development instructions (already references docs/plans/ROADMAP.md)
 
 ---
 
 ## 📊 Current Project Status
 
 ### Version
-- **Current**: v1.1.2 (deployed to production)
+- **Current**: v1.1.1 (navigation fixes complete)
+- **Next**: v1.1.2 (automated UI/UX audit)
 - **Production URL**: https://krisztiankoos.github.io/vibe/
 
 ### Git Status
 - **Branch**: main
-- **Last Commit**: c2114f0 "feat: v1.1.2 - comprehensive UX improvements and accurate methodology descriptions"
-- **Clean**: Yes (all changes committed and pushed)
+- **Last Commit**: 39f4cc6 "docs: Add session handoff for v1.1.1 and v1.1.2 deployments"
+- **Clean**: Will commit after this handoff
 
 ### Build Status
 - ✅ TypeScript compiles successfully
 - ✅ npm run build succeeds
 - ✅ 0 security vulnerabilities (npm audit)
-- ✅ All 12 exercise types working (including new ordering type)
+- ✅ All exercise types working
 
 ---
 
-## 🎯 Teacher Feedback Addressed
+## 🎓 Context for Next Session
 
-### Fully Resolved
-- ✅ "Interface is too complicated" → Made 80% fields optional
-- ✅ "Too many steps, too many fields" → Can skip Lead-In and Presentation
-- ✅ "Can't go back and fix things" → Clickable progress bar + Edit buttons
-- ✅ "Want Wordwall features" → Added ordering/sequencing exercise
-- ✅ "Losing work when navigating" → Auto-save + manual save button
-- ✅ "Why two kinds of navigation?" → Simplified to single system
-- ✅ "Opening page says incorrect information" → Fixed all methodology descriptions
-- ✅ "Need to mark optional inputs" → Added visual indicators
+### What's Been Done:
+1. v1.1.1 - Navigation fixes ✅ COMPLETE (deployed)
+2. v1.1.2 - Some UX improvements ✅ COMPLETE (deployed earlier)
+3. Roadmap consolidated and updated ✅ COMPLETE (this session)
+4. UI/UX review strategy defined ✅ COMPLETE (this session)
 
----
+### What's Next:
+1. **v1.1.2 - Automated UI/UX Audit (2-3 days)** ← START HERE
+   - Run all automated tools (Lighthouse, axe, bundle analyzer)
+   - Establish baseline metrics
+   - Test responsive design (6 viewports)
+   - Profile React performance
+   - Document findings with priority list
+   - Create `docs/review/UIUX_AUDIT_V1.md`
 
-## 🔍 UX Analysis Completed
+2. **v1.2.0 - Wordwall-Style Builder (2 weeks)**
+   - Exercise template selector (visual gallery)
+   - Smart content entry (sentence tokenizer, auto-gap creator)
+   - Image upload everywhere (Unsplash integration)
+   - Spinning wheel activity
+   - Drag-and-drop builders
+   - One-click conversion between exercise types
 
-### Quick Analysis Results (Completed This Session)
-
-#### Critical Issues - FIXED ✅
-1. Redundant navigation systems → Simplified
-2. Outdated methodology descriptions → Updated
-3. No visual indicators for optional fields → Added
-4. Missing required indicator on title → Added
-
-#### Moderate Issues - FIXED ✅
-5. No manual save button → Added
-6. No exercise progress indication → Added counters
-7. Structure step has no continue button → Added
-
-#### Minor Issues - For v1.2.0 (Not Yet Implemented)
-8. Exercise list display (only shows type + instruction)
-9. No undo/redo functionality
-10. Language toggle missing in student view
+### Questions to Resolve:
+1. **Template Topics** - What are the most common Ukrainian lessons to create templates for? (needed for v1.4.0)
+2. **Teacher Testing** - Who can test each version? (needed for v1.2.2, v1.6.0)
+3. **Wordwall Features** - Any specific features beyond the 6 listed? (before v1.2.0)
 
 ---
 
-## 📁 Key File Locations
+## 🚀 Success Metrics
+
+### Baseline (Establish in v1.1.2):
+- [ ] Lighthouse Performance: __
+- [ ] Lighthouse Accessibility: __
+- [ ] Lighthouse Best Practices: __
+- [ ] Lighthouse SEO: __
+- [ ] Bundle Size: __ KB
+- [ ] Critical Issues Found: __
+- [ ] Total Issues Found: __
+
+### Checkpoints:
+- **v1.2.2**: Compare to baseline, fix P0/P1 issues
+- **v1.6.0**: All metrics should meet or exceed targets
+
+### Final Targets (v2.0.0):
+- Lighthouse Performance: >90
+- Lighthouse Accessibility: >90
+- WCAG 2.1 AA Compliance: 100%
+- Bundle Size: <500KB
+- Interaction Latency: <100ms
+- Teacher Satisfaction: 4.5/5 stars
+- Lesson Creation Time: <5 min (with templates)
+- Template Usage: 80%+ of lessons
+
+---
+
+## 📝 Notes
+
+### User Preferences Identified:
+- ✅ Wants automated UI/UX reviews throughout development (not just at end)
+- ✅ Wants manual teacher testing after major UI changes
+- ✅ Prefers logical ordering of features (dependencies before dependents)
+- ✅ Single consolidated roadmap document (no multiple conflicting plans)
+- ✅ Baseline metrics before building new features
+
+### Technical Constraints:
+- React 19 + TypeScript 5.9 + Vite 7
+- Bilingual app (English/Ukrainian) - ALL features must work in both
+- localStorage only (no backend yet)
+- GitHub Pages deployment (static site)
+- Strict TypeScript mode (no `any`)
+- Security validation required for ALL user inputs
+
+### Roadmap Structure:
+- **Phases with UI/UX reviews:** v1.1.2 (baseline) → build features → v1.2.2 (checkpoint) → build more → v1.6.0 (comprehensive) → v2.0.0 (polish)
+- **Review frequency:** After every major UI change
+- **Testing:** Automated + Manual (teachers + students)
+- **Documentation:** Each review creates a `docs/review/*.md` file
+
+---
+
+## 🔗 Key File Locations
+
+### Roadmap & Planning
+- `docs/plans/ROADMAP.md` - **THE** roadmap (consolidated, single source of truth)
+- `docs/plans/TESTING_PLAN_V1.md` - Manual testing procedures
+- `docs/SESSION_HANDOFF.md` - This file
+
+### Documentation (To Be Created)
+- `docs/review/UIUX_AUDIT_V1.md` - v1.1.2 baseline audit (create next)
+- `docs/review/UIUX_REVIEW_V1_2_2.md` - v1.2.2 checkpoint (create later)
+- `docs/review/UIUX_REVIEW_V1_6_0.md` - v1.6.0 comprehensive review (create later)
 
 ### Core Application
 - `src/App.tsx` - Main app, navigation, state management
 - `src/types.ts` - All TypeScript interfaces
-- `src/translations.ts` - All UI strings (170+ bilingual)
-- `src/utils/security.ts` - Input validation (MUST use for all user input)
+- `src/translations.ts` - All UI strings (bilingual)
+- `src/utils/security.ts` - Input validation (ALWAYS use for user input)
 
-### Components
-- `src/components/LeadInForm.tsx` - Lead-in section form
-- `src/components/PresentationForm.tsx` - Presentation section form
-- `src/components/ExerciseBuilder.tsx` - Exercise creation UI (12 types)
-- `src/components/LessonPreview.tsx` - Preview with edit buttons
-- `src/components/StudentExercise.tsx` - Interactive student view
-- `src/components/LanguageSelector.tsx` - Opening page
-
-### Documentation
-- `CLAUDE.md` - Project instructions and dev guide
-- `docs/plans/ROADMAP.md` - Development roadmap (6 phases)
-- `docs/guides/DEVELOPMENT_GUIDE.md` - Comprehensive AI-assisted dev guide
-- `docs/SESSION_HANDOFF.md` - This file
-
-### Claude Code Extensions (Not Tracked in Git)
-- `claude_extensions/` - Source of truth (version controlled)
-- `.claude/` - Generated files (in .gitignore)
-- `start-claude.sh` - Auto-deploys extensions and launches Claude
+### Development Guides
+- `CLAUDE.md` - Concise development instructions
+- `docs/guides/DEVELOPMENT_GUIDE.md` - Comprehensive workflows
+- `docs/security/SECURITY_AUDIT.md` - Security patterns
 
 ---
 
-## 🚧 Pending Work
-
-### Immediate Next Steps (v1.2.0)
-1. **Comprehensive UX Audit** (using Task tool)
-   - Deep dive into all user flows
-   - Accessibility audit
-   - Information architecture review
-   - Create prioritized fix list
-
-2. **Minor UX Issues** (from quick analysis)
-   - Improve exercise list preview (show content, not just type)
-   - Add undo/redo functionality
-   - Consider language toggle in student view
-
-3. **Testing Infrastructure** (from ROADMAP.md)
-   - Set up Vitest for unit tests
-   - Add React Testing Library for component tests
-   - Configure Playwright for E2E tests
-
-### Longer-term (from ROADMAP.md)
-4. **Translation Quality** (Phase 2)
-   - Build Translation Agent skill
-   - Improve Ukrainian translations
-   - Add glossary for consistency
-
-5. **Backend & Auth** (Phase 3-4)
-   - Choose backend (Firebase/Supabase)
-   - Implement user authentication
-   - Real-time collaboration
-
-6. **Advanced Features** (Phase 5-6)
-   - AI lesson generation
-   - Mobile app
-   - Advanced analytics
-
----
-
-## 🛠️ Technical Context
-
-### Tech Stack
-- React 19.2.0 + TypeScript 5.9.3
-- Vite 7.2.2 (build tool)
-- GitHub Pages (deployment)
-- localStorage (current data storage)
-
-### Code Standards
-- TypeScript strict mode enabled
-- No `any` types
-- Functional components only
-- Always use `utils/security.ts` for user input
-- Never hardcode strings (use translations.ts)
-
-### Exercise Types (12 Total)
-1. gap-fill
-2. sorting
-3. matching
-4. free-text
-5. multiple-choice
-6. true-false
-7. sentence-scramble
-8. information-gap
-9. role-play
-10. collocation
-11. lexical-set
-12. **ordering** (NEW in v1.1.1)
-
-### Methodologies Supported (4 Total)
-1. **PPP** - Presentation-Practice-Production (ESL)
-2. **TTT** - Test-Teach-Test (ESL)
-3. **GPPC/ГППК** - Grammar-Presentation-Practice-Communication (Ukrainian)
-4. **CEFR** - Task-Based Learning (Ukrainian)
-
----
-
-## 💡 Important Notes for Next Session
-
-### Navigation Architecture
-The app now has a clean single-navigation system:
-- **Primary**: Clickable progress bar (non-linear, jump anywhere)
-- **Helper**: Footer Next → button (quick linear flow)
-- **Special**: Continue button on structure step (clear CTA after title)
-
-### Optional vs Required Fields
-- **Required**: Only lesson title + structure + at least 1 exercise
-- **Optional**: ALL Lead-In fields, ALL Presentation fields
-- Visual indicators clearly mark all optional fields
-
-### Auto-save Behavior
-- Auto-saves every 30 seconds to localStorage
-- Key format: `autosave-${lesson.id}`
-- Only saves if lesson has a title
-- Manual save button available in header for teacher confidence
-
-### Recent Function Changes in App.tsx
-- ❌ Removed: `goToPreviousStep()` - no longer needed
-- ❌ Removed: `skipStep()` - no longer needed
-- ✅ Kept: `goToNextStep()` - used by footer Next button
-- ✅ Kept: `navigateToStep()` - used by progress bar
-
----
-
-## 📝 Git Commands for Reference
+## 🛠️ Quick Commands
 
 ```bash
-# Check status
-git status
+# Development
+npm run dev              # Start dev server (localhost:5173)
+npm run build            # Production build
+npm run preview          # Preview production build
+npm audit                # Check vulnerabilities (should be 0)
 
-# See recent commits
-git log --oneline -5
+# Git
+git status               # Check current changes
+git log --oneline -5     # See recent commits
+git diff                 # See uncommitted changes
 
-# See what changed in v1.1.2
-git diff 479e3bd..c2114f0
+# Bundle Analysis (for v1.1.2)
+npm run build -- --mode production
+npx vite-bundle-visualizer
 
-# Start dev server
-npm run dev
-
-# Build for production
-npm run build
-
-# Check for vulnerabilities
-npm audit
-
-# Deploy extensions and start Claude
+# Start Claude with extensions
 ./start-claude.sh
 ```
+
+---
+
+## 📋 Quick Checklist for Next Session
+
+### Before Starting:
+- [ ] Read this handoff document
+- [ ] Check `git status` and `git log --oneline -5`
+- [ ] Review `docs/plans/ROADMAP.md` (especially v1.1.2 section)
+- [ ] Check `CLAUDE.md` for project instructions
+- [ ] Run `npm run dev` to verify build works
+
+### Starting v1.1.2 Automated UI/UX Audit:
+- [ ] Create `docs/review/` directory if it doesn't exist
+- [ ] Build production version: `npm run build && npm run preview`
+- [ ] Run Lighthouse (Chrome DevTools)
+- [ ] Install and run axe DevTools
+- [ ] Run bundle analyzer: `npx vite-bundle-visualizer`
+- [ ] Test 6 responsive viewports (take screenshots)
+- [ ] Profile React performance (React DevTools)
+- [ ] Create `docs/review/UIUX_AUDIT_V1.md` with findings
+- [ ] Create priority list (P0/P1/P2/P3)
 
 ---
 
@@ -279,28 +377,14 @@ npm audit
 
 - **Production**: https://krisztiankoos.github.io/vibe/
 - **GitHub Repo**: https://github.com/krisztiankoos/vibe
-- **Anthropic Docs**: https://docs.anthropic.com/claude/docs/prompt-engineering
-- **React Docs**: https://react.dev/
-
----
-
-## 📋 Quick Checklist for Next Session
-
-Before starting work:
-- [ ] Read this handoff document
-- [ ] Check `git status` and `git log --oneline -5`
-- [ ] Review `docs/plans/ROADMAP.md` for planned features
-- [ ] Check `CLAUDE.md` for project instructions
-- [ ] Run `npm run dev` to verify build works
-
-Starting UX audit:
-- [ ] Use Task tool with subagent_type=Explore
-- [ ] Set thoroughness: "very thorough"
-- [ ] Focus on: user flows, accessibility, info architecture
-- [ ] Create prioritized fix list for v1.2.0
+- **Lighthouse CI**: https://developers.google.com/web/tools/lighthouse
+- **axe DevTools**: https://www.deque.com/axe/devtools/
+- **WCAG 2.1 AA**: https://www.w3.org/WAI/WCAG21/quickref/?currentsidebar=%23col_customize&levels=aaa
+- **React Profiler**: https://react.dev/reference/react/Profiler
 
 ---
 
 **Session End Time**: 2025-11-14
 **Completed By**: Claude Code (Sonnet 4.5)
-**Status**: ✅ All tasks complete, ready for handoff
+**Status**: ✅ All tasks complete, ready to commit and push
+**Next Action**: Create git commit with changes from this session
