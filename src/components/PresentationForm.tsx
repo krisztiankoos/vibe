@@ -1,27 +1,39 @@
 import { useState } from 'react';
-import type { Presentation } from '../types';
+import type { Presentation, CEFRLevel, BilingualText } from '../types';
 import type { Language } from '../translations';
 import { getTranslation } from '../translations';
 import { validateURL } from '../utils/security';
 import { HelpIcon } from './Tooltip';
 import { helpText, quickTips } from '../utils/helpText';
+import CEFRLevelSelector from './CEFRLevelSelector';
 
 interface PresentationFormProps {
   presentation: Presentation;
   onChange: (presentation: Presentation) => void;
   language: Language;
+  cefrLevel?: CEFRLevel;
+  onCefrLevelChange?: (level: CEFRLevel | undefined) => void;
 }
 
-export default function PresentationForm({ presentation, onChange, language }: PresentationFormProps) {
+export default function PresentationForm({ presentation, onChange, language, cefrLevel, onCefrLevelChange }: PresentationFormProps) {
   const t = getTranslation(language);
   const [newExample, setNewExample] = useState('');
   const [newMediaLink, setNewMediaLink] = useState('');
   const [urlError, setUrlError] = useState('');
 
+  // For bilingual explanations (Ukrainian lessons)
+  const isBilingual = typeof presentation.explanation === 'object';
+  const [ukExplanation, setUkExplanation] = useState(
+    isBilingual && typeof presentation.explanation === 'object' ? presentation.explanation.uk : ''
+  );
+  const [enExplanation, setEnExplanation] = useState(
+    isBilingual && typeof presentation.explanation === 'object' ? presentation.explanation.en : ''
+  );
+
   const help = helpText[language].presentation;
   const tips = quickTips[language].presentation;
 
-  const updateField = (field: keyof Presentation, value: string | number | string[]) => {
+  const updateField = (field: keyof Presentation, value: string | number | string[] | BilingualText) => {
     onChange({ ...presentation, [field]: value });
   };
 
@@ -102,6 +114,15 @@ export default function PresentationForm({ presentation, onChange, language }: P
         </ul>
       </div>
 
+      {/* CEFR Level Selector (for all lessons, but especially useful for Ukrainian) */}
+      {onCefrLevelChange && (
+        <CEFRLevelSelector
+          value={cefrLevel}
+          onChange={onCefrLevelChange}
+          language={language}
+        />
+      )}
+
       <div className="form-group">
         <div className="field-label-with-help">
           <label htmlFor="presentationTitle">
@@ -151,34 +172,90 @@ export default function PresentationForm({ presentation, onChange, language }: P
         )}
       </div>
 
-      <div className="form-group">
-        <div className="field-label-with-help">
-          <label htmlFor="explanation" className="required">
-            {t.explanation}
-          </label>
-          <HelpIcon text={help.explanation} />
-        </div>
-        <textarea
-          id="explanation"
-          value={presentation.explanation}
-          onChange={(e) => updateField('explanation', e.target.value)}
-          placeholder={language === 'en'
-            ? 'How will you explain this language point? Include meaning, form, and use...'
-            : 'Як ви поясните цю мовну тему? Включіть значення, форму та використання...'}
-          rows={6}
-        />
-        <div className="field-hint example">
-          <strong>{language === 'en' ? '💡 Example:' : '💡 Приклад:'}</strong><br />
-          {language === 'en'
-            ? '"We use Present Simple for habits and routines. Form: Subject + base verb (+ s/es for he/she/it). Example: "I work" but "She works". Use timeline on board to show regular, repeated actions."'
-            : '"Ми використовуємо теперішній простий час для звичок і рутини. Форма: Підмет + базова форма дієслова (+ s/es для he/she/it). Приклад: "I work" але "She works". Використайте часову лінію на дошці, щоб показати регулярні, повторювані дії."'}
-        </div>
-        {presentation.explanation && presentation.explanation.length > 100 && (
-          <div className="field-validation success">
-            ✓ {language === 'en' ? 'Thorough explanation!' : 'Ретельне пояснення!'} ({presentation.explanation.length} {language === 'en' ? 'characters' : 'символів'})
+      {/* Explanation: Bilingual for Ukrainian, single language for English */}
+      {language === 'uk' ? (
+        <div className="form-group">
+          <div className="field-label-with-help">
+            <label className="required">{t.bilingualExplanation}</label>
+            <HelpIcon text={t.bilingualExplanationHint} />
           </div>
-        )}
-      </div>
+
+          {/* Ukrainian explanation */}
+          <div style={{ marginBottom: '1rem' }}>
+            <label htmlFor="explanationUk" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+              {t.ukrainianExplanation}
+            </label>
+            <textarea
+              id="explanationUk"
+              value={ukExplanation}
+              onChange={(e) => {
+                setUkExplanation(e.target.value);
+                const bilingual: BilingualText = { uk: e.target.value, en: enExplanation };
+                updateField('explanation', bilingual);
+              }}
+              placeholder={t.ukrainianPlaceholder}
+              rows={4}
+            />
+          </div>
+
+          {/* English translation */}
+          <div>
+            <label htmlFor="explanationEn" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+              {t.englishTranslation}
+            </label>
+            <textarea
+              id="explanationEn"
+              value={enExplanation}
+              onChange={(e) => {
+                setEnExplanation(e.target.value);
+                const bilingual: BilingualText = { uk: ukExplanation, en: e.target.value };
+                updateField('explanation', bilingual);
+              }}
+              placeholder={t.englishPlaceholder}
+              rows={4}
+            />
+          </div>
+
+          <div className="field-hint">
+            {t.bilingualExplanationHint}
+          </div>
+
+          {ukExplanation.length > 50 && enExplanation.length > 50 && (
+            <div className="field-validation success">
+              ✓ Двомовне пояснення готове!
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="form-group">
+          <div className="field-label-with-help">
+            <label htmlFor="explanation" className="required">
+              {t.explanation}
+            </label>
+            <HelpIcon text={help.explanation} />
+          </div>
+          <textarea
+            id="explanation"
+            value={typeof presentation.explanation === 'string' ? presentation.explanation : ''}
+            onChange={(e) => updateField('explanation', e.target.value)}
+            placeholder={language === 'en'
+              ? 'How will you explain this language point? Include meaning, form, and use...'
+              : 'Як ви поясните цю мовну тему? Включіть значення, форму та використання...'}
+            rows={6}
+          />
+          <div className="field-hint example">
+            <strong>{language === 'en' ? '💡 Example:' : '💡 Приклад:'}</strong><br />
+            {language === 'en'
+              ? '"We use Present Simple for habits and routines. Form: Subject + base verb (+ s/es for he/she/it). Example: "I work" but "She works". Use timeline on board to show regular, repeated actions."'
+              : '"Ми використовуємо теперішній простий час для звичок і рутини. Форма: Підмет + базова форма дієслова (+ s/es для he/she/it). Приклад: "I work" але "She works". Використайте часову лінію на дошці, щоб показати регулярні, повторювані дії."'}
+          </div>
+          {typeof presentation.explanation === 'string' && presentation.explanation.length > 100 && (
+            <div className="field-validation success">
+              ✓ {language === 'en' ? 'Thorough explanation!' : 'Ретельне пояснення!'} ({presentation.explanation.length} {language === 'en' ? 'characters' : 'символів'})
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="form-group">
         <div className="field-label-with-help">

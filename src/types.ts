@@ -1,4 +1,11 @@
-export type LessonStructure = 'PPP' | 'TTT';
+export type LessonStructure = 'PPP' | 'TTT' | 'GPPC' | 'CEFR';
+
+export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
+
+export interface BilingualText {
+  uk: string;
+  en: string;
+}
 
 export type ExerciseType = 'gap-fill' | 'sorting' | 'matching' | 'free-text' | 'multiple-choice' | 'true-false' | 'sentence-scramble' | 'information-gap' | 'role-play' | 'collocation' | 'lexical-set';
 
@@ -122,7 +129,7 @@ export interface Presentation {
   title: string;
   targetLanguage: string;
   examples: string[];
-  explanation: string;
+  explanation: string | BilingualText; // Can be string (English) or BilingualText (Ukrainian)
   duration?: number; // Duration in minutes
   mediaLinks?: string[]; // YouTube or external links
   teacherNotes?: string; // Private notes for teacher
@@ -138,6 +145,7 @@ export interface Lesson {
   title: string;
   structure: LessonStructure;
   level?: string; // e.g., "A1 Beginner", "B2 Upper-Intermediate"
+  cefrLevel?: CEFRLevel; // CEFR level tag (A1-C1)
   targetLanguage?: string; // Target language being taught (e.g., "English", "Spanish")
   duration?: number; // Total lesson duration in minutes
   objectives?: string[]; // Learning objectives

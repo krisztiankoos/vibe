@@ -18,7 +18,7 @@ function App() {
   const [lesson, setLesson] = useState<Lesson>({
     id: crypto.randomUUID(),
     title: '',
-    structure: 'PPP',
+    structure: language === 'en' ? 'PPP' : 'GPPC',
     leadIn: {
       title: '',
       description: '',
@@ -155,7 +155,7 @@ function App() {
       setLesson({
         id: crypto.randomUUID(),
         title: '',
-        structure: 'PPP',
+        structure: language === 'en' ? 'PPP' : 'GPPC',
         leadIn: { title: '', description: '', content: '' },
         presentation: { title: '', targetLanguage: '', examples: [], explanation: '' },
         controlledPractice: { type: 'controlled', exercises: [] },
@@ -244,46 +244,144 @@ function App() {
       </header>
 
       <div className="progress-bar">
-        {[t.structure, t.leadIn, t.presentation, t.controlled, t.free, t.preview].map((stepLabel, index) => (
-          <div
-            key={steps[index]}
-            className={`progress-step ${index <= currentStepIndex ? 'active' : ''} ${index === currentStepIndex ? 'current' : ''}`}
-          >
-            {stepLabel}
-          </div>
-        ))}
+        {(() => {
+          // Context-aware phase labels based on structure
+          let phaseLabels: string[];
+
+          if (lesson.structure === 'GPPC') {
+            phaseLabels = [t.structure, t.topicIntroduction, t.grammarPresentation, t.controlledPracticePhase, t.communicativePractice, t.preview];
+          } else if (lesson.structure === 'CEFR') {
+            phaseLabels = [t.structure, t.taskIntroduction, t.preparation, t.taskExecution, t.reflectionAndLanguageFocus, t.preview];
+          } else {
+            // PPP and TTT use default labels
+            phaseLabels = [t.structure, t.leadIn, t.presentation, t.controlled, t.free, t.preview];
+          }
+
+          return phaseLabels.map((stepLabel, index) => (
+            <div
+              key={steps[index]}
+              className={`progress-step ${index <= currentStepIndex ? 'active' : ''} ${index === currentStepIndex ? 'current' : ''}`}
+            >
+              {stepLabel}
+            </div>
+          ));
+        })()}
       </div>
 
       <main className="app-main">
         {currentStep === 'structure' && (
           <div className="step-content">
             <h2>{t.chooseStructure}</h2>
-            <div className="structure-selection">
-              <div
-                className={`structure-card ${lesson.structure === 'PPP' ? 'selected' : ''}`}
-                onClick={() => updateLesson({ structure: 'PPP' })}
-              >
-                <h3>{t.pppTitle}</h3>
-                <p>{t.pppDescription}</p>
-                <ul>
-                  <li>{t.pppStep1}</li>
-                  <li>{t.pppStep2}</li>
-                  <li>{t.pppStep3}</li>
-                </ul>
-              </div>
-              <div
-                className={`structure-card ${lesson.structure === 'TTT' ? 'selected' : ''}`}
-                onClick={() => updateLesson({ structure: 'TTT' })}
-              >
-                <h3>{t.tttTitle}</h3>
-                <p>{t.tttDescription}</p>
-                <ul>
-                  <li>{t.tttStep1}</li>
-                  <li>{t.tttStep2}</li>
-                  <li>{t.tttStep3}</li>
-                </ul>
-              </div>
+
+            {/* Methodology explanation banner */}
+            <div className="methodology-info">
+              <p className="methodology-note">
+                {language === 'en' ? t.eslMethodologyNote : t.uflMethodologyNote}
+              </p>
             </div>
+
+            <div className="structure-selection">
+              {/* English structures: PPP and TTT */}
+              {language === 'en' && (
+                <>
+                  <div
+                    className={`structure-card PPP ${lesson.structure === 'PPP' ? 'selected' : ''}`}
+                    onClick={() => updateLesson({ structure: 'PPP' })}
+                  >
+                    <div className="structure-header">
+                      <h3>{t.pppTitle}</h3>
+                      <span className="structure-badge">ESL Method</span>
+                    </div>
+                    <p className="structure-description">{t.pppFullDescription}</p>
+                    <div className="structure-phases">
+                      <strong>{t.phases}:</strong>
+                      <ol>
+                        <li>{t.pppStep1}</li>
+                        <li>{t.pppStep2}</li>
+                        <li>{t.pppStep3}</li>
+                      </ol>
+                    </div>
+                    <p className="structure-best-for">
+                      <strong>{t.bestFor}:</strong> {t.pppBestFor}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`structure-card TTT ${lesson.structure === 'TTT' ? 'selected' : ''}`}
+                    onClick={() => updateLesson({ structure: 'TTT' })}
+                  >
+                    <div className="structure-header">
+                      <h3>{t.tttTitle}</h3>
+                      <span className="structure-badge">ESL Method</span>
+                    </div>
+                    <p className="structure-description">{t.tttFullDescription}</p>
+                    <div className="structure-phases">
+                      <strong>{t.phases}:</strong>
+                      <ol>
+                        <li>{t.tttStep1}</li>
+                        <li>{t.tttStep2}</li>
+                        <li>{t.tttStep3}</li>
+                      </ol>
+                    </div>
+                    <p className="structure-best-for">
+                      <strong>{t.bestFor}:</strong> {t.tttBestFor}
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {/* Ukrainian structures: GPPC and CEFR */}
+              {language === 'uk' && (
+                <>
+                  <div
+                    className={`structure-card GPPC ${lesson.structure === 'GPPC' ? 'selected' : ''}`}
+                    onClick={() => updateLesson({ structure: 'GPPC' })}
+                  >
+                    <div className="structure-header">
+                      <h3>{t.gppcTitle}</h3>
+                      <span className="structure-badge">УІМ Метод</span>
+                    </div>
+                    <p className="structure-description">{t.gppcFullDescription}</p>
+                    <div className="structure-phases">
+                      <strong>{t.phases}:</strong>
+                      <ol>
+                        <li>{t.gppcStep1}</li>
+                        <li>{t.gppcStep2}</li>
+                        <li>{t.gppcStep3}</li>
+                        <li>{t.gppcStep4}</li>
+                      </ol>
+                    </div>
+                    <p className="structure-best-for">
+                      <strong>{t.bestFor}:</strong> {t.gppcBestFor}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`structure-card CEFR ${lesson.structure === 'CEFR' ? 'selected' : ''}`}
+                    onClick={() => updateLesson({ structure: 'CEFR' })}
+                  >
+                    <div className="structure-header">
+                      <h3>{t.cefrTitle}</h3>
+                      <span className="structure-badge">УІМ Метод</span>
+                    </div>
+                    <p className="structure-description">{t.cefrFullDescription}</p>
+                    <div className="structure-phases">
+                      <strong>{t.phases}:</strong>
+                      <ol>
+                        <li>{t.cefrStep1}</li>
+                        <li>{t.cefrStep2}</li>
+                        <li>{t.cefrStep3}</li>
+                        <li>{t.cefrStep4}</li>
+                      </ol>
+                    </div>
+                    <p className="structure-best-for">
+                      <strong>{t.bestFor}:</strong> {t.cefrBestFor}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+
             <div className="form-group">
               <label>{t.lessonTitle}</label>
               <input
@@ -309,6 +407,8 @@ function App() {
             presentation={lesson.presentation}
             onChange={(presentation) => updateLesson({ presentation })}
             language={language}
+            cefrLevel={lesson.cefrLevel}
+            onCefrLevelChange={(cefrLevel) => updateLesson({ cefrLevel })}
           />
         )}
 

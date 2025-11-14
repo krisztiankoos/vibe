@@ -5,6 +5,152 @@ All notable changes to the English Lesson Builder project will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - Unreleased
+
+### 🎯 Foundation Fixes - Ukrainian Methodology Upgrade
+
+This release addresses a critical pedagogical issue: Ukrainian lessons were forced into ESL-specific structures (PPP/TTT), which don't match Ukrainian as Foreign Language (UFL) teaching methodology.
+
+### ✨ New Features
+
+#### Ukrainian-Specific Lesson Structures
+- **GPPC Structure** (Grammar-Presentation-Practice-Communication) for A1-B1 grammar lessons
+  - Phase 1: Введення теми (Topic Introduction)
+  - Phase 2: Презентація граматики (Grammar Presentation) with explicit rules
+  - Phase 3: Контрольована практика (Controlled Practice) with accuracy drills
+  - Phase 4: Комунікативна практика (Communicative Practice)
+  - Best for: Cases, verb aspects, declensions, morphology
+
+- **CEFR Structure** (Task-Based Learning) for B1+ functional lessons
+  - Phase 1: Завдання (Task Introduction)
+  - Phase 2: Підготовка (Preparation)
+  - Phase 3: Виконання (Task Execution)
+  - Phase 4: Рефлексія (Reflection & Language Focus)
+  - Best for: Formal letters, debates, presentations, literature analysis
+
+#### Bilingual Explanation Support
+- **Language Toggle** in student view for Ukrainian lessons
+  - Toggle between Ukrainian and English grammar explanations
+  - UI: 🇺🇦 Українська / 🇬🇧 English explanations
+  - Ukrainian examples always stay in Ukrainian (no translation)
+  - Helps non-native speakers understand complex Ukrainian grammar
+
+#### CEFR Level Tagging
+- **Level Selector** during lesson creation
+  - Options: A1 (Beginner), A2 (Elementary), B1 (Intermediate), B2 (Upper-Intermediate), C1 (Advanced)
+  - Displayed in student view
+  - Helps learners find appropriate content
+
+#### Context-Aware Phase Labels
+- **Dynamic Progress Bar Labels** based on lesson structure
+  - PPP: Lead-In → Presentation → Controlled Practice → Free Practice
+  - TTT: Lead-In → Test 1 → Teach → Test 2
+  - GPPC: Введення теми → Презентація граматики → Контрольована практика → Комунікативна практика
+  - CEFR: Завдання → Підготовка → Виконання → Рефлексія
+
+### 📚 New Sample Lessons
+
+**7 Ukrainian Sample Lessons** (UFL Methodology):
+
+**GPPC Grammar Lessons (3)**:
+1. Орудний відмінок іменників (Instrumental Case) - A2
+   - All 3 declensions with bilingual explanations
+   - 15+ practice exercises
+   - Communicative tasks (restaurant role-play, personal writing)
+
+2. Дієслівний вид: доконаний та недоконаний (Verb Aspects) - B1
+   - Perfective vs. Imperfective distinction
+   - Formation patterns (prefixation, suffixation)
+   - Common learner errors addressed
+
+3. Дієслова руху: йти/ходити, їхати/їздити (Motion Verbs) - B1
+   - Unidirectional vs. Multidirectional verbs
+   - Time markers and usage contexts
+   - Sorting and gap-fill exercises
+
+**CEFR Task-Based Lessons (4)**:
+4. Написання офіційного листа (Writing Formal Letter) - B1
+   - 5-part formal letter structure
+   - Formal vocabulary and phrases
+   - Peer review tasks
+
+5. Участь у дебатах (Participating in Debate) - B2
+   - Argumentation and counter-argumentation
+   - Debate language tools
+   - Mini-debates with structured rounds
+
+6. Аналіз літературного тексту: Тарас Шевченко (Analyzing Literature) - C1
+   - 3-level analysis (content, form, style)
+   - Literary terminology in Ukrainian
+   - Comparative analysis and essay writing
+
+7. Підготовка та проведення презентації (Giving Presentation) - B2
+   - Complete presentation structure
+   - Q&A handling techniques
+   - Academic presentation practice
+
+### 🔧 Technical Improvements
+
+#### Type System Updates
+- `LessonStructure` type: Added `'GPPC' | 'CEFR'`
+- New `BilingualText` interface for dual-language content
+- `Presentation.explanationBilingual?: BilingualText` (optional, backwards compatible)
+- `Lesson.level?: string` (optional CEFR level: A1-C1)
+
+#### Component Updates
+- `ProgressBar`: Context-aware labels based on lesson structure
+- `App`: Structure selector now shows all 4 options (PPP, TTT, GPPC, CEFR)
+- `App`: CEFR level dropdown in lesson metadata
+- `PresentationForm`: Bilingual explanation toggle and dual textarea
+- `StudentLessonView`: Language toggle for bilingual content
+
+#### Translation Updates
+- Added 50+ new translation keys for GPPC and CEFR structures
+- Phase labels for all 4 lesson structures
+- CEFR level names (A1-C1) in both languages
+- Bilingual toggle UI strings
+
+### 📖 Documentation Updates
+
+**New Specification Documents** (docs/review/):
+- `FOUNDATION_FIXES.md` - Complete v1.1.0 implementation spec
+- `UKRAINIAN_METHODOLOGY_SPEC.md` - Detailed GPPC + CEFR pedagogy
+- `DATA_MODEL_CHANGES.md` - Technical specification for TypeScript changes
+- `UKRAINIAN_SAMPLE_LESSONS.md` - Full TypeScript templates for 7 lessons
+- `METHODOLOGY_REVIEW.md` - Analysis of current implementation issues
+
+**Updated Skills** (claude_extensions/skills/):
+- Ukrainian Teaching Skill: v1.0.0 → v2.0.0 (GPPC + CEFR hybrid)
+- ESL Teaching Skill: v1.0.0 → v2.0.0 (Enhanced PPP + TTT descriptions)
+
+### ✅ Backwards Compatibility
+
+**100% Backwards Compatible**:
+- All v1.0.0 lessons continue to work without modification
+- New fields are optional (`level`, `explanationBilingual`)
+- Existing `explanation` field still supported
+- No migration required for existing lessons
+- localStorage format compatible
+
+### 🎯 Pedagogical Impact
+
+**Problem Solved**:
+Ukrainian lessons were forced into ESL communicative methodology (PPP/TTT), but Ukrainian grammar requires explicit instruction with paradigm tables (deductive approach).
+
+**Solution**:
+Added Ukrainian-specific structures (GPPC, CEFR) that match modern Ukrainian as Foreign Language teaching standards while maintaining ESL structures for English lessons.
+
+**Target Users**:
+Ukrainian teachers teaching Ukrainian to foreigners (not native speaker education)
+
+### 🔗 Related Issues
+- Resolves methodology mismatch between English (communicative) and Ukrainian (grammar-focused)
+- Adds bilingual support for international learners
+- Aligns with CEFR standards for both languages
+- Provides 14 total sample lessons (7 EN + 7 UK)
+
+---
+
 ## [1.0.0] - 2025-11-13
 
 ### 🎉 First Official Release
