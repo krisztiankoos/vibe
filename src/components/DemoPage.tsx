@@ -18,17 +18,25 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [newWheelItem, setNewWheelItem] = useState('');
 
   // Quiz state
+  const [quizQuestion, setQuizQuestion] = useState('What is the past tense of "go"?');
+  const [quizOptions, setQuizOptions] = useState(['goed', 'went', 'gone', 'goes']);
+  const [quizCorrectIndex, setQuizCorrectIndex] = useState(1);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const [quizCorrect, setQuizCorrect] = useState<boolean | null>(null);
 
   // Match Up state
+  const [matchLeft, setMatchLeft] = useState(['cat', 'dog', 'bird']);
+  const [matchRight, setMatchRight] = useState(['meow', 'woof', 'tweet']);
   const [matchSelections, setMatchSelections] = useState<{left?: number; right?: number}>({});
   const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
 
   // Flash Cards state
+  const [flashFront, setFlashFront] = useState('Vocabulary');
+  const [flashBack, setFlashBack] = useState('The words you know in a language');
   const [flashCardFlipped, setFlashCardFlipped] = useState(false);
 
   // Memory Matching state
+  const [memoryCards] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇']);
   const [memoryFlipped, setMemoryFlipped] = useState<number[]>([]);
   const [memoryMatched, setMemoryMatched] = useState<number[]>([]);
 
@@ -37,23 +45,37 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [moleScore, setMoleScore] = useState(0);
 
   // True/False state
+  const [tfStatement, setTfStatement] = useState('English is a Romance language');
+  const [tfCorrectAnswer, setTfCorrectAnswer] = useState(false);
   const [tfAnswer, setTfAnswer] = useState<boolean | null>(null);
   const [tfCorrect, setTfCorrect] = useState<boolean | null>(null);
 
   // Gap Fill state
+  const [_gapSentence] = useState('I ___ to school yesterday and ___ my friends.');
+  const [_gapCorrectAnswers] = useState(['went', 'saw']);
   const [gapAnswers, setGapAnswers] = useState<string[]>(['', '']);
 
   // Unjumble state
+  const [unjumbleCorrectSentence] = useState('I went to school yesterday');
   const [unjumbledWords, setUnjumbledWords] = useState<string[]>(['went', 'I', 'yesterday', 'school', 'to']);
 
   // Gameshow Quiz state
+  const [gameshowQuestion] = useState('What is the capital of France?');
+  const [gameshowOptions] = useState(['London', 'Paris', 'Berlin', 'Madrid']);
+  const [gameshowCorrectIndex] = useState(1);
   const [gameshowAnswer, setGameshowAnswer] = useState<number | null>(null);
   const [gameshowTimer, setGameshowTimer] = useState(30);
   const [gameshowActive, setGameshowActive] = useState(false);
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [removedOptions, setRemovedOptions] = useState<number[]>([]);
 
-  // Group Sort state
+  // Group Sort state (reserved for teacher view)
+  const [_groupSortItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
+  const [_groupSortCategories] = useState<string[]>(['Nouns', 'Verbs']);
+  const [_groupSortAnswers] = useState<Record<string, string[]>>({
+    'Nouns': ['book', 'table', 'chair'],
+    'Verbs': ['run', 'swim', 'eat']
+  });
   const [unsortedItems, setUnsortedItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
   const [sortedNouns, setSortedNouns] = useState<string[]>([]);
   const [sortedVerbs, setSortedVerbs] = useState<string[]>([]);
@@ -293,7 +315,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   // Quiz handler
   const handleQuizAnswer = (index: number) => {
     setQuizAnswer(index);
-    setQuizCorrect(index === 1); // "went" is correct
+    setQuizCorrect(index === quizCorrectIndex);
   };
 
   // Match Up handler
@@ -358,7 +380,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   // True/False handler
   const handleTFAnswer = (answer: boolean) => {
     setTfAnswer(answer);
-    setTfCorrect(answer === false); // English is NOT a Romance language
+    setTfCorrect(answer === tfCorrectAnswer);
   };
 
   // Gameshow Quiz handlers
@@ -373,8 +395,10 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const handleFiftyFifty = () => {
     if (!fiftyFiftyUsed) {
       setFiftyFiftyUsed(true);
-      // Remove 2 wrong answers (keep index 1 which is correct, and one random wrong)
-      const wrongOptions = [0, 2, 3]; // indices of wrong answers
+      // Remove 2 wrong answers (keep correct answer and one random wrong answer)
+      const wrongOptions = gameshowOptions
+        .map((_, idx) => idx)
+        .filter(idx => idx !== gameshowCorrectIndex);
       const keepWrong = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
       const toRemove = wrongOptions.filter(idx => idx !== keepWrong);
       setRemovedOptions(toRemove);
@@ -432,9 +456,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       setGameshowActive(false);
     }
   }, [gameshowActive, gameshowTimer]);
-
-  // Memory cards data
-  const memoryCards = ['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇'];
 
   return (
     <div className="demo-page">
@@ -618,176 +639,624 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
 
           {/* 2. Quiz */}
           <div className="activity-demo-card">
-            <h3>❓ {text.quiz}</h3>
-            <div className="demo-interactive">
-              <p><strong>{text.quizQuestion}</strong></p>
-              <div className="quiz-options">
-                {text.quizOptions.map((option, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleQuizAnswer(idx)}
-                    className={`quiz-option ${quizAnswer === idx ? (quizCorrect ? 'correct' : 'incorrect') : ''}`}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      margin: '0.5rem 0',
-                      padding: '0.75rem',
-                      border: '2px solid #ddd',
-                      borderRadius: '8px',
-                      background: quizAnswer === idx ? (quizCorrect ? '#10b981' : '#ef4444') : 'white',
-                      color: quizAnswer === idx ? 'white' : '#333',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-              {quizAnswer !== null && (
-                <p style={{ marginTop: '1rem', fontWeight: 'bold', color: quizCorrect ? '#10b981' : '#ef4444' }}>
-                  {quizCorrect ? text.correct : text.incorrect}
-                </p>
-              )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>❓ {text.quiz}</h3>
+              <button
+                onClick={() => toggleView('quiz')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('quiz') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('quiz') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('quiz') === 'teacher' ? (
+              /* TEACHER VIEW - Creating the quiz */
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Question:</label>
+                  <input
+                    type="text"
+                    value={quizQuestion}
+                    onChange={(e) => setQuizQuestion(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Answer Options:</label>
+                  {quizOptions.map((option, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+                      <input
+                        type="radio"
+                        name="correct-answer"
+                        checked={quizCorrectIndex === idx}
+                        onChange={() => setQuizCorrectIndex(idx)}
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) => {
+                          const newOptions = [...quizOptions];
+                          newOptions[idx] = e.target.value;
+                          setQuizOptions(newOptions);
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: '0.5rem',
+                          border: '2px solid',
+                          borderColor: quizCorrectIndex === idx ? '#10b981' : '#ddd',
+                          borderRadius: '6px',
+                          fontSize: '1rem',
+                          background: quizCorrectIndex === idx ? '#d1fae5' : 'white'
+                        }}
+                        placeholder={`Option ${idx + 1}`}
+                      />
+                    </div>
+                  ))}
+                  <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem' }}>
+                    ✓ Select the radio button next to the correct answer
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => toggleView('quiz')}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              /* STUDENT VIEW - Taking the quiz */
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p><strong>{quizQuestion}</strong></p>
+                <div className="quiz-options">
+                  {quizOptions.map((option, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleQuizAnswer(idx)}
+                      className={`quiz-option ${quizAnswer === idx ? (quizCorrect ? 'correct' : 'incorrect') : ''}`}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        margin: '0.5rem 0',
+                        padding: '0.75rem',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        background: quizAnswer === idx ? (quizCorrect ? '#10b981' : '#ef4444') : 'white',
+                        color: quizAnswer === idx ? 'white' : '#333',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+                {quizAnswer !== null && (
+                  <p style={{ marginTop: '1rem', fontWeight: 'bold', color: quizCorrect ? '#10b981' : '#ef4444' }}>
+                    {quizCorrect ? text.correct : text.incorrect}
+                  </p>
+                )}
+                <button
+                  onClick={() => toggleView('quiz')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 3. Match Up */}
           <div className="activity-demo-card">
-            <h3>🔗 {text.matchUp}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.matchInstructions}</p>
-              <div className="match-columns" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  {text.matchLeft.map((item, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleMatchClick('left', idx)}
-                      disabled={matchedPairs.includes(idx)}
-                      className={`match-item ${matchSelections.left === idx ? 'selected' : ''} ${matchedPairs.includes(idx) ? 'matched' : ''}`}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        margin: '0.5rem 0',
-                        padding: '0.75rem',
-                        border: '2px solid',
-                        borderColor: matchedPairs.includes(idx) ? '#10b981' : (matchSelections.left === idx ? '#667eea' : '#ddd'),
-                        borderRadius: '8px',
-                        background: matchedPairs.includes(idx) ? '#d1fae5' : (matchSelections.left === idx ? '#e0e7ff' : 'white'),
-                        cursor: matchedPairs.includes(idx) ? 'not-allowed' : 'pointer',
-                        opacity: matchedPairs.includes(idx) ? 0.6 : 1
-                      }}
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-                <div>
-                  {text.matchRight.map((item, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleMatchClick('right', idx)}
-                      disabled={matchedPairs.includes(idx)}
-                      className={`match-item ${matchSelections.right === idx ? 'selected' : ''} ${matchedPairs.includes(idx) ? 'matched' : ''}`}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        margin: '0.5rem 0',
-                        padding: '0.75rem',
-                        border: '2px solid',
-                        borderColor: matchedPairs.includes(idx) ? '#10b981' : (matchSelections.right === idx ? '#667eea' : '#ddd'),
-                        borderRadius: '8px',
-                        background: matchedPairs.includes(idx) ? '#d1fae5' : (matchSelections.right === idx ? '#e0e7ff' : 'white'),
-                        cursor: matchedPairs.includes(idx) ? 'not-allowed' : 'pointer',
-                        opacity: matchedPairs.includes(idx) ? 0.6 : 1
-                      }}
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🔗 {text.matchUp}</h3>
+              <button
+                onClick={() => toggleView('match')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('match') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('match') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('match') === 'teacher' ? (
+              /* TEACHER VIEW */
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Create matching pairs - position matters (same index = match)</p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Column A:</label>
+                    {matchLeft.map((item, idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        value={item}
+                        onChange={(e) => {
+                          const newLeft = [...matchLeft];
+                          newLeft[idx] = e.target.value;
+                          setMatchLeft(newLeft);
+                        }}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          margin: '0.5rem 0',
+                          padding: '0.5rem',
+                          border: '2px solid #667eea',
+                          borderRadius: '6px'
+                        }}
+                        placeholder={`Item ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Column B:</label>
+                    {matchRight.map((item, idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        value={item}
+                        onChange={(e) => {
+                          const newRight = [...matchRight];
+                          newRight[idx] = e.target.value;
+                          setMatchRight(newRight);
+                        }}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          margin: '0.5rem 0',
+                          padding: '0.5rem',
+                          border: '2px solid #10b981',
+                          borderRadius: '6px'
+                        }}
+                        placeholder={`Match ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleView('match')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              /* STUDENT VIEW */
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.matchInstructions}</p>
+                <div className="match-columns" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    {matchLeft.map((item, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleMatchClick('left', idx)}
+                        disabled={matchedPairs.includes(idx)}
+                        className={`match-item ${matchSelections.left === idx ? 'selected' : ''} ${matchedPairs.includes(idx) ? 'matched' : ''}`}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          margin: '0.5rem 0',
+                          padding: '0.75rem',
+                          border: '2px solid',
+                          borderColor: matchedPairs.includes(idx) ? '#10b981' : (matchSelections.left === idx ? '#667eea' : '#ddd'),
+                          borderRadius: '8px',
+                          background: matchedPairs.includes(idx) ? '#d1fae5' : (matchSelections.left === idx ? '#e0e7ff' : 'white'),
+                          cursor: matchedPairs.includes(idx) ? 'not-allowed' : 'pointer',
+                          opacity: matchedPairs.includes(idx) ? 0.6 : 1
+                        }}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    {matchRight.map((item, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleMatchClick('right', idx)}
+                        disabled={matchedPairs.includes(idx)}
+                        className={`match-item ${matchSelections.right === idx ? 'selected' : ''} ${matchedPairs.includes(idx) ? 'matched' : ''}`}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          margin: '0.5rem 0',
+                          padding: '0.75rem',
+                          border: '2px solid',
+                          borderColor: matchedPairs.includes(idx) ? '#10b981' : (matchSelections.right === idx ? '#667eea' : '#ddd'),
+                          borderRadius: '8px',
+                          background: matchedPairs.includes(idx) ? '#d1fae5' : (matchSelections.right === idx ? '#e0e7ff' : 'white'),
+                          cursor: matchedPairs.includes(idx) ? 'not-allowed' : 'pointer',
+                          opacity: matchedPairs.includes(idx) ? 0.6 : 1
+                        }}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => toggleView('match')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 4. Flash Cards */}
           <div className="activity-demo-card">
-            <h3>🎴 {text.flashCards}</h3>
-            <div className="demo-interactive">
-              <div
-                className={`flashcard ${flashCardFlipped ? 'flipped' : ''}`}
-                onClick={() => setFlashCardFlipped(!flashCardFlipped)}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🎴 {text.flashCards}</h3>
+              <button
+                onClick={() => toggleView('flash')}
                 style={{
-                  width: '250px',
-                  height: '150px',
-                  margin: '1rem auto',
-                  perspective: '1000px',
-                  cursor: 'pointer'
+                  padding: '0.5rem 1rem',
+                  background: getView('flash') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
                 }}
               >
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: flashCardFlipped ? '#764ba2' : '#667eea',
-                  color: 'white',
-                  borderRadius: '12px',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  padding: '1rem',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                  transition: 'all 0.3s ease'
-                }}>
-                  {flashCardFlipped ? text.flashBack : text.flashFront}
-                </div>
-              </div>
-              <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#666' }}>{text.tapToFlip}</p>
+                {getView('flash') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('flash') === 'teacher' ? (
+              /* TEACHER VIEW */
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Front (Question/Word):</label>
+                  <input
+                    type="text"
+                    value={flashFront}
+                    onChange={(e) => setFlashFront(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Back (Answer/Definition):</label>
+                  <textarea
+                    value={flashBack}
+                    onChange={(e) => setFlashBack(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '2px solid #764ba2',
+                      borderRadius: '6px',
+                      fontSize: '1rem',
+                      minHeight: '80px',
+                      fontFamily: 'inherit'
+                    }}
+                  />
+                </div>
+
+                <button
+                  onClick={() => toggleView('flash')}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              /* STUDENT VIEW */
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <div
+                  className={`flashcard ${flashCardFlipped ? 'flipped' : ''}`}
+                  onClick={() => setFlashCardFlipped(!flashCardFlipped)}
+                  style={{
+                    width: '250px',
+                    height: '150px',
+                    margin: '1rem auto',
+                    perspective: '1000px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: flashCardFlipped ? '#764ba2' : '#667eea',
+                    color: 'white',
+                    borderRadius: '12px',
+                    fontSize: '1.2rem',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    padding: '1rem',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    {flashCardFlipped ? flashBack : flashFront}
+                  </div>
+                </div>
+                <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#666' }}>{text.tapToFlip}</p>
+                <button
+                  onClick={() => toggleView('flash')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 5. True/False */}
           <div className="activity-demo-card">
-            <h3>✓✗ {text.trueFalse}</h3>
-            <div className="demo-interactive">
-              <p style={{ marginBottom: '1rem' }}><strong>{text.tfStatement}</strong></p>
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>✓✗ {text.trueFalse}</h3>
+              <button
+                onClick={() => toggleView('tf')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('tf') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('tf') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
+            </div>
+
+            {getView('tf') === 'teacher' ? (
+              /* TEACHER VIEW */
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Statement:</label>
+                  <textarea
+                    value={tfStatement}
+                    onChange={(e) => setTfStatement(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '2px solid #667eea',
+                      borderRadius: '6px',
+                      fontSize: '1rem',
+                      minHeight: '60px',
+                      fontFamily: 'inherit'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Correct Answer:</label>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button
+                      onClick={() => setTfCorrectAnswer(true)}
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem',
+                        border: '2px solid',
+                        borderColor: tfCorrectAnswer === true ? '#10b981' : '#ddd',
+                        borderRadius: '8px',
+                        background: tfCorrectAnswer === true ? '#d1fae5' : 'white',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ✓ True
+                    </button>
+                    <button
+                      onClick={() => setTfCorrectAnswer(false)}
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem',
+                        border: '2px solid',
+                        borderColor: tfCorrectAnswer === false ? '#10b981' : '#ddd',
+                        borderRadius: '8px',
+                        background: tfCorrectAnswer === false ? '#d1fae5' : 'white',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ✗ False
+                    </button>
+                  </div>
+                </div>
+
                 <button
-                  onClick={() => handleTFAnswer(true)}
+                  onClick={() => toggleView('tf')}
                   style={{
-                    padding: '0.75rem 2rem',
-                    border: '2px solid',
-                    borderColor: tfAnswer === true ? (tfCorrect ? '#ef4444' : '#10b981') : '#ddd',
-                    borderRadius: '8px',
-                    background: tfAnswer === true ? (tfCorrect ? '#fee2e2' : '#d1fae5') : 'white',
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
                     cursor: 'pointer',
                     fontWeight: 'bold'
                   }}
                 >
-                  {text.trueBtn}
-                </button>
-                <button
-                  onClick={() => handleTFAnswer(false)}
-                  style={{
-                    padding: '0.75rem 2rem',
-                    border: '2px solid',
-                    borderColor: tfAnswer === false ? (tfCorrect ? '#10b981' : '#ef4444') : '#ddd',
-                    borderRadius: '8px',
-                    background: tfAnswer === false ? (tfCorrect ? '#d1fae5' : '#fee2e2') : 'white',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {text.falseBtn}
+                  👁️ {text.viewStudent}
                 </button>
               </div>
-              {tfAnswer !== null && (
-                <p style={{ marginTop: '1rem', fontWeight: 'bold', color: tfCorrect ? '#10b981' : '#ef4444', textAlign: 'center' }}>
-                  {tfCorrect ? text.correct : text.incorrect}
+            ) : (
+              /* STUDENT VIEW */
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
                 </p>
-              )}
-            </div>
+                <p style={{ marginBottom: '1rem' }}><strong>{tfStatement}</strong></p>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                  <button
+                    onClick={() => handleTFAnswer(true)}
+                    style={{
+                      padding: '0.75rem 2rem',
+                      border: '2px solid',
+                      borderColor: tfAnswer === true ? (tfCorrect ? '#10b981' : '#ef4444') : '#ddd',
+                      borderRadius: '8px',
+                      background: tfAnswer === true ? (tfCorrect ? '#d1fae5' : '#fee2e2') : 'white',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {text.trueBtn}
+                  </button>
+                  <button
+                    onClick={() => handleTFAnswer(false)}
+                    style={{
+                      padding: '0.75rem 2rem',
+                      border: '2px solid',
+                      borderColor: tfAnswer === false ? (tfCorrect ? '#10b981' : '#ef4444') : '#ddd',
+                      borderRadius: '8px',
+                      background: tfAnswer === false ? (tfCorrect ? '#d1fae5' : '#fee2e2') : 'white',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {text.falseBtn}
+                  </button>
+                </div>
+                {tfAnswer !== null && (
+                  <p style={{ marginTop: '1rem', fontWeight: 'bold', color: tfCorrect ? '#10b981' : '#ef4444', textAlign: 'center' }}>
+                    {tfCorrect ? text.correct : text.incorrect}
+                  </p>
+                )}
+                <button
+                  onClick={() => toggleView('tf')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 6. Matching Pairs (Memory Game) */}
@@ -939,9 +1408,9 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
                       💎 {text.fiftyFifty}
                     </button>
                   </div>
-                  <p><strong>{text.gameshowQuestion}</strong></p>
+                  <p><strong>{gameshowQuestion}</strong></p>
                   <div className="quiz-options">
-                    {text.gameshowOptions.map((option, idx) => (
+                    {gameshowOptions.map((option, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleGameshowAnswer(idx)}
@@ -970,10 +1439,10 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
                   <p style={{
                     fontSize: '1.5rem',
                     fontWeight: 'bold',
-                    color: gameshowAnswer === 1 ? '#10b981' : '#ef4444',
+                    color: gameshowAnswer === gameshowCorrectIndex ? '#10b981' : '#ef4444',
                     marginBottom: '1rem'
                   }}>
-                    {gameshowAnswer === 1 ? text.correct : text.incorrect}
+                    {gameshowAnswer === gameshowCorrectIndex ? text.correct : text.incorrect}
                   </p>
                   <button onClick={handleStartGameshow} className="demo-btn">
                     {text.startQuiz}
@@ -1100,7 +1569,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
               }}>
                 <strong>Current:</strong> {unjumbledWords.join(' ')}
               </div>
-              {unjumbledWords.join(' ') === 'I went to school yesterday' && (
+              {unjumbledWords.join(' ') === unjumbleCorrectSentence && (
                 <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold' }}>
                   ✅ {text.correct}
                 </p>
