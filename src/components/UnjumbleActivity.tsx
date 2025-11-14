@@ -13,6 +13,8 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
   const [currentIndex, setCurrentIndex] = useState(0);
   const [scrambledWords, setScrambledWords] = useState<string[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [selectedForMove, setSelectedForMove] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [attempted, setAttempted] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
@@ -92,6 +94,43 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
     scrambleSentence(sentences[currentIndex]);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    // Space or Enter to select word for moving
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedForMove === null) {
+        setSelectedForMove(idx);
+      } else if (selectedForMove === idx) {
+        setSelectedForMove(null);
+      } else {
+        // Swap positions
+        const newWords = [...scrambledWords];
+        const [movedWord] = newWords.splice(selectedForMove, 1);
+        newWords.splice(idx, 0, movedWord);
+        setScrambledWords(newWords);
+        setSelectedForMove(null);
+        setIsChecked(false);
+      }
+    }
+    // Arrow keys to move focus
+    else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (idx < scrambledWords.length - 1) {
+        setFocusedIndex(idx + 1);
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (idx > 0) {
+        setFocusedIndex(idx - 1);
+      }
+    }
+    // Escape to cancel selection
+    else if (e.key === 'Escape') {
+      e.preventDefault();
+      setSelectedForMove(null);
+    }
+  };
+
   const t = {
     en: {
       title: 'Unjumble',
@@ -103,6 +142,7 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
       correctSentence: 'Correct Sentence:',
       scrambledPreview: 'Scrambled Preview:',
       dragInstruction: 'Drag and drop words to reorder them',
+      keyboardInstruction: '⌨️ Keyboard: ↑↓ Navigate • Space/Enter Select • Esc Cancel',
       check: 'Check Answer',
       next: 'Next Sentence',
       reset: 'Reset',
@@ -123,6 +163,7 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
       correctSentence: 'Правильне речення:',
       scrambledPreview: 'Попередній перегляд:',
       dragInstruction: 'Перетягніть слова, щоб змінити порядок',
+      keyboardInstruction: '⌨️ Клавіатура: ↑↓ Навігація • Пробіл/Enter Вибрати • Esc Скасувати',
       check: 'Перевірити',
       next: 'Наступне речення',
       reset: 'Скинути',
@@ -244,12 +285,34 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
             👨‍🎓 {text.studentInstructions}
           </p>
 
-          <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-              {text.score} {score}/{attempted}
-            </p>
-            <p style={{ fontSize: '0.85rem', color: '#666' }}>
-              {language === 'en' ? 'Sentence' : 'Речення'} {currentIndex + 1}/{sentences.length}
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
+              <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                {text.score} {score}/{attempted}
+              </p>
+              <p style={{ fontSize: '0.85rem', color: '#666' }}>
+                {language === 'en' ? 'Sentence' : 'Речення'} {currentIndex + 1}/{sentences.length}
+              </p>
+            </div>
+
+            {/* Progress Bar */}
+            <div style={{
+              width: '100%',
+              height: '8px',
+              background: '#e5e7eb',
+              borderRadius: '4px',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                width: `${sentences.length > 0 ? ((currentIndex + 1) / sentences.length) * 100 : 0}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)',
+                transition: 'width 0.3s ease',
+                borderRadius: '4px'
+              }} />
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#666', textAlign: 'center', marginTop: '0.25rem' }}>
+              {sentences.length > 0 ? Math.round(((currentIndex + 1) / sentences.length) * 100) : 0}% {language === 'en' ? 'Complete' : 'Завершено'}
             </p>
           </div>
 
@@ -262,6 +325,9 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
           }}>
             <p style={{ fontSize: '0.85rem', color: '#666', margin: '0 0 0.5rem 0', textAlign: 'center' }}>
               📋 {text.dragInstruction}
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#999', margin: 0, textAlign: 'center' }}>
+              {text.keyboardInstruction}
             </p>
           </div>
 
@@ -280,13 +346,23 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
               <div
                 key={idx}
                 draggable
+                tabIndex={0}
                 onDragStart={() => handleDragStart(idx)}
                 onDragOver={handleDragOver}
                 onDrop={() => handleDrop(idx)}
+                onKeyDown={(e) => handleKeyDown(e, idx)}
+                onFocus={() => setFocusedIndex(idx)}
+                onBlur={() => setFocusedIndex(null)}
                 style={{
                   padding: '0.75rem 1rem',
-                  background: draggedIndex === idx ? '#e0e7ff' : '#f9fafb',
-                  border: draggedIndex === idx ? '2px dashed #667eea' : '2px solid #e5e7eb',
+                  background:
+                    selectedForMove === idx ? '#fef3c7' :
+                    draggedIndex === idx ? '#e0e7ff' :
+                    focusedIndex === idx ? '#f3f4f6' : '#f9fafb',
+                  border:
+                    selectedForMove === idx ? '3px solid #f59e0b' :
+                    draggedIndex === idx ? '2px dashed #667eea' :
+                    focusedIndex === idx ? '2px solid #667eea' : '2px solid #e5e7eb',
                   borderRadius: '8px',
                   cursor: 'grab',
                   userSelect: 'none',
@@ -294,7 +370,10 @@ export default function UnjumbleActivity({ language, content }: UnjumbleActivity
                   alignItems: 'center',
                   gap: '0.75rem',
                   transition: 'all 0.2s',
-                  boxShadow: draggedIndex === idx ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                  boxShadow:
+                    selectedForMove === idx ? '0 4px 8px rgba(245, 158, 11, 0.3)' :
+                    draggedIndex === idx || focusedIndex === idx ? '0 4px 6px rgba(0,0,0,0.1)' : 'none',
+                  outline: 'none'
                 }}
               >
                 <span style={{

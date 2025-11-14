@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ContentType, ContentItem, ActivityType } from '../types';
 import type { Language } from '../translations';
 
@@ -24,10 +24,39 @@ export default function ContentCreator({
     'unjumble'
   ]);
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedContent = localStorage.getItem('vibe_content_creator');
+      if (savedContent) {
+        const parsed = JSON.parse(savedContent);
+        if (parsed.contentType) setContentType(parsed.contentType);
+        if (parsed.bulkInput) setBulkInput(parsed.bulkInput);
+        if (parsed.selectedActivities) setSelectedActivities(parsed.selectedActivities);
+      }
+    } catch (error) {
+      console.error('Failed to load saved content:', error);
+    }
+  }, []);
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('vibe_content_creator', JSON.stringify({
+        contentType,
+        bulkInput,
+        selectedActivities
+      }));
+    } catch (error) {
+      console.error('Failed to save content:', error);
+    }
+  }, [contentType, bulkInput, selectedActivities]);
+
   const t = {
     en: {
       title: 'Content Creator',
       subtitle: 'Create your content once, use it in multiple activities',
+      autoSave: 'Auto-saved ✓',
       contentType: 'Content Type:',
       words: 'Simple Words',
       qaPairs: 'Question & Answer Pairs',
@@ -50,6 +79,7 @@ export default function ContentCreator({
     uk: {
       title: 'Створення Контенту',
       subtitle: 'Створіть контент один раз, використовуйте в різних активностях',
+      autoSave: 'Автозбереження ✓',
       contentType: 'Тип контенту:',
       words: 'Прості слова',
       qaPairs: 'Запитання та відповіді',
@@ -150,10 +180,27 @@ export default function ContentCreator({
       padding: '2rem',
       borderRadius: '12px',
       marginBottom: '2rem',
-      color: 'white'
+      color: 'white',
+      position: 'sticky',
+      top: '0',
+      zIndex: 100,
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
     }}>
-      <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.8rem' }}>{text.title}</h2>
-      <p style={{ margin: '0 0 2rem 0', opacity: 0.9 }}>{text.subtitle}</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <div>
+          <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.8rem' }}>{text.title}</h2>
+          <p style={{ margin: '0', opacity: 0.9 }}>{text.subtitle}</p>
+        </div>
+        <div style={{
+          padding: '0.5rem 1rem',
+          background: 'rgba(255,255,255,0.2)',
+          borderRadius: '6px',
+          fontSize: '0.85rem',
+          fontWeight: 'bold'
+        }}>
+          {text.autoSave}
+        </div>
+      </div>
 
       {/* Content Type Selector */}
       <div style={{ marginBottom: '1.5rem' }}>

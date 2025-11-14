@@ -2,6 +2,83 @@
   box-sizing: border-box;
 }
 
+/* Accessibility: Touch Targets */
+button,
+a,
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="radio"],
+select {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Ensure interactive elements have adequate touch targets */
+button:not(.icon-only) {
+  padding: 0.75rem 1.5rem;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* Hide navigation menu on mobile (or make it smaller) */
+  nav[style*="position: fixed"] {
+    display: none !important;
+  }
+
+  /* Adjust sticky Content Creator on mobile */
+  .demo-content {
+    padding: 1rem !important;
+  }
+
+  /* Make activity cards more compact */
+  .activity-demo-card {
+    padding: 1rem !important;
+  }
+
+  /* Adjust section headers for mobile */
+  div[style*="linear-gradient"] h2 {
+    font-size: 1.2rem !important;
+  }
+
+  /* Ensure proper spacing */
+  .activity-demos-grid {
+    gap: 1rem !important;
+  }
+
+  /* Make inputs full width on mobile */
+  input[type="text"],
+  textarea {
+    width: 100% !important;
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+
+  /* Adjust button sizing for mobile */
+  button {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.2rem !important;
+  }
+
+  h3 {
+    font-size: 1rem !important;
+  }
+
+  /* More compact padding */
+  .demo-content {
+    padding: 0.5rem !important;
+  }
+}
+
 /* Language Selector */
 .language-selector {
   min-height: 100vh;

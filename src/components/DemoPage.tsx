@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import type { Language } from '../translations';
 import type { ContentItem, ContentType, ActivityType } from '../types';
 import ContentCreator from './ContentCreator';
-import AnagramActivity from './AnagramActivity';
-import RankOrderActivity from './RankOrderActivity';
-import MissingWordActivity from './MissingWordActivity';
-import UnjumbleActivity from './UnjumbleActivity';
+
+// Lazy load activity components for better performance
+const AnagramActivity = lazy(() => import('./AnagramActivity'));
+const RankOrderActivity = lazy(() => import('./RankOrderActivity'));
+const MissingWordActivity = lazy(() => import('./MissingWordActivity'));
+const UnjumbleActivity = lazy(() => import('./UnjumbleActivity'));
 
 interface DemoPageProps {
   language: Language;
@@ -64,10 +66,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [gapCorrectAnswers, setGapCorrectAnswers] = useState(['went', 'saw']);
   const [gapAnswers, setGapAnswers] = useState<string[]>(['', '']);
 
-  // Unjumble state
-  const [unjumbleCorrectSentence, setUnjumbleCorrectSentence] = useState('I went to school yesterday');
-  const [unjumbledWords, setUnjumbledWords] = useState<string[]>(['went', 'I', 'yesterday', 'school', 'to']);
-
   // Gameshow Quiz state
   const [gameshowQuestion, setGameshowQuestion] = useState('What is the capital of France?');
   const [gameshowOptions, setGameshowOptions] = useState(['London', 'Paris', 'Berlin', 'Madrid']);
@@ -94,6 +92,20 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       subtitle: 'See how teachers CREATE and students USE each activity type',
       exit: 'Exit Demo',
       switchLanguage: 'Switch to Ukrainian',
+
+      // Navigation
+      navTitle: 'Jump to Activity',
+      activities: 'Activities',
+
+      // Section headers
+      sectionInteractive: 'Interactive & Game-Based',
+      sectionQuiz: 'Assessment & Testing',
+      sectionWord: 'Word & Language Exercises',
+      sectionDescription: {
+        interactive: 'Engaging activities with randomization and visual feedback',
+        quiz: 'Question-based activities with scoring and feedback',
+        word: 'Text manipulation and vocabulary building exercises'
+      },
 
       // View toggle
       teacherView: 'Teacher View',
@@ -188,6 +200,20 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       subtitle: 'Дивіться, як вчителі СТВОРЮЮТЬ і студенти ВИКОРИСТОВУЮТЬ кожен тип активності',
       exit: 'Вийти з Демо',
       switchLanguage: 'Перемкнути на English',
+
+      // Navigation
+      navTitle: 'Перейти до Активності',
+      activities: 'Активності',
+
+      // Section headers
+      sectionInteractive: 'Інтерактивні та Ігрові',
+      sectionQuiz: 'Тестування та Оцінювання',
+      sectionWord: 'Словесні та Мовні Вправи',
+      sectionDescription: {
+        interactive: 'Захоплюючі активності з випадковістю та візуальним зворотнім зв\'язком',
+        quiz: 'Активності на основі запитань з підрахунком балів та зворотнім зв\'язком',
+        word: 'Маніпуляція текстом та вправи для розширення словникового запасу'
+      },
 
       // View toggle
       teacherView: 'Вигляд Вчителя',
@@ -406,15 +432,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
     }
   };
 
-  // Unjumble handler
-  const handleWordClick = (index: number) => {
-    // Move clicked word to the end
-    const newWords = [...unjumbledWords];
-    const [word] = newWords.splice(index, 1);
-    newWords.push(word);
-    setUnjumbledWords(newWords);
-  };
-
   // Find Match handler
 
   // Gameshow timer effect
@@ -426,6 +443,90 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       setGameshowActive(false);
     }
   }, [gameshowActive, gameshowTimer]);
+
+  // Populate activities from Content Creator when sharedContent changes
+  React.useEffect(() => {
+    if (sharedContent.length === 0) return; // Only populate if there's content
+
+    // Extract data based on content type
+    const words: string[] = [];
+    const questions: string[] = [];
+    const answers: string[] = [];
+    const leftItems: string[] = [];
+    const rightItems: string[] = [];
+
+    sharedContent.forEach(item => {
+      if (item.type === 'word') {
+        words.push(item.text);
+      } else if (item.type === 'qa-pair') {
+        questions.push(item.question);
+        answers.push(item.answer);
+        leftItems.push(item.question);
+        rightItems.push(item.answer);
+      } else if (item.type === 'definition') {
+        words.push(item.word);
+        leftItems.push(item.word);
+        rightItems.push(item.definition);
+      }
+    });
+
+    // Populate Random Wheel
+    if (words.length > 0) {
+      setWheelItems(words.slice(0, 8)); // Limit to 8 items for the wheel
+    }
+
+    // Populate Quiz (if we have Q&A pairs)
+    if (questions.length > 0 && answers.length >= 4) {
+      setQuizQuestion(questions[0]);
+      const correctAnswer = answers[0];
+      const wrongAnswers = answers.slice(1, 4);
+      const allOptions = [correctAnswer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+      setQuizOptions(allOptions);
+      setQuizCorrectIndex(allOptions.indexOf(correctAnswer));
+    }
+
+    // Populate Match Up
+    if (leftItems.length > 0 && rightItems.length > 0) {
+      setMatchLeft(leftItems.slice(0, 6));
+      setMatchRight(rightItems.slice(0, 6));
+      setMatchedPairs([]);
+    }
+
+    // Populate Flash Cards
+    if (leftItems.length > 0 && rightItems.length > 0) {
+      setFlashFront(leftItems[0]);
+      setFlashBack(rightItems[0]);
+    }
+
+    // Populate True/False (if we have Q&A pairs)
+    if (questions.length > 0) {
+      setTfStatement(questions[0]);
+    }
+
+    // Populate Whack-a-Mole
+    if (words.length > 0) {
+      setMoleTargetWord(words[0]);
+      setMoleDistractorWord(words[1] || '🕳️');
+    }
+
+    // Populate Gameshow Quiz
+    if (questions.length > 0 && answers.length >= 4) {
+      setGameshowQuestion(questions[0]);
+      const correctAnswer = answers[0];
+      const wrongAnswers = answers.slice(1, 4);
+      const allOptions = [correctAnswer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+      setGameshowOptions(allOptions);
+      setGameshowCorrectIndex(allOptions.indexOf(correctAnswer));
+    }
+
+    // Populate Group Sort
+    if (words.length >= 6) {
+      setUnsortedItems(words);
+      setSortedNouns([]);
+      setSortedVerbs([]);
+    }
+
+  }, [sharedContent]);
 
   return (
     <div className="demo-page">
@@ -445,6 +546,86 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       </header>
 
       <main className="demo-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+
+        {/* Activity Navigation Menu */}
+        <nav style={{
+          position: 'fixed',
+          right: '1rem',
+          top: '120px',
+          background: 'white',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          padding: '1rem',
+          zIndex: 99,
+          maxWidth: '220px',
+          maxHeight: 'calc(100vh - 140px)',
+          overflowY: 'auto'
+        }}>
+          <h4 style={{
+            margin: '0 0 0.75rem 0',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+            color: '#667eea',
+            textAlign: 'center'
+          }}>
+            {text.navTitle}
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {[
+              { id: 'activity-random-wheel', emoji: '🎡', name: text.randomWheel },
+              { id: 'activity-quiz', emoji: '❓', name: text.quiz },
+              { id: 'activity-match-up', emoji: '🔗', name: text.matchUp },
+              { id: 'activity-flash-cards', emoji: '🎴', name: text.flashCards },
+              { id: 'activity-true-false', emoji: '✓✗', name: text.trueFalse },
+              { id: 'activity-whack-a-mole', emoji: '🔨', name: text.whackAMole },
+              { id: 'activity-gameshow-quiz', emoji: '🎯', name: text.gameshowQuiz },
+              { id: 'activity-group-sort', emoji: '🗂️', name: text.groupSort },
+              { id: 'activity-anagram', emoji: '🔤', name: language === 'en' ? 'Anagram' : 'Анаграма' },
+              { id: 'activity-rank-order', emoji: '📊', name: language === 'en' ? 'Rank Order' : 'Ранжування' },
+              { id: 'activity-missing-word', emoji: '📝', name: text.missingWord },
+              { id: 'activity-unjumble', emoji: '🔀', name: text.unjumble }
+            ].map(activity => (
+              <a
+                key={activity.id}
+                href={`#${activity.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(activity.id)?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.5rem 0.75rem',
+                  background: '#f9fafb',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                  textDecoration: 'none',
+                  color: '#374151',
+                  fontSize: '0.85rem',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                  minHeight: '44px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#667eea';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#f9fafb';
+                  e.currentTarget.style.color = '#374151';
+                }}
+              >
+                <span>{activity.emoji}</span>
+                <span style={{ flex: 1 }}>{activity.name}</span>
+              </a>
+            ))}
+          </div>
+        </nav>
+
         {/* Content Creator */}
         <ContentCreator
           language={language}
@@ -458,8 +639,24 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
         {/* Activities - Vertical Stack */}
         <div className="activity-demos-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
+          {/* SECTION 1: Interactive & Game-Based */}
+          <div style={{
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            padding: '1.5rem',
+            borderRadius: '12px',
+            color: 'white',
+            marginTop: '1rem'
+          }}>
+            <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              🎮 {text.sectionInteractive}
+            </h2>
+            <p style={{ margin: 0, opacity: 0.9, fontSize: '0.95rem' }}>
+              {text.sectionDescription.interactive}
+            </p>
+          </div>
+
           {/* 1. Random Wheel */}
-          <div className="activity-demo-card">
+          <div id="activity-random-wheel" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🎡 {text.randomWheel}</h3>
               <button
@@ -618,8 +815,24 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             )}
           </div>
 
+          {/* SECTION 2: Assessment & Testing */}
+          <div style={{
+            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            padding: '1.5rem',
+            borderRadius: '12px',
+            color: 'white',
+            marginTop: '2rem'
+          }}>
+            <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              📊 {text.sectionQuiz}
+            </h2>
+            <p style={{ margin: 0, opacity: 0.9, fontSize: '0.95rem' }}>
+              {text.sectionDescription.quiz}
+            </p>
+          </div>
+
           {/* 2. Quiz */}
-          <div className="activity-demo-card">
+          <div id="activity-quiz" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>❓ {text.quiz}</h3>
               <button
@@ -671,7 +884,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
                         name="correct-answer"
                         checked={quizCorrectIndex === idx}
                         onChange={() => setQuizCorrectIndex(idx)}
-                        style={{ width: '20px', height: '20px' }}
+                        style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px' }}
                       />
                       <input
                         type="text"
@@ -771,7 +984,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
           </div>
 
           {/* 3. Match Up */}
-          <div className="activity-demo-card">
+          <div id="activity-match-up" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🔗 {text.matchUp}</h3>
               <button
@@ -946,7 +1159,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
           </div>
 
           {/* 4. Flash Cards */}
-          <div className="activity-demo-card">
+          <div id="activity-flash-cards" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🎴 {text.flashCards}</h3>
               <button
@@ -1081,7 +1294,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
           </div>
 
           {/* 5. True/False */}
-          <div className="activity-demo-card">
+          <div id="activity-true-false" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>✓✗ {text.trueFalse}</h3>
               <button
@@ -1241,7 +1454,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
           </div>
 
           {/* 6. Whack-a-Mole (renumbered from 7) */}
-          <div className="activity-demo-card">
+          <div id="activity-whack-a-mole" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🔨 {text.whackAMole}</h3>
               <button
@@ -1574,7 +1787,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
           </div>
 
           {/* 9. Gameshow Quiz */}
-          <div className="activity-demo-card">
+          <div id="activity-gameshow-quiz" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🎯 {text.gameshowQuiz}</h3>
               <button
@@ -1625,7 +1838,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
                         name="gameshow-correct"
                         checked={gameshowCorrectIndex === idx}
                         onChange={() => setGameshowCorrectIndex(idx)}
-                        style={{ width: '20px', height: '20px' }}
+                        style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px' }}
                       />
                       <input
                         type="text"
@@ -1776,8 +1989,24 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             )}
           </div>
 
+          {/* SECTION 3: Word & Language Exercises */}
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            padding: '1.5rem',
+            borderRadius: '12px',
+            color: 'white',
+            marginTop: '2rem'
+          }}>
+            <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              📝 {text.sectionWord}
+            </h2>
+            <p style={{ margin: 0, opacity: 0.9, fontSize: '0.95rem' }}>
+              {text.sectionDescription.word}
+            </p>
+          </div>
+
           {/* 10. Group Sort */}
-          <div className="activity-demo-card">
+          <div id="activity-group-sort" className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🗂️ {text.groupSort}</h3>
               <button
@@ -2015,178 +2244,77 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             )}
           </div>
 
-          {/* 11. Unjumble */}
-          <div className="activity-demo-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0 }}>🔀 {text.unjumble}</h3>
-              <button
-                onClick={() => toggleView('unjumble')}
-                style={{
-                  padding: '0.5rem 1rem',
-                  background: getView('unjumble') === 'teacher' ? '#667eea' : '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: 'bold'
-                }}
-              >
-                {getView('unjumble') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
-              </button>
-            </div>
-
-            {getView('unjumble') === 'teacher' ? (
-              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
-                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  👨‍🏫 {text.teacherInstructions}
-                </p>
-
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Correct Sentence:
-                  </label>
-                  <input
-                    type="text"
-                    value={unjumbleCorrectSentence}
-                    onChange={(e) => {
-                      setUnjumbleCorrectSentence(e.target.value);
-                      // Auto-scramble the words
-                      const words = e.target.value.split(' ').filter(w => w.trim());
-                      const scrambled = [...words].sort(() => Math.random() - 0.5);
-                      setUnjumbledWords(scrambled);
-                    }}
-                    placeholder="Enter a sentence"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '2px solid #667eea',
-                      borderRadius: '6px',
-                      fontSize: '1rem'
-                    }}
-                  />
-                  <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem', fontStyle: 'italic' }}>
-                    Words will be automatically scrambled for students
-                  </p>
-                </div>
-
-                <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px', marginBottom: '1rem' }}>
-                  <p style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Preview - Scrambled words:
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {unjumbledWords.map((word, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          padding: '0.5rem 1rem',
-                          background: '#667eea',
-                          color: 'white',
-                          borderRadius: '6px',
-                          fontSize: '0.9rem'
-                        }}
-                      >
-                        {word}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => toggleView('unjumble')}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    background: '#10b981',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    width: '100%'
-                  }}
-                >
-                  👁️ {text.viewStudent}
-                </button>
+          {/* 11. Anagram */}
+          <div id="activity-anagram">
+            <Suspense fallback={
+              <div style={{
+                padding: '3rem',
+                textAlign: 'center',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '12px',
+                color: 'white'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                <div>{language === 'en' ? 'Loading activity...' : 'Завантаження активності...'}</div>
               </div>
-            ) : (
-              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
-                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  👨‍🎓 {text.studentInstructions}
-                </p>
-                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Click words to move them to the end:</p>
-                <div className="unjumble-words" style={{
-                  display: 'flex',
-                  gap: '0.5rem',
-                  flexWrap: 'wrap',
-                  justifyContent: 'center',
-                  marginBottom: '1rem'
-                }}>
-                  {unjumbledWords.map((word, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleWordClick(idx)}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        background: '#667eea',
-                        color: 'white',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        border: 'none',
-                        fontSize: '1rem',
-                        fontWeight: '500',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      {word}
-                    </button>
-                  ))}
-                </div>
-                <div style={{
-                  padding: '1rem',
-                  background: '#f0f0f0',
-                  borderRadius: '8px',
-                  textAlign: 'center',
-                  fontSize: '1.1rem',
-                  marginBottom: '1rem'
-                }}>
-                  <strong>Current:</strong> {unjumbledWords.join(' ')}
-                </div>
-                {unjumbledWords.join(' ') === unjumbleCorrectSentence && (
-                  <p style={{ textAlign: 'center', marginBottom: '1rem', color: '#10b981', fontWeight: 'bold' }}>
-                    ✅ {text.correct}
-                  </p>
-                )}
-
-                <button
-                  onClick={() => toggleView('unjumble')}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    background: '#667eea',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    width: '100%'
-                  }}
-                >
-                  ← {text.viewTeacher}
-                </button>
-              </div>
-            )}
+            }>
+              <AnagramActivity language={language} content={sharedContent} />
+            </Suspense>
           </div>
 
-          {/* 11. Anagram */}
-          <AnagramActivity language={language} content={sharedContent} />
-
           {/* 12. Rank Order */}
-          <RankOrderActivity language={language} content={sharedContent} />
+          <div id="activity-rank-order">
+            <Suspense fallback={
+              <div style={{
+                padding: '3rem',
+                textAlign: 'center',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '12px',
+                color: 'white'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                <div>{language === 'en' ? 'Loading activity...' : 'Завантаження активності...'}</div>
+              </div>
+            }>
+              <RankOrderActivity language={language} content={sharedContent} />
+            </Suspense>
+          </div>
 
           {/* 13. Missing Word */}
-          <MissingWordActivity language={language} content={sharedContent} />
+          <div id="activity-missing-word">
+            <Suspense fallback={
+              <div style={{
+                padding: '3rem',
+                textAlign: 'center',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '12px',
+                color: 'white'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                <div>{language === 'en' ? 'Loading activity...' : 'Завантаження активності...'}</div>
+              </div>
+            }>
+              <MissingWordActivity language={language} />
+            </Suspense>
+          </div>
 
           {/* 14. Unjumble (Improved with Drag & Drop) */}
-          <UnjumbleActivity language={language} content={sharedContent} />
+          <div id="activity-unjumble">
+            <Suspense fallback={
+              <div style={{
+                padding: '3rem',
+                textAlign: 'center',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '12px',
+                color: 'white'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                <div>{language === 'en' ? 'Loading activity...' : 'Завантаження активності...'}</div>
+              </div>
+            }>
+              <UnjumbleActivity language={language} content={sharedContent} />
+            </Suspense>
+          </div>
 
         </div>
       </main>
