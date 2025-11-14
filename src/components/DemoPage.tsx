@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { Language } from '../translations';
 
 interface DemoPageProps {
@@ -39,7 +39,24 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [gapAnswers, setGapAnswers] = useState<string[]>(['', '']);
 
   // Unjumble state
-  const [unjumbledWords] = useState<string[]>(['went', 'I', 'yesterday', 'school', 'to']);
+  const [unjumbledWords, setUnjumbledWords] = useState<string[]>(['went', 'I', 'yesterday', 'school', 'to']);
+
+  // Gameshow Quiz state
+  const [gameshowAnswer, setGameshowAnswer] = useState<number | null>(null);
+  const [gameshowTimer, setGameshowTimer] = useState(30);
+  const [gameshowActive, setGameshowActive] = useState(false);
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
+  const [removedOptions, setRemovedOptions] = useState<number[]>([]);
+
+  // Group Sort state
+  const [unsortedItems, setUnsortedItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
+  const [sortedNouns, setSortedNouns] = useState<string[]>([]);
+  const [sortedVerbs, setSortedVerbs] = useState<string[]>([]);
+
+  // Find Match state
+  const [findMatchItems] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊']);
+  const [findMatchSelected, setFindMatchSelected] = useState<number[]>([]);
+  const [findMatchMatched, setFindMatchMatched] = useState<number[]>([]);
 
   const t = {
     en: {
@@ -104,10 +121,21 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       unjumbleInstructions: 'Drag words to make a correct sentence:',
 
       // Group Sort
-      sortInstructions: 'Drag words to the correct category:',
+      sortInstructions: 'Click words to sort into categories:',
       sortItems: ['run', 'book', 'swim', 'table', 'eat', 'chair'],
       nouns: 'Nouns',
-      verbs: 'Verbs'
+      verbs: 'Verbs',
+      unsorted: 'Unsorted Items',
+
+      // Gameshow Quiz
+      gameshowQuestion: 'What is the capital of France?',
+      gameshowOptions: ['London', 'Paris', 'Berlin', 'Madrid'],
+      fiftyFifty: '50/50',
+      timeLeft: 'Time:',
+      startQuiz: 'Start Quiz',
+
+      // Find Match
+      findMatchInstructions: 'Click two matching items to make them disappear'
     },
     uk: {
       title: 'Демонстрація Інтерактивних Активностей',
@@ -171,10 +199,21 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       unjumbleInstructions: 'Перетягніть слова, щоб скласти речення:',
 
       // Group Sort
-      sortInstructions: 'Перетягніть слова в правильну категорію:',
+      sortInstructions: 'Натисніть слова, щоб сортувати за категоріями:',
       sortItems: ['бігти', 'книга', 'плавати', 'стіл', 'їсти', 'стілець'],
       nouns: 'Іменники',
-      verbs: 'Дієслова'
+      verbs: 'Дієслова',
+      unsorted: 'Несортовані Елементи',
+
+      // Gameshow Quiz
+      gameshowQuestion: 'Яка столиця Франції?',
+      gameshowOptions: ['Лондон', 'Париж', 'Берлін', 'Мадрид'],
+      fiftyFifty: '50/50',
+      timeLeft: 'Час:',
+      startQuiz: 'Почати Квіз',
+
+      // Find Match
+      findMatchInstructions: 'Натисніть два однакові елементи, щоб вони зникли'
     }
   };
 
@@ -261,6 +300,78 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
     setTfAnswer(answer);
     setTfCorrect(answer === false); // English is NOT a Romance language
   };
+
+  // Gameshow Quiz handlers
+  const handleStartGameshow = () => {
+    setGameshowActive(true);
+    setGameshowTimer(30);
+    setGameshowAnswer(null);
+    setFiftyFiftyUsed(false);
+    setRemovedOptions([]);
+  };
+
+  const handleFiftyFifty = () => {
+    if (!fiftyFiftyUsed) {
+      setFiftyFiftyUsed(true);
+      // Remove 2 wrong answers (keep index 1 which is correct, and one random wrong)
+      const wrongOptions = [0, 2, 3]; // indices of wrong answers
+      const keepWrong = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+      const toRemove = wrongOptions.filter(idx => idx !== keepWrong);
+      setRemovedOptions(toRemove);
+    }
+  };
+
+  const handleGameshowAnswer = (index: number) => {
+    setGameshowAnswer(index);
+    setGameshowActive(false);
+  };
+
+  // Group Sort handlers
+  const handleSortItem = (item: string, category: 'noun' | 'verb') => {
+    setUnsortedItems(unsortedItems.filter(i => i !== item));
+    if (category === 'noun') {
+      setSortedNouns([...sortedNouns, item]);
+    } else {
+      setSortedVerbs([...sortedVerbs, item]);
+    }
+  };
+
+  // Unjumble handler
+  const handleWordClick = (index: number) => {
+    // Move clicked word to the end
+    const newWords = [...unjumbledWords];
+    const [word] = newWords.splice(index, 1);
+    newWords.push(word);
+    setUnjumbledWords(newWords);
+  };
+
+  // Find Match handler
+  const handleFindMatchClick = (index: number) => {
+    if (findMatchMatched.includes(index) || findMatchSelected.includes(index)) {
+      return;
+    }
+
+    const newSelected = [...findMatchSelected, index];
+    setFindMatchSelected(newSelected);
+
+    if (newSelected.length === 2) {
+      const [first, second] = newSelected;
+      if (findMatchItems[first] === findMatchItems[second]) {
+        setFindMatchMatched([...findMatchMatched, first, second]);
+      }
+      setTimeout(() => setFindMatchSelected([]), 500);
+    }
+  };
+
+  // Gameshow timer effect
+  React.useEffect(() => {
+    if (gameshowActive && gameshowTimer > 0) {
+      const timer = setTimeout(() => setGameshowTimer(gameshowTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (gameshowActive && gameshowTimer === 0) {
+      setGameshowActive(false);
+    }
+  }, [gameshowActive, gameshowTimer]);
 
   // Memory cards data
   const memoryCards = ['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇'];
@@ -598,81 +709,249 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             </div>
           </div>
 
-          {/* 9-12: Simplified placeholders for remaining activities */}
+          {/* 9. Gameshow Quiz */}
           <div className="activity-demo-card">
             <h3>🎯 {text.gameshowQuiz}</h3>
             <div className="demo-interactive">
-              <p>Quiz with timer and lifelines (enhanced version of Quiz)</p>
-              <div style={{ padding: '2rem', background: '#f0f0f0', borderRadius: '8px', textAlign: 'center' }}>
-                ⏱️ Timer + 💎 Lifelines
-              </div>
+              {!gameshowActive && gameshowAnswer === null && (
+                <button onClick={handleStartGameshow} className="demo-btn" style={{ marginBottom: '1rem' }}>
+                  {text.startQuiz}
+                </button>
+              )}
+
+              {gameshowActive && (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 'bold',
+                      color: gameshowTimer <= 10 ? '#ef4444' : '#667eea',
+                      animation: gameshowTimer <= 10 ? 'pulse 1s infinite' : 'none'
+                    }}>
+                      {text.timeLeft} {gameshowTimer}s
+                    </div>
+                    <button
+                      onClick={handleFiftyFifty}
+                      disabled={fiftyFiftyUsed}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: fiftyFiftyUsed ? '#ccc' : '#f59e0b',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: fiftyFiftyUsed ? 'not-allowed' : 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      💎 {text.fiftyFifty}
+                    </button>
+                  </div>
+                  <p><strong>{text.gameshowQuestion}</strong></p>
+                  <div className="quiz-options">
+                    {text.gameshowOptions.map((option, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleGameshowAnswer(idx)}
+                        disabled={removedOptions.includes(idx)}
+                        style={{
+                          display: removedOptions.includes(idx) ? 'none' : 'block',
+                          width: '100%',
+                          margin: '0.5rem 0',
+                          padding: '0.75rem',
+                          border: '2px solid #ddd',
+                          borderRadius: '8px',
+                          background: 'white',
+                          color: '#333',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {!gameshowActive && gameshowAnswer !== null && (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  <p style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: gameshowAnswer === 1 ? '#10b981' : '#ef4444',
+                    marginBottom: '1rem'
+                  }}>
+                    {gameshowAnswer === 1 ? text.correct : text.incorrect}
+                  </p>
+                  <button onClick={handleStartGameshow} className="demo-btn">
+                    {text.startQuiz}
+                  </button>
+                </div>
+              )}
+
+              {!gameshowActive && gameshowTimer === 0 && (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  <p style={{ fontSize: '1.2rem', color: '#ef4444', marginBottom: '1rem' }}>
+                    ⏰ Time's up!
+                  </p>
+                  <button onClick={handleStartGameshow} className="demo-btn">
+                    Try Again
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
+          {/* 10. Group Sort */}
           <div className="activity-demo-card">
             <h3>🗂️ {text.groupSort}</h3>
             <div className="demo-interactive">
               <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.sortInstructions}</p>
+
+              {unsortedItems.length > 0 && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>{text.unsorted}:</p>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {unsortedItems.map((item, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '0.25rem' }}>
+                        <button
+                          onClick={() => handleSortItem(item, 'noun')}
+                          style={{
+                            padding: '0.5rem 0.75rem',
+                            background: 'white',
+                            border: '2px solid #667eea',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem'
+                          }}
+                          title={`Sort as ${text.nouns}`}
+                        >
+                          {item} → N
+                        </button>
+                        <button
+                          onClick={() => handleSortItem(item, 'verb')}
+                          style={{
+                            padding: '0.5rem 0.75rem',
+                            background: 'white',
+                            border: '2px solid #10b981',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem'
+                          }}
+                          title={`Sort as ${text.verbs}`}
+                        >
+                          {item} → V
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px' }}>
-                <p><strong>{text.nouns}:</strong> book, table, chair</p>
-                <p><strong>{text.verbs}:</strong> run, swim, eat</p>
+                <p style={{ marginBottom: '0.5rem' }}>
+                  <strong style={{ color: '#667eea' }}>{text.nouns}:</strong>{' '}
+                  {sortedNouns.length > 0 ? sortedNouns.join(', ') : '—'}
+                </p>
+                <p style={{ margin: 0 }}>
+                  <strong style={{ color: '#10b981' }}>{text.verbs}:</strong>{' '}
+                  {sortedVerbs.length > 0 ? sortedVerbs.join(', ') : '—'}
+                </p>
               </div>
+
+              {unsortedItems.length === 0 && (
+                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold' }}>
+                  ✅ All sorted!
+                </p>
+              )}
             </div>
           </div>
 
+          {/* 11. Unjumble */}
           <div className="activity-demo-card">
             <h3>🔀 {text.unjumble}</h3>
             <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.unjumbleInstructions}</p>
+              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Click words to move them to the end:</p>
               <div className="unjumble-words" style={{
                 display: 'flex',
                 gap: '0.5rem',
                 flexWrap: 'wrap',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                marginBottom: '1rem'
               }}>
                 {unjumbledWords.map((word, idx) => (
-                  <div
+                  <button
                     key={idx}
+                    onClick={() => handleWordClick(idx)}
                     style={{
                       padding: '0.5rem 1rem',
                       background: '#667eea',
                       color: 'white',
                       borderRadius: '8px',
-                      cursor: 'move'
+                      cursor: 'pointer',
+                      border: 'none',
+                      fontSize: '1rem',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
                     }}
                   >
                     {word}
-                  </div>
+                  </button>
                 ))}
               </div>
+              <div style={{
+                padding: '1rem',
+                background: '#f0f0f0',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontSize: '1.1rem'
+              }}>
+                <strong>Current:</strong> {unjumbledWords.join(' ')}
+              </div>
+              {unjumbledWords.join(' ') === 'I went to school yesterday' && (
+                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold' }}>
+                  ✅ {text.correct}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* 12. Find the Match */}
           <div className="activity-demo-card">
             <h3>🔍 {text.findMatch}</h3>
             <div className="demo-interactive">
-              <p>Click pairs of matching items (similar to Match Up)</p>
+              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.findMatchInstructions}</p>
               <div className="find-match-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
                 gap: '0.5rem'
               }}>
-                {['🍎', '🍎', '🍌', '🍌', '🍊', '🍊'].map((item, idx) => (
+                {findMatchItems.map((item, idx) => (
                   <button
                     key={idx}
+                    onClick={() => handleFindMatchClick(idx)}
+                    disabled={findMatchMatched.includes(idx)}
                     style={{
                       padding: '1rem',
                       fontSize: '2rem',
-                      border: '2px solid #667eea',
+                      border: '2px solid',
+                      borderColor: findMatchSelected.includes(idx) ? '#f59e0b' : (findMatchMatched.includes(idx) ? '#10b981' : '#667eea'),
                       borderRadius: '8px',
-                      background: 'white',
-                      cursor: 'pointer'
+                      background: findMatchMatched.includes(idx) ? '#d1fae5' : (findMatchSelected.includes(idx) ? '#fef3c7' : 'white'),
+                      cursor: findMatchMatched.includes(idx) ? 'not-allowed' : 'pointer',
+                      opacity: findMatchMatched.includes(idx) ? 0.3 : 1,
+                      transition: 'all 0.3s ease',
+                      transform: findMatchSelected.includes(idx) ? 'scale(1.1)' : 'scale(1)'
                     }}
                   >
-                    {item}
+                    {findMatchMatched.includes(idx) ? '✓' : item}
                   </button>
                 ))}
               </div>
+              {findMatchMatched.length === 6 && (
+                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#10b981', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                  🎉 All matched!
+                </p>
+              )}
             </div>
           </div>
 
