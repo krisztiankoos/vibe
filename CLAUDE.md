@@ -1,203 +1,353 @@
-# Vibe - English Lesson Builder
+# Vibe - Language Lesson Builder
 
-**Live Production**: https://krisztiankoos.github.io/vibe/
-**Version**: 1.0.0
+**Production**: https://krisztiankoos.github.io/vibe/ | **Version**: 1.0.0 | **Branch**: `dev` → `main` (auto-deploy)
+**Stack**: React 19 + TypeScript 5.9 + Vite 7 | **State**: localStorage (no backend)
 
-## Project Overview
-
-Bilingual web application for language teachers to create, share, and deliver interactive language lessons. Supports English (ESL) and Ukrainian teaching methodologies with student-facing interactive exercises.
-
-## Tech Stack
-
-- **Frontend**: React 19.2.0, TypeScript 5.9.3
-- **Build**: Vite 7.2.2
-- **Deployment**: GitHub Pages (auto-deploy from main branch)
-- **State**: React Hooks + localStorage
-
-## Quick Start
-
-```bash
-# First time setup
-npm install          # Install dependencies
-
-# Development
-./start-claude.sh    # Start Claude Code (auto-deploys extensions)
-npm run dev          # Start dev server (localhost:5173)
-npm run build        # Production build
-npm run preview      # Preview production build
-npm audit            # Check for vulnerabilities
-```
-
-## Project Structure
-
-```
-src/
-├── components/       # 13 React components (App, LeadInForm, StudentLessonView, etc.)
-├── data/            # 14 sample lessons (7 EN + 7 UK)
-├── hooks/           # Custom React hooks
-├── utils/           # Security, import/export, help text
-├── types.ts         # TypeScript definitions
-├── translations.ts  # 170+ bilingual strings
-└── App.css          # All styles
-```
-
-## Key Files
-
-- `src/types.ts` - Core types: `Lesson`, `Exercise`, `Language`
-- `src/translations.ts` - All UI strings (English/Ukrainian)
-- `src/utils/security.ts` - Input validation & sanitization (MUST use for all user input)
-- `src/utils/lessonUtils.ts` - Import/export/print functions
-- `docs/guides/DEVELOPMENT_GUIDE.md` - Comprehensive AI-assisted development guide
-- `docs/` - All project documentation organized by category
-- `claude_extensions/` - Version-controlled Claude Code skills and commands
-- `start-claude.sh` - Startup script that auto-deploys extensions
-
-## Code Standards
-
-### TypeScript
-- Strict mode enabled
-- No `any` types
-- Explicit return types on functions
-- All props destructured with types
-
-### React
-- Functional components only
-- Follow Rules of Hooks
-- Stable keys in lists (use `id`, not array index)
-
-### Security (Critical)
-```typescript
-import { validateInput, sanitizeInput, validateURL } from './utils/security';
-
-// Always validate/sanitize user input:
-const clean = sanitizeInput(userInput);
-const isValid = validateInput(userInput, { maxLength: 1000 });
-const url = validateURL(userUrl);
-```
-
-### Translations
-```typescript
-// Never hardcode strings - always use translations:
-const t = translations;
-<button>{t.lessonBuilder.saveButton[language]}</button>
-```
-
-## Development Workflow
-
-1. **Feature Branch**: `git checkout -b feature/description`
-2. **Implement**: Follow patterns in existing components
-3. **Translations**: Add to `translations.ts` for both `en` and `uk`
-4. **Security**: Validate all inputs with `utils/security.ts`
-5. **Test**: Manual testing checklist (TESTING_PLAN_V1.md)
-6. **Document**: Update CHANGELOG.md
-7. **Commit**: Use conventional commits (`feat:`, `fix:`, `refactor:`, etc.)
-8. **PR**: Merge to main → auto-deploy to GitHub Pages
-
-## Testing
-
-**Current**: Manual testing via TESTING_PLAN_V1.md
-**Planned**: Vitest (unit), React Testing Library (component), Playwright (E2E)
-
-Run before every PR:
-- ✅ `npm run build` succeeds
-- ✅ `npm audit` shows 0 vulnerabilities
-- ✅ All 11 exercise types render correctly
-- ✅ Both English and Ukrainian UI work
-- ✅ Import/export/save/load functions work
-- ✅ Student view displays lessons correctly
-
-## Git Workflow
-
-**Branches**:
-- `main` - Production (auto-deploys to GitHub Pages)
-- `feature/*` - New features
-- `fix/*` - Bug fixes
-- `refactor/*` - Code improvements
-
-**Commit Format**:
-```
-feat: add pronunciation practice exercise type
-fix: correct infinite loop in useKeyboardShortcuts
-docs: update README with collaboration guide
-refactor: extract exercise validation to custom hook
-test: add E2E tests for student lesson flow
-```
-
-## Common Tasks
-
-### Add New Exercise Type
-1. Add type to `Exercise` in `src/types.ts`
-2. Add builder form in `src/components/ExerciseBuilder.tsx`
-3. Add student view in `src/components/StudentExercise.tsx`
-4. Add translations to `src/translations.ts`
-5. Add help text to `src/utils/helpText.ts`
-6. Test with both languages
-
-### Add New Sample Lesson
-1. Add to `src/data/sampleLessons.ts` (English)
-2. Add to `src/data/sampleLessonsUkrainian.ts` (Ukrainian)
-3. Follow existing lesson structure
-4. Include all metadata (title, level, duration, objectives)
-
-### Fix Security Issue
-1. Review `docs/security/SECURITY_AUDIT.md` for patterns
-2. Always use `utils/security.ts` functions
-3. Never use `dangerouslySetInnerHTML`
-4. Run `npm audit` after dependency changes
-
-## AI-Assisted Development
-
-This project follows professional AI-assisted development practices with Claude Code.
-
-**See docs/guides/DEVELOPMENT_GUIDE.md for**:
-- Anthropic best practices
-- Prompt engineering guidelines
-- Skills development plan
-- Agent architecture
-- Detailed workflow documentation
-
-**Key Principle**: Write clear, contextual prompts with:
-- Task description
-- Current state & relevant files
-- Requirements & constraints
-- Success criteria
-
-## Known Issues / Warnings
-
-- ⚠️ Keyboard shortcuts were removed due to React error #310 (infinite render loop)
-- ⚠️ All data stored in localStorage (no backend yet)
-- ⚠️ No user authentication (coming in future version)
-- ⚠️ No automated tests yet (manual testing only)
-
-## Next Steps
-
-**Immediate**:
-- Set up Vercel development environment
-- Add unit tests (Vitest)
-- Build Translation Agent for bilingual automation
-
-**Short-term**:
-- Complete testing suite (unit + component + E2E)
-- Implement Testing & Security agents
-- Improve translation quality
-
-**Long-term**:
-- Backend (Firebase/Supabase)
-- User authentication
-- Lesson collaboration features
-- Mobile app
-
-## Resources
-
-- **Anthropic Docs**: https://docs.anthropic.com/claude/docs/prompt-engineering
-- **React Docs**: https://react.dev/
-- **Project Security**: docs/security/SECURITY_AUDIT.md
-- **Testing Plan**: docs/plans/TESTING_PLAN_V1.md
-- **Full Dev Guide**: docs/guides/DEVELOPMENT_GUIDE.md
-- **Setup Summary**: docs/guides/SETUP_SUMMARY.md
-- **All Documentation**: docs/README.md
+> **For planning & architecture**: See CLAUDE_PLANNING.md (comprehensive context)
+> **For execution**: Use this file (concise, action-oriented)
 
 ---
 
-**Last Updated**: 2025-11-14
-**Maintained by**: AI-assisted development with Claude Code
+## 🚨 CRITICAL RULES (Always Follow)
+
+### 1. Security First
+**ALWAYS validate and sanitize ALL user input. No exceptions.**
+
+```typescript
+import { validateInput, sanitizeInput, validateURL } from './utils/security';
+
+// ✅ CORRECT
+const clean = sanitizeInput(userInput);
+if (!validateInput(clean, { maxLength: 1000 })) {
+  return; // reject invalid input
+}
+
+// ❌ WRONG
+const data = userInput; // NEVER use raw input
+innerHTML = userInput;  // NEVER use dangerouslySetInnerHTML
+```
+
+**Why**: This is a teaching app - XSS could expose student/teacher data.
+
+### 2. Bilingual Everything
+**ALWAYS use translations. NEVER hardcode strings.**
+
+```typescript
+import { translations } from './translations';
+
+// ✅ CORRECT
+<button>{translations.lessonBuilder.saveButton[language]}</button>
+
+// ❌ WRONG
+<button>Save</button>
+<button>{language === 'en' ? 'Save' : 'Зберегти'}</button>
+```
+
+**Why**: Every UI element needs English AND Ukrainian. Missing translations break UX.
+
+**Action**: When adding ANY text:
+1. Add to `src/translations.ts` under correct category
+2. Provide both `en` and `uk` values
+3. Use `translations.category.key[language]` in component
+
+### 3. TypeScript Strict Mode
+**ALWAYS use explicit types. NEVER use `any`.**
+
+```typescript
+// ✅ CORRECT
+interface Props {
+  lesson: Lesson;
+  onSave: (lesson: Lesson) => void;
+}
+
+const Component: React.FC<Props> = ({ lesson, onSave }) => {
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  return <div>...</div>;
+};
+
+// ❌ WRONG
+const Component = (props: any) => { ... }
+const [data, setData] = useState();
+```
+
+**Why**: Strict typing catches bugs at compile time, not runtime.
+
+---
+
+## 📋 Decision Trees (Common Scenarios)
+
+### Scenario: User wants to add new feature
+
+```
+Is it UI-facing text?
+├─ YES → Add to src/translations.ts (both en + uk)
+└─ NO → Continue
+
+Does it accept user input?
+├─ YES → Use validateInput() + sanitizeInput()
+└─ NO → Continue
+
+Does it modify lesson/exercise data?
+├─ YES → Update src/types.ts first, then components
+└─ NO → Continue
+
+Does it need new exercise type?
+├─ YES → Follow "Add Exercise Type" workflow (see below)
+└─ NO → Implement feature
+
+Test in both languages?
+└─ ALWAYS YES → Switch language toggle, verify both work
+```
+
+### Scenario: User reports bug
+
+```
+Is it security-related?
+├─ YES → Priority 1, fix immediately, check security.ts usage
+└─ NO → Continue
+
+Does it affect both languages?
+├─ YES → Check translations.ts for missing/incorrect keys
+├─ NO → Check language-specific logic
+└─ UNKNOWN → Test both languages first
+
+Is it TypeScript error?
+├─ YES → Check types.ts, ensure no `any` types used
+└─ NO → Continue
+
+Can you reproduce it?
+├─ YES → Fix, test, commit
+└─ NO → Ask for steps to reproduce
+```
+
+---
+
+## 🎯 Code Patterns (Follow These)
+
+### Pattern 1: Adding New Exercise Type
+
+**Step-by-step** (complete ALL steps):
+1. `src/types.ts` → Add type to `Exercise` union
+2. `src/components/ExerciseBuilder.tsx` → Add builder form UI
+3. `src/components/StudentExercise.tsx` → Add student view
+4. `src/translations.ts` → Add all UI strings (en + uk)
+5. `src/utils/helpText.ts` → Add help text
+6. **Test**: Create exercise in both languages, verify student view works
+
+**Example commit**:
+```
+feat: add pronunciation practice exercise type
+
+- Added PronunciationExercise type to types.ts
+- Built form in ExerciseBuilder with audio upload
+- Student view plays audio with recording comparison
+- Added 12 translation strings (en/uk)
+- Help text explains IPA and stress patterns
+
+Tested in both English and Ukrainian interfaces.
+```
+
+### Pattern 2: Working with Translations
+
+```typescript
+// Component structure
+import { translations } from '../translations';
+import { Language } from '../types';
+
+const MyComponent: React.FC<{ language: Language }> = ({ language }) => {
+  const t = translations.myCategory; // namespace
+
+  return (
+    <>
+      <h1>{t.title[language]}</h1>
+      <button>{t.buttonLabel[language]}</button>
+      <p>{t.helpText[language]}</p>
+    </>
+  );
+};
+```
+
+**When translations are missing**:
+1. Add to `src/translations.ts`:
+```typescript
+export const translations = {
+  // ... existing
+  myCategory: {
+    title: { en: 'English Title', uk: 'Український Заголовок' },
+    buttonLabel: { en: 'Click Me', uk: 'Натисни мене' },
+    helpText: { en: 'Help text...', uk: 'Текст допомоги...' }
+  }
+};
+```
+
+### Pattern 3: Security Validation
+
+**For all text inputs**:
+```typescript
+const handleInput = (value: string) => {
+  const sanitized = sanitizeInput(value);
+  const isValid = validateInput(sanitized, {
+    maxLength: 1000,
+    minLength: 1,
+    allowedChars: /^[a-zA-Z0-9\s\-.,!?'"]+$/
+  });
+
+  if (!isValid) {
+    setError(translations.errors.invalidInput[language]);
+    return;
+  }
+
+  // Safe to use
+  setValue(sanitized);
+};
+```
+
+**For URLs** (file uploads, links):
+```typescript
+const handleURL = (url: string) => {
+  const validatedURL = validateURL(url);
+  if (!validatedURL) {
+    setError(translations.errors.invalidURL[language]);
+    return;
+  }
+
+  setImageURL(validatedURL);
+};
+```
+
+---
+
+## 📁 Project Structure (Quick Reference)
+
+```
+src/
+├── components/          # 13 components (App, LeadInForm, ExerciseBuilder, etc.)
+│   └── [Name].tsx       # All functional components, typed props
+├── data/                # Sample lessons (sampleLessons.ts + sampleLessonsUkrainian.ts)
+├── hooks/               # Custom React hooks
+├── utils/
+│   ├── security.ts      # validateInput, sanitizeInput, validateURL ⚠️ CRITICAL
+│   ├── lessonUtils.ts   # Import/export/print functions
+│   └── helpText.ts      # Contextual help strings
+├── types.ts             # ALL TypeScript interfaces (Lesson, Exercise, Language, etc.)
+├── translations.ts      # ALL UI strings (en/uk) ⚠️ CRITICAL
+└── App.css              # All styles (single file)
+
+docs/
+├── guides/              # DEVELOPMENT_GUIDE.md, SETUP_SUMMARY.md
+├── plans/               # TESTING_PLAN_V1.md, ROADMAP.md
+└── security/            # SECURITY_AUDIT.md
+
+claude_extensions/       # Skills + commands (deploy with ./start-claude.sh)
+```
+
+**Key files** (read these first for any task):
+- `src/types.ts` - Understand data structures
+- `src/translations.ts` - See existing translation patterns
+- `src/utils/security.ts` - Know security functions
+
+---
+
+## ✅ Success Criteria (What "Good" Looks Like)
+
+Before marking task complete, verify:
+
+**For ANY code change**:
+- [ ] `npm run build` succeeds with zero errors
+- [ ] `npm audit` shows 0 vulnerabilities
+- [ ] TypeScript strict mode passes (no `any`, all types explicit)
+- [ ] Both English and Ukrainian UI tested and working
+
+**For new features**:
+- [ ] All user-facing text in `translations.ts`
+- [ ] All user input validated with `security.ts` functions
+- [ ] Added to both builder view AND student view
+- [ ] Works with existing import/export/save/load
+- [ ] Help text added if needed
+
+**For bug fixes**:
+- [ ] Root cause identified and documented
+- [ ] Fix doesn't break other features
+- [ ] Added to CHANGELOG.md
+
+---
+
+## ⚠️ Common Pitfalls (Avoid These)
+
+### Pitfall 1: Forgetting Ukrainian
+**Bad**: Add feature, test in English, commit
+**Good**: Add feature, switch to Ukrainian, test again, then commit
+
+### Pitfall 2: Skipping Validation
+**Bad**: `const data = event.target.value; saveLesson(data);`
+**Good**: `const raw = event.target.value; const clean = sanitizeInput(raw); if (validateInput(clean)) saveLesson(clean);`
+
+### Pitfall 3: Hardcoding Strings
+**Bad**: `alert("Saved successfully!");`
+**Good**: `alert(translations.notifications.saveSuccess[language]);`
+
+### Pitfall 4: Using Array Index as Key
+**Bad**: `exercises.map((ex, i) => <div key={i}>...)</div>`
+**Good**: `exercises.map(ex => <div key={ex.id}>...)</div>`
+
+### Pitfall 5: Modifying Types Without Checking Usage
+**Bad**: Change `Exercise` type, don't check where it's used → build breaks
+**Good**: Search codebase for type usage, update all locations, then test
+
+---
+
+## 🚀 Quick Commands
+
+```bash
+npm run dev              # Start dev server (localhost:5173)
+npm run build            # Production build (must pass before PR)
+npm audit                # Check vulnerabilities (must be 0)
+./start-claude.sh        # Deploy extensions + start Claude Code
+```
+
+---
+
+## 📚 Deep Dives (When You Need Details)
+
+**For comprehensive guides, see**:
+- **Planning & architecture**: `CLAUDE_PLANNING.md` (component architecture, state management, security architecture, data models, user journeys, etc.)
+- Architecture & workflows: `docs/guides/DEVELOPMENT_GUIDE.md`
+- Testing procedures: `docs/plans/TESTING_PLAN_V1.md`
+- Security patterns: `docs/security/SECURITY_AUDIT.md`
+- Full roadmap: `docs/plans/ROADMAP.md`
+- All docs index: `docs/README.md`
+
+**External resources**:
+- [React 19 Docs](https://react.dev/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Anthropic Prompt Engineering](https://docs.anthropic.com/claude/docs/prompt-engineering)
+
+---
+
+## 🎓 Teaching Context (Why This App Exists)
+
+**Purpose**: Help ESL/Ukrainian teachers create interactive lessons
+**Users**: Teachers (builders) + Students (lesson consumers)
+**Methodology**:
+- English: PPP/TTT communicative approach (focus on fluency)
+- Ukrainian: Traditional grammar-translation (focus on accuracy)
+
+**11 Exercise Types**: Multiple choice, gap-fill, matching, ordering, discussion, role-play, lead-in, reading, writing, listening, pronunciation
+
+**Critical UX**:
+- Teachers build lessons → export/print
+- Students view lessons → interactive exercises → immediate feedback
+- Both roles must work seamlessly in both languages
+
+---
+
+## 🐛 Known Constraints
+
+- ⚠️ No backend yet (localStorage only)
+- ⚠️ No auth (coming later)
+- ⚠️ No automated tests (manual testing via TESTING_PLAN_V1.md)
+- ⚠️ Keyboard shortcuts removed (React error #310 - infinite loop)
+
+---
+
+**Last Updated**: 2025-11-14 | **Maintained by**: AI-assisted development with Claude Code
