@@ -67,12 +67,11 @@ function App() {
         setStudentLesson(shared);
         setStudentMode(true);
         // Auto-select language based on lesson or default to English
-        if (!language) {
-          setLanguage('en');
-        }
+        setLanguage(prev => prev || 'en');
       }
     }
-  }, [language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Show student view if in student mode
   if (studentMode && studentLesson && language) {
