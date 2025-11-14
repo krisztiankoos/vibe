@@ -1,5 +1,5 @@
 /**
- * Lesson Templates for Wordwall-Style Builder
+ * Lesson Templates for Interactive Builder
  *
  * Pre-configured activity sequences that teachers can use as starting points
  * Templates demonstrate different methodologies and provide quick lesson creation
