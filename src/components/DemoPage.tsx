@@ -8,9 +8,14 @@ interface DemoPageProps {
 }
 
 export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPageProps) {
+  // View mode state - teacher or student view for each activity
+  const [viewMode, setViewMode] = useState<Record<string, 'teacher' | 'student'>>({});
+
   // Random Wheel state
+  const [wheelItems, setWheelItems] = useState<string[]>(['present simple', 'past simple', 'present perfect', 'past continuous', 'future simple']);
   const [wheelSpinning, setWheelSpinning] = useState(false);
   const [wheelResult, setWheelResult] = useState('');
+  const [newWheelItem, setNewWheelItem] = useState('');
 
   // Quiz state
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
@@ -61,9 +66,22 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const t = {
     en: {
       title: 'Interactive Activity Demos',
-      subtitle: 'Try all 12 activity types - fully functional!',
+      subtitle: 'See how teachers CREATE and students USE each activity type',
       exit: 'Exit Demo',
       switchLanguage: 'Switch to Ukrainian',
+
+      // View toggle
+      teacherView: 'Teacher View',
+      studentView: 'Student View',
+      viewTeacher: 'View as Teacher',
+      viewStudent: 'View as Student',
+
+      // Teacher instructions
+      teacherInstructions: 'This is what YOU see when creating the activity',
+      studentInstructions: 'This is what STUDENTS see when doing the activity',
+      addItem: 'Add Item',
+      removeItem: 'Remove',
+      editContent: 'Edit Content',
 
       // Activity names
       quiz: 'Quiz',
@@ -80,8 +98,11 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       whackAMole: 'Whack-a-Mole',
 
       // Random Wheel
-      wheelItems: ['Student 1', 'Student 2', 'Student 3', 'Student 4', 'Student 5'],
+      wheelTitle: 'Grammar Tense Selector',
+      wheelDescription: 'Random tense for practice sentences',
       spinWheel: 'Spin the Wheel',
+      wheelItemsLabel: 'Wheel Items (one per line):',
+      wheelItemPlaceholder: 'Enter item...',
 
       // Quiz
       quizQuestion: 'What is the past tense of "go"?',
@@ -139,9 +160,22 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
     },
     uk: {
       title: 'Демонстрація Інтерактивних Активностей',
-      subtitle: 'Спробуйте всі 12 типів активностей - повністю функціональні!',
+      subtitle: 'Дивіться, як вчителі СТВОРЮЮТЬ і студенти ВИКОРИСТОВУЮТЬ кожен тип активності',
       exit: 'Вийти з Демо',
       switchLanguage: 'Перемкнути на English',
+
+      // View toggle
+      teacherView: 'Вигляд Вчителя',
+      studentView: 'Вигляд Студента',
+      viewTeacher: 'Переглянути як Вчитель',
+      viewStudent: 'Переглянути як Студент',
+
+      // Teacher instructions
+      teacherInstructions: 'Це те, що ВИ бачите при створенні активності',
+      studentInstructions: 'Це те, що СТУДЕНТИ бачать при виконанні активності',
+      addItem: 'Додати Елемент',
+      removeItem: 'Видалити',
+      editContent: 'Редагувати Вміст',
 
       // Activity names
       quiz: 'Квіз',
@@ -158,8 +192,11 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       whackAMole: 'Вдар Крота',
 
       // Random Wheel
-      wheelItems: ['Студент 1', 'Студент 2', 'Студент 3', 'Студент 4', 'Студент 5'],
+      wheelTitle: 'Вибір Граматичного Часу',
+      wheelDescription: 'Випадковий час для практичних речень',
       spinWheel: 'Крутити Колесо',
+      wheelItemsLabel: 'Елементи Колеса (по одному на рядок):',
+      wheelItemPlaceholder: 'Введіть елемент...',
 
       // Quiz
       quizQuestion: 'Який минулий час дієслова "go"?',
@@ -219,13 +256,36 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
 
   const text = t[language];
 
-  // Random Wheel handler
+  // View toggle helper
+  const toggleView = (activityId: string) => {
+    setViewMode(prev => ({
+      ...prev,
+      [activityId]: prev[activityId] === 'teacher' ? 'student' : 'teacher'
+    }));
+  };
+
+  const getView = (activityId: string): 'teacher' | 'student' => {
+    return viewMode[activityId] || 'teacher'; // Default to teacher view
+  };
+
+  // Random Wheel handlers
+  const handleAddWheelItem = () => {
+    if (newWheelItem.trim()) {
+      setWheelItems([...wheelItems, newWheelItem.trim()]);
+      setNewWheelItem('');
+    }
+  };
+
+  const handleRemoveWheelItem = (index: number) => {
+    setWheelItems(wheelItems.filter((_, i) => i !== index));
+  };
+
   const handleSpin = () => {
     setWheelSpinning(true);
     setWheelResult('');
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * text.wheelItems.length);
-      setWheelResult(text.wheelItems[randomIndex]);
+      const randomIndex = Math.floor(Math.random() * wheelItems.length);
+      setWheelResult(wheelItems[randomIndex]);
       setWheelSpinning(false);
     }, 1500);
   };
@@ -398,29 +458,162 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
 
           {/* 1. Random Wheel */}
           <div className="activity-demo-card">
-            <h3>🎡 {text.randomWheel}</h3>
-            <div className="demo-interactive">
-              <div className={`wheel ${wheelSpinning ? 'spinning' : ''}`} style={{
-                width: '200px',
-                height: '200px',
-                margin: '1rem auto',
-                border: '8px solid #667eea',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: wheelSpinning ? 'linear-gradient(45deg, #667eea, #764ba2)' : '#f0f0f0',
-                transition: 'all 0.3s ease',
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
-                animation: wheelSpinning ? 'spin 0.3s linear infinite' : 'none'
-              }}>
-                {wheelResult || '?'}
-              </div>
-              <button onClick={handleSpin} disabled={wheelSpinning} className="demo-btn">
-                {text.spinWheel}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🎡 {text.randomWheel}</h3>
+              <button
+                onClick={() => toggleView('wheel')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('wheel') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('wheel') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
               </button>
             </div>
+
+            {getView('wheel') === 'teacher' ? (
+              /* TEACHER VIEW - Creating the wheel */
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+                <h4 style={{ marginTop: 0 }}>{text.wheelTitle}</h4>
+                <p style={{ fontSize: '0.9rem', color: '#666' }}>{text.wheelDescription}</p>
+
+                <div style={{ marginTop: '1.5rem' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    {text.wheelItemsLabel}
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <input
+                      type="text"
+                      value={newWheelItem}
+                      onChange={(e) => setNewWheelItem(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddWheelItem()}
+                      placeholder={text.wheelItemPlaceholder}
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '2px solid #667eea',
+                        borderRadius: '6px',
+                        fontSize: '1rem'
+                      }}
+                    />
+                    <button onClick={handleAddWheelItem} className="demo-btn" style={{ margin: 0 }}>
+                      + {text.addItem}
+                    </button>
+                  </div>
+
+                  <div style={{ background: 'white', padding: '1rem', borderRadius: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                    {wheelItems.map((item, idx) => (
+                      <div key={idx} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '0.5rem',
+                        background: '#f9f9f9',
+                        borderRadius: '4px',
+                        marginBottom: '0.5rem'
+                      }}>
+                        <span>{item}</span>
+                        <button
+                          onClick={() => handleRemoveWheelItem(idx)}
+                          style={{
+                            padding: '0.25rem 0.75rem',
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          ✕ {text.removeItem}
+                        </button>
+                      </div>
+                    ))}
+                    {wheelItems.length === 0 && (
+                      <p style={{ textAlign: 'center', color: '#999', margin: 0 }}>No items yet. Add some above!</p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => toggleView('wheel')}
+                    style={{
+                      marginTop: '1rem',
+                      width: '100%',
+                      padding: '0.75rem',
+                      background: '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    👁️ {text.viewStudent}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* STUDENT VIEW - Using the wheel */
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <h4 style={{ textAlign: 'center', marginTop: 0 }}>{text.wheelTitle}</h4>
+                <div className={`wheel ${wheelSpinning ? 'spinning' : ''}`} style={{
+                  width: '200px',
+                  height: '200px',
+                  margin: '1rem auto',
+                  border: '8px solid #667eea',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: wheelSpinning ? 'linear-gradient(45deg, #667eea, #764ba2)' : '#f0f0f0',
+                  transition: 'all 0.3s ease',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  padding: '1rem',
+                  animation: wheelSpinning ? 'spin 0.3s linear infinite' : 'none'
+                }}>
+                  {wheelResult || '?'}
+                </div>
+                <button onClick={handleSpin} disabled={wheelSpinning || wheelItems.length === 0} className="demo-btn">
+                  {text.spinWheel}
+                </button>
+                {wheelItems.length === 0 && (
+                  <p style={{ textAlign: 'center', color: '#ef4444', fontSize: '0.9rem', marginTop: '1rem' }}>
+                    (Teacher needs to add items first)
+                  </p>
+                )}
+                <button
+                  onClick={() => toggleView('wheel')}
+                  style={{
+                    marginTop: '1rem',
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 2. Quiz */}
