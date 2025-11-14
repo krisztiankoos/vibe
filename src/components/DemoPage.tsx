@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import type { Language } from '../translations';
+import type { ContentItem, ContentType, ActivityType } from '../types';
+import ContentCreator from './ContentCreator';
+import AnagramActivity from './AnagramActivity';
+import RankOrderActivity from './RankOrderActivity';
 
 interface DemoPageProps {
   language: Language;
@@ -8,6 +12,11 @@ interface DemoPageProps {
 }
 
 export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPageProps) {
+  // Shared content from Content Creator
+  const [sharedContent, setSharedContent] = useState<ContentItem[]>([]);
+  const [_contentType, setContentType] = useState<ContentType>('words');
+  const [_selectedActivities, setSelectedActivities] = useState<ActivityType[]>([]);
+
   // View mode state - teacher or student view for each activity
   const [viewMode, setViewMode] = useState<Record<string, 'teacher' | 'student'>>({});
 
@@ -35,11 +44,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [flashBack, setFlashBack] = useState('The words you know in a language');
   const [flashCardFlipped, setFlashCardFlipped] = useState(false);
 
-  // Memory Matching state
-  const [memoryCards, setMemoryCards] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇']);
-  const [newMemoryPair, setNewMemoryPair] = useState('');
-  const [memoryFlipped, setMemoryFlipped] = useState<number[]>([]);
-  const [memoryMatched, setMemoryMatched] = useState<number[]>([]);
 
   // Whack-a-Mole state
   const [molePosition, setMolePosition] = useState(-1);
@@ -81,11 +85,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [sortedNouns, setSortedNouns] = useState<string[]>([]);
   const [sortedVerbs, setSortedVerbs] = useState<string[]>([]);
 
-  // Find Match state
-  const [findMatchItems, setFindMatchItems] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊']);
-  const [findMatchSelected, setFindMatchSelected] = useState<number[]>([]);
-  const [findMatchMatched, setFindMatchMatched] = useState<number[]>([]);
-  const [newFindMatchItem, setNewFindMatchItem] = useState('');
 
   const t = {
     en: {
@@ -340,23 +339,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
     }
   };
 
-  // Memory Matching handler
-  const handleMemoryClick = (index: number) => {
-    if (memoryFlipped.length === 2 || memoryFlipped.includes(index) || memoryMatched.includes(index)) {
-      return;
-    }
-
-    const newFlipped = [...memoryFlipped, index];
-    setMemoryFlipped(newFlipped);
-
-    if (newFlipped.length === 2) {
-      const [first, second] = newFlipped;
-      if (Math.floor(first / 2) === Math.floor(second / 2)) {
-        setMemoryMatched([...memoryMatched, first, second]);
-      }
-      setTimeout(() => setMemoryFlipped([]), 1000);
-    }
-  };
 
   // Whack-a-Mole handler
   const handleStartMole = () => {
@@ -432,22 +414,6 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   };
 
   // Find Match handler
-  const handleFindMatchClick = (index: number) => {
-    if (findMatchMatched.includes(index) || findMatchSelected.includes(index)) {
-      return;
-    }
-
-    const newSelected = [...findMatchSelected, index];
-    setFindMatchSelected(newSelected);
-
-    if (newSelected.length === 2) {
-      const [first, second] = newSelected;
-      if (findMatchItems[first] === findMatchItems[second]) {
-        setFindMatchMatched([...findMatchMatched, first, second]);
-      }
-      setTimeout(() => setFindMatchSelected([]), 500);
-    }
-  };
 
   // Gameshow timer effect
   React.useEffect(() => {
@@ -477,7 +443,18 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
       </header>
 
       <main className="demo-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
-        <div className="activity-demos-grid">
+        {/* Content Creator */}
+        <ContentCreator
+          language={language}
+          onContentChange={(items, type) => {
+            setSharedContent(items);
+            setContentType(type);
+          }}
+          onActivitiesChange={setSelectedActivities}
+        />
+
+        {/* Activities - Vertical Stack */}
+        <div className="activity-demos-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
           {/* 1. Random Wheel */}
           <div className="activity-demo-card">
@@ -1261,152 +1238,7 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             )}
           </div>
 
-          {/* 6. Matching Pairs (Memory Game) */}
-          <div className="activity-demo-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0 }}>🎴 {text.matchingPairs}</h3>
-              <button
-                onClick={() => toggleView('memory')}
-                style={{
-                  padding: '0.5rem 1rem',
-                  background: getView('memory') === 'teacher' ? '#667eea' : '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: 'bold'
-                }}
-              >
-                {getView('memory') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
-              </button>
-            </div>
-
-            {getView('memory') === 'teacher' ? (
-              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
-                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  👨‍🏫 {text.teacherInstructions}
-                </p>
-                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Add pairs - each item should appear exactly twice</p>
-
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                    <input
-                      type="text"
-                      value={newMemoryPair}
-                      onChange={(e) => setNewMemoryPair(e.target.value)}
-                      placeholder="Enter item (emoji or word)"
-                      style={{
-                        flex: 1,
-                        padding: '0.5rem',
-                        border: '2px solid #667eea',
-                        borderRadius: '6px'
-                      }}
-                    />
-                    <button
-                      onClick={() => {
-                        if (newMemoryPair.trim()) {
-                          setMemoryCards([...memoryCards, newMemoryPair.trim(), newMemoryPair.trim()]);
-                          setNewMemoryPair('');
-                        }
-                      }}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        background: '#667eea',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      + Add Pair
-                    </button>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {Array.from(new Set(memoryCards)).map((item, idx) => (
-                      <span key={idx} style={{
-                        padding: '0.5rem 1rem',
-                        background: '#e0e7ff',
-                        borderRadius: '6px',
-                        fontSize: '1.5rem'
-                      }}>
-                        {item} ×2
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => toggleView('memory')}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: '#10b981',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  👁️ {text.viewStudent}
-                </button>
-              </div>
-            ) : (
-              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
-                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  👨‍🎓 {text.studentInstructions}
-                </p>
-                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.memoryInstructions}</p>
-                <div className="memory-grid" style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: '0.5rem',
-                  maxWidth: '300px',
-                  margin: '0 auto 1rem'
-                }}>
-                  {memoryCards.map((card, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleMemoryClick(idx)}
-                      className={`memory-card ${memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? 'flipped' : ''}`}
-                      style={{
-                        aspectRatio: '1',
-                        border: '2px solid #667eea',
-                        borderRadius: '8px',
-                        background: memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? '#e0e7ff' : '#667eea',
-                        fontSize: '2rem',
-                        cursor: 'pointer',
-                        opacity: memoryMatched.includes(idx) ? 0.5 : 1
-                      }}
-                    >
-                      {memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? card : '?'}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  onClick={() => toggleView('memory')}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    background: 'white',
-                    color: '#667eea',
-                    border: '2px solid #667eea',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    fontSize: '0.85rem'
-                  }}
-                >
-                  ← {text.viewTeacher}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* 7. Whack-a-Mole */}
+          {/* 6. Whack-a-Mole (renumbered from 7) */}
           <div className="activity-demo-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>🔨 {text.whackAMole}</h3>
@@ -2342,196 +2174,11 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
             )}
           </div>
 
-          {/* 12. Find the Match */}
-          <div className="activity-demo-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0 }}>🔍 {text.findMatch}</h3>
-              <button
-                onClick={() => toggleView('findmatch')}
-                style={{
-                  padding: '0.5rem 1rem',
-                  background: getView('findmatch') === 'teacher' ? '#667eea' : '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: 'bold'
-                }}
-              >
-                {getView('findmatch') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
-              </button>
-            </div>
+          {/* 11. Anagram - NEW */}
+          <AnagramActivity language={language} content={sharedContent} />
 
-            {getView('findmatch') === 'teacher' ? (
-              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
-                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  👨‍🏫 {text.teacherInstructions}
-                </p>
-
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Add Matching Pairs:
-                  </label>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <input
-                      type="text"
-                      value={newFindMatchItem}
-                      onChange={(e) => setNewFindMatchItem(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter' && newFindMatchItem.trim()) {
-                          setFindMatchItems([...findMatchItems, newFindMatchItem.trim(), newFindMatchItem.trim()]);
-                          setNewFindMatchItem('');
-                        }
-                      }}
-                      placeholder="Add item (will create a pair)"
-                      style={{
-                        flex: 1,
-                        padding: '0.5rem',
-                        border: '2px solid #667eea',
-                        borderRadius: '6px'
-                      }}
-                    />
-                    <button
-                      onClick={() => {
-                        if (newFindMatchItem.trim()) {
-                          setFindMatchItems([...findMatchItems, newFindMatchItem.trim(), newFindMatchItem.trim()]);
-                          setNewFindMatchItem('');
-                        }
-                      }}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        background: '#667eea',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      + Add Pair
-                    </button>
-                  </div>
-                  <p style={{ fontSize: '0.85rem', color: '#666', fontStyle: 'italic' }}>
-                    Each item will be added twice to create a matching pair
-                  </p>
-                </div>
-
-                <div style={{ padding: '1rem', background: '#f0f0f0', borderRadius: '8px', marginBottom: '1rem' }}>
-                  <p style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Current Pairs ({findMatchItems.length / 2}):
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {Array.from(new Set(findMatchItems)).map((item, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          padding: '0.5rem 0.75rem',
-                          background: 'white',
-                          border: '2px solid #ddd',
-                          borderRadius: '6px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem'
-                        }}
-                      >
-                        <span style={{ fontSize: '1.5rem' }}>{item}</span>
-                        <span style={{ fontSize: '0.8rem', color: '#666' }}>×2</span>
-                        <button
-                          onClick={() => {
-                            setFindMatchItems(findMatchItems.filter(i => i !== item));
-                          }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#ef4444',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            fontSize: '1.1rem',
-                            padding: '0 0.25rem'
-                          }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => toggleView('findmatch')}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    background: '#10b981',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    width: '100%'
-                  }}
-                >
-                  👁️ {text.viewStudent}
-                </button>
-              </div>
-            ) : (
-              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
-                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  👨‍🎓 {text.studentInstructions}
-                </p>
-                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.findMatchInstructions}</p>
-                <div className="find-match-grid" style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '0.5rem',
-                  marginBottom: '1rem'
-                }}>
-                  {findMatchItems.map((item, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleFindMatchClick(idx)}
-                      disabled={findMatchMatched.includes(idx)}
-                      style={{
-                        padding: '1rem',
-                        fontSize: '2rem',
-                        border: '2px solid',
-                        borderColor: findMatchSelected.includes(idx) ? '#f59e0b' : (findMatchMatched.includes(idx) ? '#10b981' : '#667eea'),
-                        borderRadius: '8px',
-                        background: findMatchMatched.includes(idx) ? '#d1fae5' : (findMatchSelected.includes(idx) ? '#fef3c7' : 'white'),
-                        cursor: findMatchMatched.includes(idx) ? 'not-allowed' : 'pointer',
-                        opacity: findMatchMatched.includes(idx) ? 0.3 : 1,
-                        transition: 'all 0.3s ease',
-                        transform: findMatchSelected.includes(idx) ? 'scale(1.1)' : 'scale(1)'
-                      }}
-                    >
-                      {findMatchMatched.includes(idx) ? '✓' : item}
-                    </button>
-                  ))}
-                </div>
-                {findMatchMatched.length === findMatchItems.length && findMatchItems.length > 0 && (
-                  <p style={{ textAlign: 'center', marginBottom: '1rem', color: '#10b981', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                    🎉 All matched!
-                  </p>
-                )}
-
-                <button
-                  onClick={() => toggleView('findmatch')}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    background: '#667eea',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    width: '100%'
-                  }}
-                >
-                  ← {text.viewTeacher}
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 12. Rank Order - NEW */}
+          <RankOrderActivity language={language} content={sharedContent} />
 
         </div>
       </main>

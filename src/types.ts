@@ -176,10 +176,10 @@ export interface Lesson {
 // ============================================================================
 
 /**
- * Activity Types - Core building blocks for lessons
+ * Lesson Activity Types - Core building blocks for lessons
  * Activities can be composed in any order to create flexible lesson structures
  */
-export type ActivityType =
+export type LessonActivityType =
   | 'warm-up'        // Engage students, activate prior knowledge
   | 'presentation'   // Teach new content, explain concepts
   | 'exercise'       // Practice activity (controlled or free)
@@ -251,7 +251,7 @@ export type ActivityContent =
  */
 export interface Activity {
   id: string;
-  type: ActivityType;
+  type: LessonActivityType;
   title: string;
   duration?: number;
   content: ActivityContent;
@@ -292,7 +292,7 @@ export interface LessonTemplate {
   language: string;
   level?: string;
   activityStructure: Array<{
-    type: ActivityType;
+    type: LessonActivityType;
     title: string;
     suggestedDuration?: number;
     description?: string;
@@ -312,4 +312,60 @@ export type AnyLesson = Lesson | ActivityLesson;
  */
 export function isActivityLesson(lesson: AnyLesson): lesson is ActivityLesson {
   return 'version' in lesson && lesson.version === 'v2';
+}
+
+/**
+ * Content Set System for Interactive Activities
+ * Allows teachers to create content once and reuse across multiple activity types
+ */
+
+export type ContentType = 'words' | 'qa-pairs' | 'definitions';
+
+export interface WordItem {
+  type: 'word';
+  text: string;
+}
+
+export interface QAPairItem {
+  type: 'qa-pair';
+  question: string;
+  answer: string;
+}
+
+export interface DefinitionItem {
+  type: 'definition';
+  word: string;
+  definition: string;
+}
+
+export type ContentItem = WordItem | QAPairItem | DefinitionItem;
+
+export interface ContentSet {
+  id: string;
+  name: string;
+  contentType: ContentType;
+  items: ContentItem[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ActivityType =
+  | 'random-wheel'
+  | 'quiz'
+  | 'match-up'
+  | 'flash-cards'
+  | 'true-false'
+  | 'whack-a-mole'
+  | 'gap-fill'
+  | 'gameshow-quiz'
+  | 'group-sort'
+  | 'unjumble'
+  | 'anagram'
+  | 'rank-order';
+
+export interface GeneratedActivity {
+  id: string;
+  type: ActivityType;
+  contentSetId: string;
+  enabled: boolean;
 }
