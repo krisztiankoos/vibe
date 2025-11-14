@@ -51,6 +51,22 @@ Project planning and roadmap documents:
   - Phase 5: Advanced Features
   - Phase 6: Platform & Infrastructure
 
+### 🔍 Review
+
+Code and methodology reviews:
+
+- **[Methodology Review](review/METHODOLOGY_REVIEW.md)** - Pedagogical approach analysis
+  - English (ESL) methodology assessment
+  - Ukrainian methodology assessment
+  - Exercise type analysis
+  - Recommendations for improvement
+
+- **[Foundation Fixes](review/FOUNDATION_FIXES.md)** - Version 1.1.0 specification
+  - Ukrainian lesson structures (GPPC, CEFR)
+  - Bilingual support specification
+  - Implementation checklist
+  - Migration plan
+
 ### 🔒 Security
 
 Security documentation and audits:
@@ -87,6 +103,7 @@ Security documentation and audits:
 - User-facing docs → Root directory
 - Development guides → `docs/guides/`
 - Plans and roadmaps → `docs/plans/`
+- Code/methodology reviews → `docs/review/`
 - Security documents → `docs/security/`
 - Architecture diagrams → `docs/architecture/` (to be created)
 

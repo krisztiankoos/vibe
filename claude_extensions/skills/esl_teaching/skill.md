@@ -25,14 +25,46 @@ This skill helps create pedagogically sound English lessons that follow establis
 - Grammar emerges from communicative needs
 
 ### 2. PPP Framework (Presentation, Practice, Production)
-- **Presentation**: Introduce target language in context
-- **Practice**: Controlled exercises to build accuracy
-- **Production**: Freer activities for fluency and creativity
+
+**When to Use**: Grammar-focused lessons, A1-B2 levels
+
+**Structure** (60-minute lesson):
+1. **Lead-In** (5-10 min) - Activate prior knowledge, generate interest in topic
+2. **Presentation** (10-15 min) - Introduce target language in meaningful context
+   - Show examples in authentic situations
+   - Elicit form, meaning, pronunciation
+   - Brief explanation (inductive approach)
+3. **Controlled Practice** (15-20 min) - Accuracy-focused exercises
+   - Gap-fills, multiple choice, matching
+   - Immediate error correction
+   - Focus on form
+4. **Free Practice/Production** (15-25 min) - Fluency-focused activities
+   - Role-plays, discussions, information gaps
+   - Apply target language in meaningful contexts
+   - Gentle error correction (focus on communication)
+
+**Best for**: Present simple, past tenses, modals, conditionals, passive voice
 
 ### 3. TTT Framework (Test, Teach, Test)
-- **Test**: Assess what students already know
-- **Teach**: Address gaps in knowledge
-- **Test**: Evaluate learning outcomes
+
+**When to Use**: Discovery-based learning, B1+ levels, revision lessons
+
+**Structure** (60-minute lesson):
+1. **Lead-In** (5-10 min) - Activate schema, introduce topic
+2. **First Test** (15-20 min) - Diagnostic task to reveal what students know
+   - Authentic task or text
+   - Students attempt without pre-teaching
+   - Teacher notes gaps/errors
+3. **Teach** (15-20 min) - Address specific gaps identified in Test 1
+   - Focused instruction on problem areas
+   - Clarify meaning, form, pronunciation
+   - Controlled practice of weak areas
+4. **Second Test** (15-20 min) - Check learning outcomes
+   - Similar task to Test 1
+   - Students apply what was taught
+   - Measure improvement
+
+**Best for**: Revision, authentic texts, higher levels, student-led discovery
 
 ### 4. Student-Centered Learning
 - Students talk more than teacher (STT > TTT)
@@ -197,6 +229,125 @@ This skill helps create pedagogically sound English lessons that follow establis
 ❌ Don't: 50 minutes of gap-fill exercises
 ✅ Do: 10 min controlled, 20 min guided, 20 min free practice
 
+## Lesson Creation Patterns
+
+### Pattern 1: Create PPP Grammar Lesson (A1-B2)
+
+**Input**: "Create lesson: Present Perfect for life experiences (B1 level)"
+
+**Output**:
+```typescript
+{
+  structure: 'PPP',
+  level: 'B1',
+
+  leadIn: {
+    title: 'Have you ever...?',
+    content: 'Show images of travel destinations. Ask: "Have you been to Paris? Japan? Brazil?" Elicit experiences, write on board.'
+  },
+
+  presentation: {
+    targetLanguage: 'I have been to Paris. She has visited Japan. Have you ever eaten sushi?',
+    explanation: 'Present Perfect connects past experiences to present. Use for life experiences without specific time. Form: have/has + past participle',
+    examples: [
+      'I have traveled to 15 countries. (life experience)',
+      'She has never tried Indian food. (up to now)',
+      'Have you ever met a celebrity? (in your life)'
+    ]
+  },
+
+  controlledPractice: {
+    exercises: [
+      { type: 'gap-fill', text: 'I ___ (visit) Rome twice.', answer: 'have visited' },
+      { type: 'multiple-choice', question: 'She ___ never ___ sushi.', options: ['has/eaten', 'have/ate', 'has/eat'], correct: 0 },
+      { type: 'sentence-scramble', words: ['ever', 'you', 'have', 'skydiving', 'been'], answer: 'Have you ever been skydiving?' }
+    ]
+  },
+
+  freePractice: {
+    exercises: [
+      { type: 'information-gap', instruction: 'Student A: Ask about experiences. Student B: Answer and ask back. Use: travel, food, sports, jobs, meeting famous people.' },
+      { type: 'free-text', prompt: 'Write 5 sentences about interesting things you have done in your life.' }
+    ]
+  }
+}
+```
+
+### Pattern 2: Create TTT Discovery Lesson (B1+)
+
+**Input**: "Create lesson: Reported speech in news article (B2 level)"
+
+**Output**:
+```typescript
+{
+  structure: 'TTT',
+  level: 'B2',
+
+  leadIn: {
+    title: 'Breaking News',
+    content: 'Show recent news headlines. Discuss: "What did the president say? What did scientists report?" Activate topic.'
+  },
+
+  ttt: {
+    test1: {
+      title: 'Read and Report',
+      task: 'Read this news article with direct quotes. Rewrite 5 quotes as reported speech.',
+      example: 'Direct: "I will visit China next month," the PM said. → Reported: The PM said he would visit China the following month.'
+    },
+
+    teach: {
+      title: 'Reported Speech Rules',
+      content: 'Based on Test 1 errors, teach: tense backshift (will→would, can→could), pronoun changes (I→he/she), time word changes (next month→following month)',
+      examples: [
+        'Direct: "I am tired" → She said she was tired (am→was)',
+        'Direct: "We can help" → They said they could help (can→could)',
+        'Direct: "I will call tomorrow" → He said he would call the next day'
+      ]
+    },
+
+    test2: {
+      title: 'News Report Task',
+      task: 'Listen to 3 interview clips. Write reported speech sentences for each quote. Check accuracy improvement from Test 1.'
+    }
+  }
+}
+```
+
+### Pattern 3: Communicative Activity Design
+
+**Input**: "Design information-gap activity for making suggestions (A2)"
+
+**Output**:
+```typescript
+{
+  type: 'information-gap',
+  level: 'A2',
+
+  targetLanguage: [
+    'Why don\'t we...?',
+    'How about...?',
+    'Let\'s...',
+    'We could...'
+  ],
+
+  activity: {
+    title: 'Weekend Plans',
+    setup: 'Student A has Saturday schedule. Student B has Sunday schedule. Together, find 2 activities both can do.',
+    studentA: {
+      saturday: ['Morning: free', 'Afternoon: shopping', 'Evening: free'],
+      sunday: ['Morning: family lunch', 'Afternoon: free', 'Evening: free']
+    },
+    studentB: {
+      saturday: ['Morning: gym', 'Afternoon: free', 'Evening: dinner with parents'],
+      sunday: ['Morning: free', 'Afternoon: movie', 'Evening: free']
+    },
+    instruction: 'Make suggestions. Agree on 2 weekend activities together. Use: Why don\'t we...? How about...?'
+  }
+}
+```
+
+---
+
 ## Integration with Vibe Platform
 
 ### Exercise Type Mapping
@@ -216,6 +367,22 @@ This skill helps create pedagogically sound English lessons that follow establis
 3. **Controlled Practice** (15-20 min): Gap-fills, MCQs, matching
 4. **Free Practice** (15-25 min): Information gap, role-play, discussion
 5. **Wrap-up** (5 min): Review, assign homework
+
+### Integration with Vibe v1.1.0
+
+**New features for English lessons**:
+- **CEFR Level Selector**: Tag all lessons with A1-C1 level during creation
+- **Context-Aware Phase Labels**: PPP and TTT structures show appropriate phase names in progress bar
+- **Existing Structures**: PPP and TTT remain unchanged (no migration needed)
+- **Exercise Types**: All 11 exercise types continue to work seamlessly
+
+**Creating lessons**:
+```typescript
+// PPP lesson automatically shows: Structure → Lead-In → Presentation → Controlled → Free → Preview
+// TTT lesson automatically shows: Structure → Lead-In → Test 1 → Teach → Test 2 → Preview
+```
+
+Students see lessons with clear CEFR levels and appropriate phase labels throughout the learning experience.
 
 ## Methodology References
 
@@ -253,8 +420,17 @@ Don't use for:
 
 ## Version
 
-**Version**: 1.0.0
+**Version**: 2.0.0 (Updated for v1.1.0)
 **Last Updated**: 2025-11-14
-**Compatibility**: Vibe v1.0.0+
-**Methodology**: PPP/TTT, Communicative Language Teaching
+**Compatibility**: Vibe v1.1.0+
+**Methodology**: PPP/TTT, Communicative Language Teaching (CLT)
 **CEFR Levels**: A1-C2
+
+**Changes from 1.0**:
+- Expanded PPP framework with detailed 4-phase structure and timing
+- Expanded TTT framework with detailed 4-phase structure and timing
+- Added "Lesson Creation Patterns" section with TypeScript code examples
+- Added "Integration with Vibe v1.1.0" section
+- Enhanced pedagogical guidance (when to use PPP vs TTT, best practices)
+- Aligned with Ukrainian teaching skill v2.0.0 format for consistency
+- Updated compatibility to v1.1.0 (CEFR level selector, context-aware labels)
