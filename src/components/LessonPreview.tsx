@@ -7,9 +7,10 @@ interface LessonPreviewProps {
   onExport?: () => void;
   onPrint?: () => void;
   language: Language;
+  onEdit?: (section: 'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free') => void;
 }
 
-export default function LessonPreview({ lesson, onExport, onPrint, language }: LessonPreviewProps) {
+export default function LessonPreview({ lesson, onExport, onPrint, language, onEdit }: LessonPreviewProps) {
   const t = getTranslation(language);
   const renderExercise = (exercise: Lesson['controlledPractice']['exercises'][0]) => {
     switch (exercise.type) {
@@ -156,6 +157,30 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
           </>
         );
 
+      case 'ordering':
+        return (
+          <>
+            {exercise.context && (
+              <p style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e3f2fd', borderRadius: '5px' }}>
+                <strong>{language === 'en' ? 'Context' : 'Контекст'}:</strong> {exercise.context}
+              </p>
+            )}
+            <div style={{ marginTop: '10px' }}>
+              <p><strong>{language === 'en' ? 'Items to Order' : 'Елементи для впорядкування'}:</strong></p>
+              <ol>
+                {exercise.items.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ol>
+            </div>
+            <div className="field-hint" style={{ marginTop: '10px' }}>
+              {language === 'en'
+                ? '📝 Students will need to arrange these items in the correct order'
+                : '📝 Учні мають розташувати ці елементи в правильному порядку'}
+            </div>
+          </>
+        );
+
       default:
         return null;
     }
@@ -180,13 +205,27 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
       </div>
 
       <div className="preview-section">
-        <h3>{t.lessonInformation}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>{t.lessonInformation}</h3>
+          {onEdit && (
+            <button onClick={() => onEdit('structure')} className="edit-button" style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+              ✏️ {language === 'en' ? 'Edit' : 'Редагувати'}
+            </button>
+          )}
+        </div>
         <p><strong>{t.lessonTitle}:</strong> {lesson.title || 'Untitled Lesson'}</p>
         <p><strong>{t.structure}:</strong> {lesson.structure}</p>
       </div>
 
       <div className="preview-section">
-        <h3>{t.leadIn}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>{t.leadIn}</h3>
+          {onEdit && (
+            <button onClick={() => onEdit('lead-in')} className="edit-button" style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+              ✏️ {language === 'en' ? 'Edit' : 'Редагувати'}
+            </button>
+          )}
+        </div>
         <p><strong>{lesson.leadIn.title}</strong></p>
         {lesson.leadIn.duration && (
           <p><strong>{t.duration}:</strong> {lesson.leadIn.duration} minutes</p>
@@ -214,7 +253,14 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
       </div>
 
       <div className="preview-section">
-        <h3>{t.presentation}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>{t.presentation}</h3>
+          {onEdit && (
+            <button onClick={() => onEdit('presentation')} className="edit-button" style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+              ✏️ {language === 'en' ? 'Edit' : 'Редагувати'}
+            </button>
+          )}
+        </div>
         <p><strong>{lesson.presentation.title}</strong></p>
         {lesson.presentation.duration && (
           <p><strong>{t.duration}:</strong> {lesson.presentation.duration} minutes</p>
@@ -256,7 +302,14 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
       </div>
 
       <div className="preview-section">
-        <h3>{t.controlled}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>{t.controlled}</h3>
+          {onEdit && (
+            <button onClick={() => onEdit('controlled')} className="edit-button" style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+              ✏️ {language === 'en' ? 'Edit' : 'Редагувати'}
+            </button>
+          )}
+        </div>
         {lesson.controlledPractice.exercises.length === 0 ? (
           <p className="empty-message">{t.noExercises}</p>
         ) : (
@@ -271,7 +324,14 @@ export default function LessonPreview({ lesson, onExport, onPrint, language }: L
       </div>
 
       <div className="preview-section">
-        <h3>{t.free}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>{t.free}</h3>
+          {onEdit && (
+            <button onClick={() => onEdit('free')} className="edit-button" style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+              ✏️ {language === 'en' ? 'Edit' : 'Редагувати'}
+            </button>
+          )}
+        </div>
         {lesson.freePractice.exercises.length === 0 ? (
           <p className="empty-message">{t.noExercises}</p>
         ) : (

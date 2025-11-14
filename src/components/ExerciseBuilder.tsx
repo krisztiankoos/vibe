@@ -66,6 +66,10 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
   const [lexicalChunks, setLexicalChunks] = useState('');
   const [lexicalContext, setLexicalContext] = useState('');
 
+  // Ordering states
+  const [orderingItems, setOrderingItems] = useState('');
+  const [orderingContext, setOrderingContext] = useState('');
+
   const resetForm = () => {
     setInstruction('');
     setGapFillText('');
@@ -93,6 +97,8 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
     setLexicalTopic('');
     setLexicalChunks('');
     setLexicalContext('');
+    setOrderingItems('');
+    setOrderingContext('');
   };
 
   const handleAddExercise = () => {
@@ -238,6 +244,18 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
           };
         }
         break;
+
+      case 'ordering':
+        if (instruction && orderingItems) {
+          exercise = {
+            type: 'ordering',
+            id: crypto.randomUUID(),
+            instruction,
+            items: orderingItems.split('\n').map((i) => i.trim()).filter(Boolean),
+            context: orderingContext || undefined,
+          };
+        }
+        break;
     }
 
     if (exercise) {
@@ -321,8 +339,8 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
           <h3>{language === 'en' ? 'Controlled Practice Exercises' : 'Вправи для контрольованої практики'}</h3>
           <p>
             {language === 'en'
-              ? 'Create exercises where students practice the target language in a controlled way. Choose from 11 exercise types including gap-fills, multiple choice, matching, and communicative activities.'
-              : 'Створюйте вправи, де учні практикують цільову мову контрольованим чином. Виберіть з 11 типів вправ, включаючи заповнення пропусків, множинний вибір, співставлення та комунікативні активності.'}
+              ? 'Create exercises where students practice the target language in a controlled way. Choose from 12 exercise types including gap-fills, multiple choice, matching, ordering, and communicative activities.'
+              : 'Створюйте вправи, де учні практикують цільову мову контрольованим чином. Виберіть з 12 типів вправ, включаючи заповнення пропусків, множинний вибір, співставлення, впорядкування та комунікативні активності.'}
           </p>
         </div>
       </div>
@@ -340,6 +358,7 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
           <option value="true-false">{t.trueFalse}</option>
           <option value="matching">{t.matching}</option>
           <option value="sorting">{t.sorting}</option>
+          <option value="ordering">{t.ordering}</option>
           <option value="sentence-scramble">{t.sentenceScramble}</option>
           <option value="free-text">{t.freeText}</option>
           <option value="information-gap">{t.informationGap}</option>
@@ -349,8 +368,8 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
         </select>
         <div className="field-hint">
           {language === 'en'
-            ? '📋 Select from 11 different exercise types based on your teaching goals'
-            : '📋 Виберіть з 11 різних типів вправ на основі ваших навчальних цілей'}
+            ? '📋 Select from 12 different exercise types based on your teaching goals'
+            : '📋 Виберіть з 12 різних типів вправ на основі ваших навчальних цілей'}
         </div>
       </div>
 
@@ -988,6 +1007,66 @@ export default function ExerciseBuilder({ onAddExercise, language }: ExerciseBui
               {language === 'en'
                 ? '📝 Help students understand when and where to use these expressions'
                 : '📝 Допоможіть учням зрозуміти, коли і де використовувати ці вирази'}
+            </div>
+          </div>
+        </>
+      )}
+
+      {exerciseType === 'ordering' && (
+        <>
+          <div className="section-help">
+            <p>
+              {language === 'en'
+                ? '🔢 Ordering exercises help students practice sequencing and logical thinking. Students arrange items in the correct order - perfect for processes, timelines, instructions, or story sequences.'
+                : '🔢 Вправи на впорядкування допомагають учням практикувати послідовність і логічне мислення. Учні розставляють елементи в правильному порядку - ідеально для процесів, часових шкал, інструкцій або послідовностей подій.'}
+            </p>
+          </div>
+          <div className="form-group">
+            <div className="field-label-with-help">
+              <label htmlFor="orderingItems" className="required">
+                {language === 'en' ? 'Items to Order' : 'Елементи для впорядкування'}
+              </label>
+              <HelpIcon text={language === 'en'
+                ? 'Enter items that students need to arrange in the correct sequence. One item per line.'
+                : 'Введіть елементи, які учні мають розташувати в правильній послідовності. Один елемент на рядок.'} />
+            </div>
+            <textarea
+              id="orderingItems"
+              value={orderingItems}
+              onChange={(e) => setOrderingItems(e.target.value)}
+              placeholder={language === 'en'
+                ? 'e.g., "First, heat the water\nThen, add the tea bag\nWait for 3 minutes\nFinally, remove the tea bag and enjoy"'
+                : 'напр., "Спочатку нагрійте воду\nПотім додайте чайний пакетик\nПочекайте 3 хвилини\nНарешті, вийміть пакетик і насолоджуйтесь"'}
+              rows={8}
+            />
+            <div className="field-hint example">
+              <strong>{language === 'en' ? '💡 Tip:' : '💡 Порада:'}</strong> {language === 'en'
+                ? 'Enter items in the CORRECT order, one per line. The app will scramble them for students.'
+                : 'Введіть елементи в ПРАВИЛЬНОМУ порядку, по одному на рядок. Додаток переплутає їх для учнів.'}
+            </div>
+          </div>
+          <div className="form-group">
+            <div className="field-label-with-help">
+              <label htmlFor="orderingContext">
+                {language === 'en' ? 'Context (Optional)' : 'Контекст (Необов\'язково)'}
+              </label>
+              <HelpIcon text={language === 'en'
+                ? 'Provide additional context or scenario to help students understand the task'
+                : 'Надайте додатковий контекст або сценарій, щоб допомогти учням зрозуміти завдання'} />
+            </div>
+            <input
+              id="orderingContext"
+              type="text"
+              value={orderingContext}
+              onChange={(e) => setOrderingContext(e.target.value)}
+              placeholder={language === 'en'
+                ? 'e.g., "How to make tea", "Steps in a job interview", "Daily routine"'
+                : 'напр., "Як заварити чай", "Етапи співбесіди", "Щоденна рутина"'}
+            />
+            <div className="field-hint">
+              {language === 'en'
+                ? '📝 Help students understand the scenario or topic being sequenced'
+                : '📝 Допоможіть учням зрозуміти сценарій або тему, яку впорядковують'}
             </div>
           </div>
         </>

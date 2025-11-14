@@ -57,6 +57,13 @@ export default function StudentExercise({ exercise, exerciseNumber, language, pr
         const correctSentence = exercise.correctSentence || '';
         return studentSentence.toLowerCase().trim() === correctSentence.toLowerCase().trim() ? 100 : 0;
 
+      case 'ordering':
+        if (!answers) return 0;
+        const orderingAnswers = answers as number[];
+        const correctOrder = exercise.correctOrder || Array.from({ length: exercise.items.length }, (_, i) => i);
+        const isCorrect = orderingAnswers.every((val, idx) => val === correctOrder[idx]);
+        return isCorrect ? 100 : 0;
+
       case 'free-text':
       case 'information-gap':
       case 'role-play':
@@ -92,6 +99,8 @@ export default function StudentExercise({ exercise, exerciseNumber, language, pr
         return <CollocationExercise exercise={exercise} language={language} />;
       case 'lexical-set':
         return <LexicalSetExercise exercise={exercise} language={language} />;
+      case 'ordering':
+        return <OrderingExercise exercise={exercise} answers={answers} setAnswers={setAnswers} submitted={submitted} language={language} />;
       default:
         return <p>Exercise type not yet supported</p>;
     }
@@ -438,6 +447,113 @@ function LexicalSetExercise({ exercise, language }: any) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function OrderingExercise({ exercise, answers, setAnswers, submitted, language }: any) {
+  // Initialize with scrambled order or use existing answers
+  const [itemOrder, setItemOrder] = useState<number[]>(() => {
+    if (answers) return answers;
+    // Create scrambled order: shuffle indices
+    const indices = Array.from({ length: exercise.items.length }, (_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices;
+  });
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    if (submitted) return;
+    const newOrder = [...itemOrder];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    if (targetIndex < 0 || targetIndex >= newOrder.length) return;
+
+    [newOrder[index], newOrder[targetIndex]] = [newOrder[targetIndex], newOrder[index]];
+    setItemOrder(newOrder);
+    setAnswers(newOrder);
+  };
+
+  const correctOrder = exercise.correctOrder || Array.from({ length: exercise.items.length }, (_, i) => i);
+  const isCorrect = submitted && itemOrder.every((val, idx) => val === correctOrder[idx]);
+
+  return (
+    <div className="ordering-exercise">
+      {exercise.context && (
+        <p className="context" style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+          <strong>{language === 'en' ? 'Context' : 'Контекст'}:</strong> {exercise.context}
+        </p>
+      )}
+      <div className="ordering-items">
+        {itemOrder.map((itemIndex, position) => (
+          <div
+            key={position}
+            className={`ordering-item ${submitted ? (itemIndex === correctOrder[position] ? 'correct' : 'incorrect') : ''}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.75rem',
+              marginBottom: '0.5rem',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: submitted
+                ? itemIndex === correctOrder[position]
+                  ? '#d4edda'
+                  : '#f8d7da'
+                : '#fff',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <button
+                onClick={() => moveItem(position, 'up')}
+                disabled={submitted || position === 0}
+                style={{
+                  padding: '0.25rem 0.5rem',
+                  fontSize: '0.75rem',
+                  cursor: submitted || position === 0 ? 'not-allowed' : 'pointer',
+                  opacity: submitted || position === 0 ? 0.5 : 1,
+                }}
+              >
+                ▲
+              </button>
+              <button
+                onClick={() => moveItem(position, 'down')}
+                disabled={submitted || position === itemOrder.length - 1}
+                style={{
+                  padding: '0.25rem 0.5rem',
+                  fontSize: '0.75rem',
+                  cursor: submitted || position === itemOrder.length - 1 ? 'not-allowed' : 'pointer',
+                  opacity: submitted || position === itemOrder.length - 1 ? 0.5 : 1,
+                }}
+              >
+                ▼
+              </button>
+            </div>
+            <div style={{ flex: 1 }}>
+              <strong>{position + 1}.</strong> {exercise.items[itemIndex]}
+            </div>
+            {submitted && itemIndex === correctOrder[position] && (
+              <span className="check-mark" style={{ color: '#28a745' }}>✓</span>
+            )}
+            {submitted && itemIndex !== correctOrder[position] && (
+              <span className="x-mark" style={{ color: '#dc3545' }}>✗</span>
+            )}
+          </div>
+        ))}
+      </div>
+      {submitted && !isCorrect && (
+        <div className="correct-order" style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#e3f2fd', borderRadius: '4px' }}>
+          <p><strong>{language === 'en' ? 'Correct order' : 'Правильний порядок'}:</strong></p>
+          <ol>
+            {correctOrder.map((itemIndex: number, position: number) => (
+              <li key={position}>{exercise.items[itemIndex]}</li>
+            ))}
+          </ol>
+        </div>
+      )}
     </div>
   );
 }

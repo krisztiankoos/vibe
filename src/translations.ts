@@ -164,6 +164,7 @@ interface Translations {
   rolePlay: string;
   collocation: string;
   lexicalSet: string;
+  ordering: string;
 
   // Gap fill
   textWithGaps: string;
@@ -445,6 +446,7 @@ export const translations: Record<Language, Translations> = {
     rolePlay: 'Role Play (Communicative)',
     collocation: 'Collocation Practice (Lexical)',
     lexicalSet: 'Lexical Set / Chunks (Lexical)',
+    ordering: 'Ordering / Sequencing',
 
     // Gap fill
     textWithGaps: 'Text with Gaps',
@@ -725,6 +727,7 @@ export const translations: Record<Language, Translations> = {
     rolePlay: 'Рольова Гра (Комунікативна)',
     collocation: 'Практика Колокацій (Лексична)',
     lexicalSet: 'Лексичний Набір / Вирази (Лексична)',
+    ordering: 'Впорядкування / Послідовність',
 
     // Gap fill
     textWithGaps: 'Текст з Пропусками',

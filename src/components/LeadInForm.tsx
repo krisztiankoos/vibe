@@ -10,9 +10,11 @@ interface LeadInFormProps {
   leadIn: LeadIn;
   onChange: (leadIn: LeadIn) => void;
   language: Language;
+  onBack?: () => void;
+  onSkip?: () => void;
 }
 
-export default function LeadInForm({ leadIn, onChange, language }: LeadInFormProps) {
+export default function LeadInForm({ leadIn, onChange, language, onBack, onSkip }: LeadInFormProps) {
   const t = getTranslation(language);
   const [newMediaLink, setNewMediaLink] = useState('');
   const [urlError, setUrlError] = useState('');
@@ -93,7 +95,7 @@ export default function LeadInForm({ leadIn, onChange, language }: LeadInFormPro
 
       <div className="form-group">
         <div className="field-label-with-help">
-          <label htmlFor="leadInTitle" className="required">
+          <label htmlFor="leadInTitle">
             {t.leadInTitle}
           </label>
           <HelpIcon text={help.title} />
@@ -137,7 +139,7 @@ export default function LeadInForm({ leadIn, onChange, language }: LeadInFormPro
 
       <div className="form-group">
         <div className="field-label-with-help">
-          <label htmlFor="leadInContent" className="required">
+          <label htmlFor="leadInContent">
             {t.contentInstructions}
           </label>
           <HelpIcon text={help.content} />
@@ -272,6 +274,21 @@ export default function LeadInForm({ leadIn, onChange, language }: LeadInFormPro
             : '📝 Ці нотатки тільки для вас - учні їх не побачать'}
         </div>
       </div>
+
+      {(onBack || onSkip) && (
+        <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
+          {onBack && (
+            <button type="button" onClick={onBack} className="btn-secondary">
+              ← {language === 'en' ? 'Back' : 'Назад'}
+            </button>
+          )}
+          {onSkip && (
+            <button type="button" onClick={onSkip} className="btn-secondary">
+              {language === 'en' ? 'Skip' : 'Пропустити'} →
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

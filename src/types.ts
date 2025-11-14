@@ -7,7 +7,7 @@ export interface BilingualText {
   en: string;
 }
 
-export type ExerciseType = 'gap-fill' | 'sorting' | 'matching' | 'free-text' | 'multiple-choice' | 'true-false' | 'sentence-scramble' | 'information-gap' | 'role-play' | 'collocation' | 'lexical-set';
+export type ExerciseType = 'gap-fill' | 'sorting' | 'matching' | 'free-text' | 'multiple-choice' | 'true-false' | 'sentence-scramble' | 'information-gap' | 'role-play' | 'collocation' | 'lexical-set' | 'ordering';
 
 export interface GapFillExercise {
   type: 'gap-fill';
@@ -103,6 +103,15 @@ export interface LexicalSetExercise {
   context?: string; // Optional: context or example situation
 }
 
+export interface OrderingExercise {
+  type: 'ordering';
+  id: string;
+  instruction: string;
+  items: string[]; // Items to be ordered (displayed in scrambled order)
+  correctOrder?: number[]; // Optional: indices representing correct order
+  context?: string; // Optional: context or scenario
+}
+
 export type Exercise =
   | GapFillExercise
   | SortingExercise
@@ -114,7 +123,8 @@ export type Exercise =
   | InformationGapExercise
   | RolePlayExercise
   | CollocationExercise
-  | LexicalSetExercise;
+  | LexicalSetExercise
+  | OrderingExercise;
 
 export interface LeadIn {
   title: string;

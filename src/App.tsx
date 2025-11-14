@@ -44,11 +44,24 @@ function App() {
   });
 
   const [currentStep, setCurrentStep] = useState<'structure' | 'lead-in' | 'presentation' | 'controlled' | 'free' | 'preview'>('structure');
+  const [visitedSteps, setVisitedSteps] = useState<Set<string>>(new Set(['structure']));
   const [showSampleLessons, setShowSampleLessons] = useState(false);
   const [showSavedLessons, setShowSavedLessons] = useState(false);
   const [studentMode, setStudentMode] = useState(false);
   const [studentLesson, setStudentLesson] = useState<Lesson | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-save lesson to localStorage every 30 seconds
+  useEffect(() => {
+    if (!lesson.title) return; // Don't auto-save empty lessons
+
+    const autoSaveInterval = setInterval(() => {
+      const autoSaveKey = `autosave-${lesson.id}`;
+      localStorage.setItem(autoSaveKey, JSON.stringify(lesson));
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(autoSaveInterval);
+  }, [lesson]);
 
   // Check URL parameters for shared lesson
   useEffect(() => {
@@ -93,6 +106,34 @@ function App() {
   }
 
   const t = getTranslation(language);
+
+  // Navigation functions
+  const navigateToStep = (step: typeof currentStep) => {
+    setCurrentStep(step);
+    setVisitedSteps(prev => new Set([...prev, step]));
+  };
+
+  const goToNextStep = () => {
+    const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex < steps.length - 1) {
+      const nextStep = steps[currentIndex + 1] as typeof currentStep;
+      navigateToStep(nextStep);
+    }
+  };
+
+  const goToPreviousStep = () => {
+    const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      const prevStep = steps[currentIndex - 1] as typeof currentStep;
+      setCurrentStep(prevStep);
+    }
+  };
+
+  const skipStep = () => {
+    goToNextStep();
+  };
 
   const updateLesson = (updates: Partial<Lesson>) => {
     setLesson((prev) => ({ ...prev, ...updates }));
@@ -257,14 +298,22 @@ function App() {
             phaseLabels = [t.structure, t.leadIn, t.presentation, t.controlled, t.free, t.preview];
           }
 
-          return phaseLabels.map((stepLabel, index) => (
-            <div
-              key={steps[index]}
-              className={`progress-step ${index <= currentStepIndex ? 'active' : ''} ${index === currentStepIndex ? 'current' : ''}`}
-            >
-              {stepLabel}
-            </div>
-          ));
+          return phaseLabels.map((stepLabel, index) => {
+            const step = steps[index] as typeof currentStep;
+            const isVisited = visitedSteps.has(step);
+            const isClickable = isVisited || index <= currentStepIndex + 1; // Can click visited or next step
+
+            return (
+              <div
+                key={step}
+                className={`progress-step ${index <= currentStepIndex ? 'active' : ''} ${index === currentStepIndex ? 'current' : ''} ${isClickable ? 'clickable' : ''}`}
+                onClick={() => isClickable && navigateToStep(step)}
+                style={{ cursor: isClickable ? 'pointer' : 'not-allowed' }}
+              >
+                {stepLabel}
+              </div>
+            );
+          });
         })()}
       </div>
 
@@ -399,6 +448,8 @@ function App() {
             leadIn={lesson.leadIn}
             onChange={(leadIn) => updateLesson({ leadIn })}
             language={language}
+            onBack={goToPreviousStep}
+            onSkip={skipStep}
           />
         )}
 
@@ -409,6 +460,8 @@ function App() {
             language={language}
             cefrLevel={lesson.cefrLevel}
             onCefrLevelChange={(cefrLevel) => updateLesson({ cefrLevel })}
+            onBack={goToPreviousStep}
+            onSkip={skipStep}
           />
         )}
 
@@ -428,6 +481,15 @@ function App() {
                   <button onClick={() => removeExercise('controlled', exercise.id)}>{t.remove}</button>
                 </div>
               ))}
+            </div>
+
+            <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
+              <button type="button" onClick={goToPreviousStep} className="btn-secondary">
+                ← {language === 'en' ? 'Back' : 'Назад'}
+              </button>
+              <button type="button" onClick={skipStep} className="btn-secondary">
+                {language === 'en' ? 'Skip' : 'Пропустити'} →
+              </button>
             </div>
           </div>
         )}
@@ -449,6 +511,15 @@ function App() {
                 </div>
               ))}
             </div>
+
+            <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
+              <button type="button" onClick={goToPreviousStep} className="btn-secondary">
+                ← {language === 'en' ? 'Back' : 'Назад'}
+              </button>
+              <button type="button" onClick={skipStep} className="btn-secondary">
+                {language === 'en' ? 'Skip' : 'Пропустити'} →
+              </button>
+            </div>
           </div>
         )}
 
@@ -458,20 +529,21 @@ function App() {
             onExport={() => exportLessonToJSON(lesson)}
             onPrint={printLesson}
             language={language}
+            onEdit={navigateToStep}
           />
         )}
       </main>
 
       <footer className="app-footer">
         <button
-          onClick={() => setCurrentStep(steps[Math.max(0, currentStepIndex - 1)] as any)}
+          onClick={goToPreviousStep}
           disabled={currentStepIndex === 0}
         >
           {t.previous}
         </button>
         {currentStep !== 'preview' && (
           <button
-            onClick={() => setCurrentStep(steps[currentStepIndex + 1] as any)}
+            onClick={goToNextStep}
           >
             {t.next}
           </button>

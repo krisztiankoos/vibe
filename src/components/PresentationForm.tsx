@@ -13,9 +13,11 @@ interface PresentationFormProps {
   language: Language;
   cefrLevel?: CEFRLevel;
   onCefrLevelChange?: (level: CEFRLevel | undefined) => void;
+  onBack?: () => void;
+  onSkip?: () => void;
 }
 
-export default function PresentationForm({ presentation, onChange, language, cefrLevel, onCefrLevelChange }: PresentationFormProps) {
+export default function PresentationForm({ presentation, onChange, language, cefrLevel, onCefrLevelChange, onBack, onSkip }: PresentationFormProps) {
   const t = getTranslation(language);
   const [newExample, setNewExample] = useState('');
   const [newMediaLink, setNewMediaLink] = useState('');
@@ -146,7 +148,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
 
       <div className="form-group">
         <div className="field-label-with-help">
-          <label htmlFor="targetLanguage" className="required">
+          <label htmlFor="targetLanguage">
             {t.targetLanguage}
           </label>
           <HelpIcon text={help.targetLanguage} />
@@ -176,7 +178,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
       {language === 'uk' ? (
         <div className="form-group">
           <div className="field-label-with-help">
-            <label className="required">{t.bilingualExplanation}</label>
+            <label>{t.bilingualExplanation}</label>
             <HelpIcon text={t.bilingualExplanationHint} />
           </div>
 
@@ -229,7 +231,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
       ) : (
         <div className="form-group">
           <div className="field-label-with-help">
-            <label htmlFor="explanation" className="required">
+            <label htmlFor="explanation">
               {t.explanation}
             </label>
             <HelpIcon text={help.explanation} />
@@ -259,7 +261,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
 
       <div className="form-group">
         <div className="field-label-with-help">
-          <label htmlFor="examples" className="required">
+          <label htmlFor="examples">
             {t.exampleSentences}
           </label>
           <HelpIcon text={help.examples} />
@@ -412,6 +414,21 @@ export default function PresentationForm({ presentation, onChange, language, cef
             : '📝 Ці нотатки тільки для вас - учні їх не побачать'}
         </div>
       </div>
+
+      {(onBack || onSkip) && (
+        <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
+          {onBack && (
+            <button type="button" onClick={onBack} className="btn-secondary">
+              ← {language === 'en' ? 'Back' : 'Назад'}
+            </button>
+          )}
+          {onSkip && (
+            <button type="button" onClick={onSkip} className="btn-secondary">
+              {language === 'en' ? 'Skip' : 'Пропустити'} →
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
