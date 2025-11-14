@@ -36,7 +36,8 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [flashCardFlipped, setFlashCardFlipped] = useState(false);
 
   // Memory Matching state
-  const [memoryCards] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇']);
+  const [memoryCards, setMemoryCards] = useState(['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇']);
+  const [newMemoryPair, setNewMemoryPair] = useState('');
   const [memoryFlipped, setMemoryFlipped] = useState<number[]>([]);
   const [memoryMatched, setMemoryMatched] = useState<number[]>([]);
 
@@ -51,31 +52,28 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
   const [tfCorrect, setTfCorrect] = useState<boolean | null>(null);
 
   // Gap Fill state
-  const [_gapSentence] = useState('I ___ to school yesterday and ___ my friends.');
-  const [_gapCorrectAnswers] = useState(['went', 'saw']);
+  const [_gapSentence, _setGapSentence] = useState('I ___ to school yesterday and ___ my friends.');
+  const [_gapCorrectAnswers, _setGapCorrectAnswers] = useState(['went', 'saw']);
   const [gapAnswers, setGapAnswers] = useState<string[]>(['', '']);
 
   // Unjumble state
-  const [unjumbleCorrectSentence] = useState('I went to school yesterday');
+  const [unjumbleCorrectSentence, _setUnjumbleCorrectSentence] = useState('I went to school yesterday');
   const [unjumbledWords, setUnjumbledWords] = useState<string[]>(['went', 'I', 'yesterday', 'school', 'to']);
 
   // Gameshow Quiz state
-  const [gameshowQuestion] = useState('What is the capital of France?');
-  const [gameshowOptions] = useState(['London', 'Paris', 'Berlin', 'Madrid']);
-  const [gameshowCorrectIndex] = useState(1);
+  const [gameshowQuestion, _setGameshowQuestion] = useState('What is the capital of France?');
+  const [gameshowOptions, _setGameshowOptions] = useState(['London', 'Paris', 'Berlin', 'Madrid']);
+  const [gameshowCorrectIndex, _setGameshowCorrectIndex] = useState(1);
   const [gameshowAnswer, setGameshowAnswer] = useState<number | null>(null);
   const [gameshowTimer, setGameshowTimer] = useState(30);
   const [gameshowActive, setGameshowActive] = useState(false);
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [removedOptions, setRemovedOptions] = useState<number[]>([]);
 
-  // Group Sort state (reserved for teacher view)
-  const [_groupSortItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
-  const [_groupSortCategories] = useState<string[]>(['Nouns', 'Verbs']);
-  const [_groupSortAnswers] = useState<Record<string, string[]>>({
-    'Nouns': ['book', 'table', 'chair'],
-    'Verbs': ['run', 'swim', 'eat']
-  });
+  // Group Sort state
+  const [_groupSortItems, _setGroupSortItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
+  const [_groupSortCategory1, _setGroupSortCategory1] = useState('Nouns');
+  const [_groupSortCategory2, _setGroupSortCategory2] = useState('Verbs');
   const [unsortedItems, setUnsortedItems] = useState<string[]>(['run', 'book', 'swim', 'table', 'eat', 'chair']);
   const [sortedNouns, setSortedNouns] = useState<string[]>([]);
   const [sortedVerbs, setSortedVerbs] = useState<string[]>([]);
@@ -1261,36 +1259,147 @@ export default function DemoPage({ language, onChangeLanguage, onExit }: DemoPag
 
           {/* 6. Matching Pairs (Memory Game) */}
           <div className="activity-demo-card">
-            <h3>🎴 {text.matchingPairs}</h3>
-            <div className="demo-interactive">
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.memoryInstructions}</p>
-              <div className="memory-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '0.5rem',
-                maxWidth: '300px',
-                margin: '0 auto'
-              }}>
-                {memoryCards.map((card, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleMemoryClick(idx)}
-                    className={`memory-card ${memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? 'flipped' : ''}`}
-                    style={{
-                      aspectRatio: '1',
-                      border: '2px solid #667eea',
-                      borderRadius: '8px',
-                      background: memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? '#e0e7ff' : '#667eea',
-                      fontSize: '2rem',
-                      cursor: 'pointer',
-                      opacity: memoryMatched.includes(idx) ? 0.5 : 1
-                    }}
-                  >
-                    {memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? card : '?'}
-                  </button>
-                ))}
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>🎴 {text.matchingPairs}</h3>
+              <button
+                onClick={() => toggleView('memory')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: getView('memory') === 'teacher' ? '#667eea' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getView('memory') === 'teacher' ? `👨‍🏫 ${text.teacherView}` : `👨‍🎓 ${text.studentView}`}
+              </button>
             </div>
+
+            {getView('memory') === 'teacher' ? (
+              <div className="demo-interactive" style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '2px dashed #667eea' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🏫 {text.teacherInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Add pairs - each item should appear exactly twice</p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <input
+                      type="text"
+                      value={newMemoryPair}
+                      onChange={(e) => setNewMemoryPair(e.target.value)}
+                      placeholder="Enter item (emoji or word)"
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '2px solid #667eea',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (newMemoryPair.trim()) {
+                          setMemoryCards([...memoryCards, newMemoryPair.trim(), newMemoryPair.trim()]);
+                          setNewMemoryPair('');
+                        }
+                      }}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#667eea',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      + Add Pair
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {Array.from(new Set(memoryCards)).map((item, idx) => (
+                      <span key={idx} style={{
+                        padding: '0.5rem 1rem',
+                        background: '#e0e7ff',
+                        borderRadius: '6px',
+                        fontSize: '1.5rem'
+                      }}>
+                        {item} ×2
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleView('memory')}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  👁️ {text.viewStudent}
+                </button>
+              </div>
+            ) : (
+              <div className="demo-interactive" style={{ background: '#f0fdf4', padding: '1rem', borderRadius: '8px', border: '2px dashed #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  👨‍🎓 {text.studentInstructions}
+                </p>
+                <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{text.memoryInstructions}</p>
+                <div className="memory-grid" style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '0.5rem',
+                  maxWidth: '300px',
+                  margin: '0 auto 1rem'
+                }}>
+                  {memoryCards.map((card, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleMemoryClick(idx)}
+                      className={`memory-card ${memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? 'flipped' : ''}`}
+                      style={{
+                        aspectRatio: '1',
+                        border: '2px solid #667eea',
+                        borderRadius: '8px',
+                        background: memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? '#e0e7ff' : '#667eea',
+                        fontSize: '2rem',
+                        cursor: 'pointer',
+                        opacity: memoryMatched.includes(idx) ? 0.5 : 1
+                      }}
+                    >
+                      {memoryFlipped.includes(idx) || memoryMatched.includes(idx) ? card : '?'}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => toggleView('memory')}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'white',
+                    color: '#667eea',
+                    border: '2px solid #667eea',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  ← {text.viewTeacher}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 7. Whack-a-Mole */}
