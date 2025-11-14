@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(git mv:*)",
+      "Bash(chmod:*)",
+      "Bash(./claude_extensions/deploy.sh:*)",
+      "Bash(git fetch:*)",
+      "Bash(docs/plans/ROADMAP.md)",
+      "Bash(docs/guides/PROMPT_ENGINEERING_GUIDE.md)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Professional AI-assisted development setup with claude_extensions\n\nMajor infrastructure improvements following Anthropic best practices:\n\n## Claude Extensions Structure (jamesblonde pattern)\n- Version-controlled claude_extensions/ directory\n- Auto-deployment with start-claude.sh script\n- Separate skills and commands for team sharing\n\n## Teaching Methodology Skills (2 complete skills)\n- ESL Teaching: English using PPP/TTT communicative methodology\n- Ukrainian Teaching: Ukrainian using traditional grammar-translation\n- NOTE: These are NOT translation/bilingual skills - each language has\n  its own complete teaching methodology and is taught in its own language\n\n## Custom Slash Commands (6 commands)\n- /test - Comprehensive testing workflow\n- /translate - Add bilingual translations\n- /security-check - Security audit\n- /add-exercise - Scaffold new exercise types\n- /release - Release preparation and deployment\n- /review - Code review with best practices\n\n## Documentation Organization\n- Moved to docs/ structure (guides/, plans/, security/)\n- Added ROADMAP.md with 6-phase development plan\n- Added PROMPT_ENGINEERING_GUIDE.md for AI integration\n- Created comprehensive setup documentation\n\n## Startup Script\n- start-claude.sh - Auto-deploys extensions and launches Claude\n- Preflight checks for required tools\n- Branch-aware contextual tips\n\n## Deployment System\n- claude_extensions/deploy.sh - Automated deployment\n- Creates automatic backups\n- Color-coded output with validation\n\n## Git Configuration\n- Updated .gitignore for claude_extensions pattern\n- .claude/ generated from claude_extensions/ (not tracked)\n- Local overrides (CLAUDE.local.md) not tracked\n\nFiles created:\n- CLAUDE.md (concise AI dev guide)\n- PROJECT_STATUS.md (complete project status)\n- SETUP_COMPLETE.md (setup documentation)\n- docs/guides/PROMPT_ENGINEERING_GUIDE.md (AI integration guide)\n- docs/plans/ROADMAP.md (development roadmap)\n- claude_extensions/ (complete structure with 2 skills, 6 commands)\n- start-claude.sh (startup automation)\n\n🚀 Ready for professional development in dev branch\n\nGenerated with Claude Code\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git check-ignore:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(rm:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "WebSearch",
+      "WebFetch(domain:wordwall.net)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

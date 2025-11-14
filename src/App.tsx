@@ -10,6 +10,7 @@ import LessonPreview from './components/LessonPreview';
 import SampleLessons from './components/SampleLessons';
 import SavedLessons from './components/SavedLessons';
 import StudentLessonView from './components/StudentLessonView';
+import DemoPage from './components/DemoPage';
 import { importLessonFromJSON, exportLessonToJSON, printLesson } from './utils/lessonUtils';
 import './App.css';
 
@@ -49,6 +50,7 @@ function App() {
   const [showSavedLessons, setShowSavedLessons] = useState(false);
   const [studentMode, setStudentMode] = useState(false);
   const [studentLesson, setStudentLesson] = useState<Lesson | null>(null);
+  const [demoMode, setDemoMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-save lesson to localStorage every 30 seconds
@@ -83,6 +85,17 @@ function App() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Show demo page if in demo mode
+  if (demoMode && language) {
+    return (
+      <DemoPage
+        language={language}
+        onChangeLanguage={setLanguage}
+        onExit={() => setDemoMode(false)}
+      />
+    );
+  }
 
   // Show student view if in student mode
   if (studentMode && studentLesson && language) {
@@ -264,6 +277,9 @@ function App() {
             <p>{t.appSubtitle}</p>
           </div>
           <div className="header-actions">
+            <button onClick={() => setDemoMode(true)} className="header-btn" style={{ background: '#f59e0b', color: 'white' }}>
+              🎯 {language === 'en' ? 'v1.2.0 Demo' : 'Демо v1.2.0'}
+            </button>
             <button onClick={() => setLanguage(null)} className="header-btn">{t.changeLanguage}</button>
             <button onClick={handleNewLesson} className="header-btn">{t.newLesson}</button>
             <button
