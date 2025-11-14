@@ -285,7 +285,7 @@ export const translations: Record<Language, Translations> = {
   en: {
     // Home page
     homeTitle: 'Language Lesson Builder',
-    homeSubtitle: 'Create engaging language lessons with PPP & TTT methodologies',
+    homeSubtitle: 'Create engaging lessons with PPP, TTT, GPPC & CEFR methodologies',
     selectLanguage: 'Select Language for Your Lessons',
     englishLessonBuilder: 'English Lesson Builder',
     ukrainianLessonBuilder: 'Ukrainian Lesson Builder',
@@ -294,7 +294,7 @@ export const translations: Record<Language, Translations> = {
 
     // Header
     appTitle: 'English Lesson Builder',
-    appSubtitle: 'Create engaging lessons following PPP & TTT methodologies',
+    appSubtitle: 'Create engaging lessons with PPP, TTT, GPPC & CEFR methodologies',
     newLesson: 'New Lesson',
     importJSON: 'Import JSON',
     changeLanguage: 'Change Language',
@@ -566,7 +566,7 @@ export const translations: Record<Language, Translations> = {
   uk: {
     // Home page
     homeTitle: 'Конструктор Мовних Уроків',
-    homeSubtitle: 'Створюйте цікаві мовні уроки за методиками ГППК та CEFR',
+    homeSubtitle: 'Створюйте цікаві уроки за методиками PPP, TTT, ГППК та CEFR',
     selectLanguage: 'Оберіть Мову для Ваших Уроків',
     englishLessonBuilder: 'Конструктор Англійських Уроків',
     ukrainianLessonBuilder: 'Конструктор Українських Уроків',
@@ -575,7 +575,7 @@ export const translations: Record<Language, Translations> = {
 
     // Header
     appTitle: 'Конструктор Українських Уроків',
-    appSubtitle: 'Створюйте цікаві уроки за методиками ГППК та CEFR',
+    appSubtitle: 'Створюйте цікаві уроки за методиками PPP, TTT, ГППК та CEFR',
     newLesson: 'Новий Урок',
     importJSON: 'Імпорт JSON',
     changeLanguage: 'Змінити Мову',

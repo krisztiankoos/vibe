@@ -10,11 +10,9 @@ interface LeadInFormProps {
   leadIn: LeadIn;
   onChange: (leadIn: LeadIn) => void;
   language: Language;
-  onBack?: () => void;
-  onSkip?: () => void;
 }
 
-export default function LeadInForm({ leadIn, onChange, language, onBack, onSkip }: LeadInFormProps) {
+export default function LeadInForm({ leadIn, onChange, language }: LeadInFormProps) {
   const t = getTranslation(language);
   const [newMediaLink, setNewMediaLink] = useState('');
   const [urlError, setUrlError] = useState('');
@@ -96,7 +94,7 @@ export default function LeadInForm({ leadIn, onChange, language, onBack, onSkip 
       <div className="form-group">
         <div className="field-label-with-help">
           <label htmlFor="leadInTitle">
-            {t.leadInTitle}
+            {t.leadInTitle} <span className="optional-label">({language === 'en' ? 'Optional' : 'Необов\'язково'})</span>
           </label>
           <HelpIcon text={help.title} />
         </div>
@@ -140,7 +138,7 @@ export default function LeadInForm({ leadIn, onChange, language, onBack, onSkip 
       <div className="form-group">
         <div className="field-label-with-help">
           <label htmlFor="leadInContent">
-            {t.contentInstructions}
+            {t.contentInstructions} <span className="optional-label">({language === 'en' ? 'Optional' : 'Необов\'язково'})</span>
           </label>
           <HelpIcon text={help.content} />
         </div>
@@ -274,21 +272,6 @@ export default function LeadInForm({ leadIn, onChange, language, onBack, onSkip 
             : '📝 Ці нотатки тільки для вас - учні їх не побачать'}
         </div>
       </div>
-
-      {(onBack || onSkip) && (
-        <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
-          {onBack && (
-            <button type="button" onClick={onBack} className="btn-secondary">
-              ← {language === 'en' ? 'Back' : 'Назад'}
-            </button>
-          )}
-          {onSkip && (
-            <button type="button" onClick={onSkip} className="btn-secondary">
-              {language === 'en' ? 'Skip' : 'Пропустити'} →
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

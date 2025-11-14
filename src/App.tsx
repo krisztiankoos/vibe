@@ -122,19 +122,6 @@ function App() {
     }
   };
 
-  const goToPreviousStep = () => {
-    const steps = ['structure', 'lead-in', 'presentation', 'controlled', 'free', 'preview'];
-    const currentIndex = steps.indexOf(currentStep);
-    if (currentIndex > 0) {
-      const prevStep = steps[currentIndex - 1] as typeof currentStep;
-      setCurrentStep(prevStep);
-    }
-  };
-
-  const skipStep = () => {
-    goToNextStep();
-  };
-
   const updateLesson = (updates: Partial<Lesson>) => {
     setLesson((prev) => ({ ...prev, ...updates }));
   };
@@ -270,7 +257,19 @@ function App() {
           <div className="header-actions">
             <button onClick={() => setLanguage(null)} className="header-btn">{t.changeLanguage}</button>
             <button onClick={handleNewLesson} className="header-btn">{t.newLesson}</button>
-            <button onClick={() => setShowSavedLessons(true)} className="header-btn">💾 {language === 'en' ? 'My Lessons' : 'Мої Уроки'}</button>
+            <button
+              onClick={() => {
+                const autoSaveKey = `autosave-${lesson.id}`;
+                localStorage.setItem(autoSaveKey, JSON.stringify(lesson));
+                alert(language === 'en' ? '✓ Progress saved!' : '✓ Прогрес збережено!');
+              }}
+              className="header-btn"
+              style={{ background: '#4caf50', color: 'white' }}
+              disabled={!lesson.title}
+            >
+              💾 {language === 'en' ? 'Save Progress' : 'Зберегти Прогрес'}
+            </button>
+            <button onClick={() => setShowSavedLessons(true)} className="header-btn">{language === 'en' ? 'My Lessons' : 'Мої Уроки'}</button>
             <button onClick={() => setShowSampleLessons(true)} className="header-btn">📚 {language === 'en' ? 'Sample Lessons' : 'Зразки Уроків'}</button>
             <button onClick={() => fileInputRef.current?.click()} className="header-btn">{t.importJSON}</button>
             <input
@@ -432,7 +431,7 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label>{t.lessonTitle}</label>
+              <label className="required">{t.lessonTitle}</label>
               <input
                 type="text"
                 value={lesson.title}
@@ -440,6 +439,18 @@ function App() {
                 placeholder={t.lessonTitlePlaceholder}
               />
             </div>
+
+            {lesson.title && (
+              <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                <button
+                  onClick={goToNextStep}
+                  className="btn-primary"
+                  style={{ padding: '0.75rem 2rem', fontSize: '1.1rem' }}
+                >
+                  {language === 'en' ? 'Continue' : 'Продовжити'} →
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -448,8 +459,6 @@ function App() {
             leadIn={lesson.leadIn}
             onChange={(leadIn) => updateLesson({ leadIn })}
             language={language}
-            onBack={goToPreviousStep}
-            onSkip={skipStep}
           />
         )}
 
@@ -460,14 +469,17 @@ function App() {
             language={language}
             cefrLevel={lesson.cefrLevel}
             onCefrLevelChange={(cefrLevel) => updateLesson({ cefrLevel })}
-            onBack={goToPreviousStep}
-            onSkip={skipStep}
           />
         )}
 
         {currentStep === 'controlled' && (
           <div className="step-content">
-            <h2>{t.controlledPracticeTitle}</h2>
+            <h2>
+              {t.controlledPracticeTitle}
+              <span style={{ marginLeft: '1rem', fontSize: '0.9rem', color: '#666', fontWeight: 'normal' }}>
+                ({lesson.controlledPractice.exercises.length} {language === 'en' ? 'exercises' : 'вправ'})
+              </span>
+            </h2>
             <p>{t.controlledPracticeSubtitle}</p>
             <ExerciseBuilder
               onAddExercise={(exercise) => addExercise('controlled', exercise)}
@@ -482,21 +494,17 @@ function App() {
                 </div>
               ))}
             </div>
-
-            <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
-              <button type="button" onClick={goToPreviousStep} className="btn-secondary">
-                ← {language === 'en' ? 'Back' : 'Назад'}
-              </button>
-              <button type="button" onClick={skipStep} className="btn-secondary">
-                {language === 'en' ? 'Skip' : 'Пропустити'} →
-              </button>
-            </div>
           </div>
         )}
 
         {currentStep === 'free' && (
           <div className="step-content">
-            <h2>{t.freePracticeTitle}</h2>
+            <h2>
+              {t.freePracticeTitle}
+              <span style={{ marginLeft: '1rem', fontSize: '0.9rem', color: '#666', fontWeight: 'normal' }}>
+                ({lesson.freePractice.exercises.length} {language === 'en' ? 'exercises' : 'вправ'})
+              </span>
+            </h2>
             <p>{t.freePracticeSubtitle}</p>
             <ExerciseBuilder
               onAddExercise={(exercise) => addExercise('free', exercise)}
@@ -510,15 +518,6 @@ function App() {
                   <button onClick={() => removeExercise('free', exercise.id)}>{t.remove}</button>
                 </div>
               ))}
-            </div>
-
-            <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
-              <button type="button" onClick={goToPreviousStep} className="btn-secondary">
-                ← {language === 'en' ? 'Back' : 'Назад'}
-              </button>
-              <button type="button" onClick={skipStep} className="btn-secondary">
-                {language === 'en' ? 'Skip' : 'Пропустити'} →
-              </button>
             </div>
           </div>
         )}
@@ -535,17 +534,12 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <button
-          onClick={goToPreviousStep}
-          disabled={currentStepIndex === 0}
-        >
-          {t.previous}
-        </button>
         {currentStep !== 'preview' && (
           <button
             onClick={goToNextStep}
+            className="next-button"
           >
-            {t.next}
+            {t.next} →
           </button>
         )}
         {currentStep === 'preview' && (

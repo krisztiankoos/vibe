@@ -34,7 +34,7 @@ export default function LanguageSelector({ onSelectLanguage }: LanguageSelectorP
 
         <div className="info-banner">
           <p>
-            <strong>What is PPP & TTT?</strong> PPP (Presentation-Practice-Production) and TTT (Test-Teach-Test) are proven teaching methodologies used worldwide for effective language instruction.
+            <strong>Teaching Methodologies:</strong> Choose from four proven frameworks - <strong>PPP</strong> (Presentation-Practice-Production), <strong>TTT</strong> (Test-Teach-Test), <strong>GPPC/ГППК</strong> (Grammar-Presentation-Practice-Communication), and <strong>CEFR</strong> (Common European Framework Task-Based Learning).
           </p>
         </div>
       </div>

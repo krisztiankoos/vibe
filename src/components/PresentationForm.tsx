@@ -13,11 +13,9 @@ interface PresentationFormProps {
   language: Language;
   cefrLevel?: CEFRLevel;
   onCefrLevelChange?: (level: CEFRLevel | undefined) => void;
-  onBack?: () => void;
-  onSkip?: () => void;
 }
 
-export default function PresentationForm({ presentation, onChange, language, cefrLevel, onCefrLevelChange, onBack, onSkip }: PresentationFormProps) {
+export default function PresentationForm({ presentation, onChange, language, cefrLevel, onCefrLevelChange }: PresentationFormProps) {
   const t = getTranslation(language);
   const [newExample, setNewExample] = useState('');
   const [newMediaLink, setNewMediaLink] = useState('');
@@ -149,7 +147,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
       <div className="form-group">
         <div className="field-label-with-help">
           <label htmlFor="targetLanguage">
-            {t.targetLanguage}
+            {t.targetLanguage} <span className="optional-label">({language === 'en' ? 'Optional' : 'Необов\'язково'})</span>
           </label>
           <HelpIcon text={help.targetLanguage} />
         </div>
@@ -178,7 +176,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
       {language === 'uk' ? (
         <div className="form-group">
           <div className="field-label-with-help">
-            <label>{t.bilingualExplanation}</label>
+            <label>{t.bilingualExplanation} <span className="optional-label">(Необов'язково)</span></label>
             <HelpIcon text={t.bilingualExplanationHint} />
           </div>
 
@@ -232,7 +230,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
         <div className="form-group">
           <div className="field-label-with-help">
             <label htmlFor="explanation">
-              {t.explanation}
+              {t.explanation} <span className="optional-label">(Optional)</span>
             </label>
             <HelpIcon text={help.explanation} />
           </div>
@@ -262,7 +260,7 @@ export default function PresentationForm({ presentation, onChange, language, cef
       <div className="form-group">
         <div className="field-label-with-help">
           <label htmlFor="examples">
-            {t.exampleSentences}
+            {t.exampleSentences} <span className="optional-label">({language === 'en' ? 'Optional' : 'Необов\'язково'})</span>
           </label>
           <HelpIcon text={help.examples} />
         </div>
@@ -414,21 +412,6 @@ export default function PresentationForm({ presentation, onChange, language, cef
             : '📝 Ці нотатки тільки для вас - учні їх не побачать'}
         </div>
       </div>
-
-      {(onBack || onSkip) && (
-        <div className="form-navigation" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
-          {onBack && (
-            <button type="button" onClick={onBack} className="btn-secondary">
-              ← {language === 'en' ? 'Back' : 'Назад'}
-            </button>
-          )}
-          {onSkip && (
-            <button type="button" onClick={onSkip} className="btn-secondary">
-              {language === 'en' ? 'Skip' : 'Пропустити'} →
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }
