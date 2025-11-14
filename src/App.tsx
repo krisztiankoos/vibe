@@ -23,12 +23,14 @@ function App() {
       title: '',
       description: '',
       content: '',
+      mediaLinks: [],
     },
     presentation: {
       title: '',
       targetLanguage: '',
       examples: [],
       explanation: '',
+      mediaLinks: [],
     },
     controlledPractice: {
       type: 'controlled',
