@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import type { Lesson, Exercise } from './types';
 import type { Language } from './translations';
 import { getTranslation } from './translations';
@@ -218,7 +218,7 @@ function App() {
   };
 
   // Define keyboard shortcuts
-  const shortcuts: KeyboardShortcut[] = language ? [
+  const shortcuts: KeyboardShortcut[] = useMemo(() => language ? [
     {
       key: 's',
       ctrlKey: true,
@@ -279,7 +279,7 @@ function App() {
       description: language === 'en' ? 'Close modal' : 'Закрити модальне вікно',
       preventDefault: false,
     },
-  ] : [];
+  ] : [], [language, currentStep, lesson, showSampleLessons, showSavedLessons, showShortcutsHelp]);
 
   // Use keyboard shortcuts
   useKeyboardShortcuts(shortcuts, !!language && !studentMode);
